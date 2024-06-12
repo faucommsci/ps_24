@@ -5,7 +5,7 @@ title-slide-attributes:
 
 author: 
   - name: Christoph Adrian
-    url: https://faucommsci.github.io/dbd_2023/course-team.html
+    url: https://faucommsci.github.io/ps_24/course-team.html
     affiliation: Chair of Communicaion Science
     affiliation-url: https://www.kowi.rw.fau.de/person/christoph-adrian/
 
@@ -15,7 +15,7 @@ format:
   revealjs:
     theme: slidetheme.scss
     logo: ../img/ps24-hex.png
-    footer: "[Home](https://faucommsci.github.io/dbd_2023/)"
+    footer: "[Home](https://faucommsci.github.io/ps_24/)"
     slide-number: true
     preview-links: auto
     # template-partials:
