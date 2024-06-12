@@ -1,0 +1,36 @@
+---
+title: "KI nutzen, um KI-Folgen zu verstehen"
+subtitle: "Projektseminar 24/25"
+date: 04/01/2024
+date-modified: last-modified
+date-format: "DD.MM.YYYY"
+author: 
+  - name: Adrian Meier 
+    url: /course-team.html
+    affiliation: Chair of Communication Science
+    affiliation-url: https://www.kowi.rw.fau.de/prof-dr-adrian-meier/
+  - name: Christoph Adrian 
+    url: /course-team.html
+    affiliation: Chair of Communication Science
+    affiliation-url: https://www.kowi.rw.fau.de/person/christoph-adrian/
+---
+
+Generative und kommunikative KI (bspw. ChatGPT, Bing, Gemini) ist derzeit in aller Munde. Den KI-Innovationen der letzten Jahre wird als „general purpose technology“ eine enorme transformative Kraft zugeschrieben, mit potenziell weitreichenden Folgen für Individuen, Wirtschaft und Gesellschaft. Die sozialwissenschaftliche Forschung auf diesem Gebiet entwickelt sich – ebenso wie ihr soziotechnologischer Gegenstand – rasant. Binnen kürzester Zeit entstehen weltweit hunderte Studien, die die individuellen und gesellschaftlichen Implikationen von generativer KI aus psychologischer, kommunikationswissenschaftlicher oder soziologischer Perspektive untersuchen. Gleichzeitig ist der Bedarf an evidenzbasierten Prognosen über mögliche Folgen von generativer KI groß, etwa im Kontext von Regulierungsvorhaben wie dem AI Act der EU. Wie jedoch lassen sich die rasant anwachsende Forschung kosten- und ressourceneffizient überblicken und Handlungsempfehlungen aus ihr ableiten?
+
+Eine mögliche Antwort liegt in der KI selbst. In diesem Projektseminar wollen wir daher den Versuch wagen, die aktuelle Forschung zu gesellschaftlichen Folgen von generativer und kommunikativer KI mit Hilfe von KI-gestützten Systematic Review Methoden schnell und zuverlässig zu synthetisieren (siehe begleitendes Seminar Angewandte Methoden).
+
+```{r backup}
+#| echo: false
+knitr::knit_exit()
+```
+
+|      |      |       | Prepare | Slides | AE  |                                                    Labs                                                    | HW  | Exam | Project |
+|--------|--------|--------|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
+| Week | Date | Topic |   📖    |   🖥️   | 📋  | [💻](https://sakai.duke.edu/samigo-app/servlet/Login?id=6fa7ebf3-01af-42a6-91ba-3e813d3901221641094171786) | ✍️  |  ✅  |   📂    |
+
+Icons
+
+-   Preparation: {{< bi book >}}
+-   Slides: {{< bi file-earmark-slides >}}
+-   Group Activity: {{< iconify octicon comment-discussion-24 >}}
+-   Application exercises: {{< iconify simple-icons googlecolab >}}

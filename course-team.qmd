@@ -1,0 +1,26 @@
+---
+title: "Teaching team"
+---
+
+## Prof. Dr. Adrian Meier
+
+![](img/team/ad-circle.png){style="float:right;padding: 0 0 0 0px;" fig-alt="Headshot of Adrian Meier" width="200"}
+
+[{{< iconify ri:bluesky-fill >}}](https://bsky.app/profile/adrianmeier.bsky.social) [{{< bi twitter-x >}}](https://twitter.com/admeierlab)  [{{< ai clarivate >}}](https://www.webofscience.com/wos/author/record/1857999) [{{< ai google-scholar >}}](https://scholar.google.de/citations?user=eI_YmEEAAAAJ&hl=de) [{{< ai osf >}}](https://osf.io/62bqz/) [{{< ai orcid >}}](https://orcid.org/my-orcid?orcid=0000-0002-0441-4150) [{{< ai researchgate >}}](https://www.researchgate.net/profile/Adrian-Meier-2) 
+
+
+is Tenure-Track [Assistant Professor for Communication Science](https://www.kowi.rw.fau.de/) at [Friedrich-Alexander-Universität (FAU) Erlangen-Nürnberg](https://www.fau.de/).
+
+His work investigates the positive and negative consequences of digital communication (e.g., via smartphones and social media) for users’ well-being, health, and self-regulation. His current research focusses on users’ digital well-being at the interface of work and leisure, for instance, digital stress, availability pressures, procrastinatory media use, and digital communication when working from home.
+
+
+## Christoph Adrian (he/him)
+
+![](img/team/ca-circle.png){style="float:right;padding: 0 0 0 0px;" fig-alt="Headshot of Christoph Adrian" width="200"}
+
+[{{< bi github >}}](https://github.com/chrdrn) [{{< ai osf >}}](https://osf.io/qj6t3/) [{{< ai orcid >}}](https://orcid.org/my-orcid?orcid=0000-0002-0441-4150) [{{< ai researchgate >}}](https://researchgate.net/profile/Christoph_Adrian) 
+
+is a Research Assistant at the [Chair of Communication Science](https://www.kowi.rw.fau.de/) at [Friedrich-Alexander-Universität (FAU) Erlangen-Nürnberg](https://www.fau.de/).
+
+His work focuses on computational methods, especially Text as Data Approaches and workin with Digital behavioral data, with an emphasis on computing, reproducible research, student-centered learning, and open-source education.
+

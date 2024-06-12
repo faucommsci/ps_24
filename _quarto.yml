@@ -1,0 +1,119 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Kommunikationswissenschaftliches Projektseminar"
+  description: 'Homepage of the project seminar "Using AI to understand AI consequences" of the assistant professorship of communication science at Friedrich-Alexander-Universität (FAU) Erlangen-Nürnberg'
+  favicon: "img/logo_fau_red.svg"
+  page-navigation: true
+  open-graph: true
+  reader-mode: false
+
+  # cookie-consent:
+  #   type: express
+  #   style: headline
+  #   palette: light
+
+  repo-url: https://github.com/faucommsci/ps_24
+  repo-actions: [edit, issue]
+    
+  sidebar:
+    logo: "img/ps24-hex.png"
+    align: center
+    tools: 
+    - icon: globe
+      href: https://www.kowi.rw.fau.de/lehre/master/projektseminar/
+    - icon: github
+      href: https://github.com/faucommsci/ps_24
+      text: Course repository
+    # - icon: chat-dots
+    #   href: https://fau-dbd.zulipchat.com/
+    #   text: DBD Zulip
+    # - icon: cloud-arrow-up
+    #   href: https://mybinder.org/v2/gh/faucommsci/dbd_binder/HEAD?urlpath=rstudio
+    #   text: DBD Binder
+    # - icon: server
+    #   href: http://10.204.20.178:8787/
+    #   text: RStudio Server
+
+# TODO Add link (icon) to RStudio Server
+
+    style: "floating"
+    search: true
+    collapse-level: 4
+    contents: 
+      - section: "Hintergrundinformationen"
+        contents:
+          - href: https://www.kowi.rw.fau.de/2024/02/21/projektseminar-sommersemester-2024-ki-nutzen-um-ki-folgen-zu-verstehen/
+            text: zum Projektseminar
+          - href: https://www.kowi.rw.fau.de/2024/03/18/methodenseminar-sose-2024-ki-gestuetzte-systematic-reviews-und-text-as-data-in-r/
+            text: zum Methodenseminar
+          - href: course-team.qmd
+            text: zum Teaching Team
+
+      - section: "Methodenseminar"
+        contents: 
+          - text: "Session 07"
+            contents: 
+              - href: slides/slides-07.qmd
+                text: "Slides"
+              - href: exercises/exercise-07.qmd
+                text: "Übung"
+              - href: exercises/showcase-07.qmd 
+                text: "Showcase"
+
+
+      # - section: "Sessions"
+      #   contents:
+      #     - href: sessions/session-01.qmd
+      #       text: "Session 01"
+      #     - href: sessions/session-02.qmd
+      #       text: "Session 02"
+      #     - href: sessions/session-03.qmd
+      #       text: "Session 03"
+      #     - href: sessions/session-04.qmd
+      #       text: "Session 04"
+      #     - href: sessions/session-06.qmd
+      #       text: "Session 06"
+      #     - href: sessions/session-07.qmd
+      #       text: "Session 07"
+      #     - href: sessions/session-08.qmd
+      #       text: "Session 08"
+      #     - href: sessions/session-09.qmd
+      #       text: "Session 09"
+      #     - href: sessions/session-10.qmd
+      #       text: "Session 10"
+
+      # - section: "Exercises"
+      #   contents:
+      #     - href: exercise/exercise-03.qmd
+      #       text: "Exercise 03"
+      #     - href: exercise/exercise-09_solution.qmd
+      #       text: "Exercise 09"
+      #     - href: exercise/exercise-10.qmd
+      #       text: "Exercise 10"
+
+      - section: "Computing"
+        contents:
+          - href: computing/computing-textbooks.qmd
+            text: R Textbooks
+          - href: computing/computing-cheatsheets.qmd
+            text: R Cheatsheets
+          - href: computing/computing-useful_links.qmd
+            text: Useful R sources
+            
+
+  page-footer: 
+   left: "Copyright 2024, Christoph Adrian"
+   right: "This page is built with ☕ & [Quarto](https://quarto.org/)."
+
+format:
+  html:
+    theme:
+      light: [journal, theme.scss]
+      dark: [journal, theme-dark.scss]
+    css: styles.css
+    code-copy: true
+    code-overflow: wrap
+    toc: true
