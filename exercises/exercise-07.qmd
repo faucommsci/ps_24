@@ -1,0 +1,157 @@
+---
+title: "API mining and data wrangling with R"
+subtitle: "Session 07 - Exercise"
+date: last-modified
+date-format: "DD.MM.YYYY"
+execute: 
+  eval: false
+---
+
+::: {.callout-tip icon="false"}
+[![Quarto Document](/img/badge-quarto_document.svg)](https://github.com/faucommsci/dbd_2023/blob/main/exercise/exercise-03.qmd) Download source file
+
+[![Binder RStudio](/img/badge-binder_rstudio.svg)](https://mybinder.org/v2/gh/faucommsci/dbd_binder/HEAD?urlpath=rstudio) Open this exercise in interactive and executable environment
+:::
+
+::: callout-note
+## Ziel der Anwendung: Eingrenzung der Suchergebnisse
+
+-   In folgenden Übungsaufgaben dienen dazu, die Datengrundlage für die in den nächsten Sitzungen anstehende(n) Textanalyse(n) weiter inhaltlich plausibel einzugrenzen bzw. zu präzisieren.
+
+-   Finales Ziel ist die Erstellung eines Code-Chunks, mit dessen Hilfe der Datensatz review_subsample erstellt werden soll. Bitte arbeitet die Übung durch, wir besprechen zu Anfang der nächsten Sitzung dann eure Vorschläge.
+:::
+
+## Background
+
+::: callout-tip
+## Todays's data basis: [OpenAlex](https://openalex.org/)
+
+OpenAlex is a free and open catalog of the global research system. It's named after the ancient Library of Alexandria and made by the nonprofit OurResearch.
+:::
+
+![](https://help.openalex.org/~gitbook/image?url=https%3A%2F%2F3117786224-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa3BRxfacarwiv3wTnHuB%252Fuploads%252FHk254kXRAMOIXVCYDDT9%252Fopenalex-overview-diagram.png%3Falt%3Dmedia%26token%3D133a87f6-6435-47c8-a272-0b108576e36a&width=768&dpr=1&quality=100&sign=4876c8bb81a37dece37cdee19427efddbfa9d6d6337a2ca8a03524c0c8791982){fig-align="center"}
+
+> *At the heart of OpenAlex is our dataset—a catalog of [works](https://help.openalex.org/how-it-works/works). A work is any sort of scholarly output. A research article is one kind of work, but there are others such as datasets, books, and dissertations. We keep track of these works—their titles (and abstracts and full text in many cases), when they were created, etc. But that's not all we do. We also keep track of the connections between these works, finding associations through things like [journals](https://help.openalex.org/how-it-works/sources), [authors](https://help.openalex.org/how-it-works/authors), [institutional affiliations](https://help.openalex.org/how-it-works/institutions), citations, [topics](https://help.openalex.org/how-it-works/topics), and [funders](https://help.openalex.org/how-it-works/funders). There are hundreds of millions of works out there, and tens of thousands more being created every day, so it's important that we have these relationships to help us make sense of research at a large scale.*
+
+## Preparation
+
+::: callout-important
+## Wichtige Information
+
+-   Bitte stellen Sie sicher, dass Sie das jeweilige R-Studio Projekt zur Übung geöffnet haben. Nur so funktionieren alle Dependencies korrekt.
+-   Um den einwandfreien Ablauf der Übung zu gewährleisten, wird für die Aufgaben auf eine eigenständige Datenerhebung verzichtet und ein Übungsdatensatz zu verfügung gestelt.
+:::
+
+### Packages
+
+-   Zum Laden der Pakete wird das Paket `pacman::pload()` genutzt, dass gegenüber der herkömmlichen Methode mit `library()` eine Reihe an Vorteile hat:
+
+    -   Prägnante Syntax
+    -   Automatische Installation (wenn Paket noch nicht vorhanden)
+    -   Laden mehrerer Pakete auf einmal
+    -   Automatische Suche nach `dependencies`
+
+```{r load-packages}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  here, qs, # file management
+  magrittr, janitor, # data wrangling
+  easystats, sjmisc, # data analysis
+  ggpubr, # visualization
+  openalexR, 
+  tidyverse # load last to avoid masking issues
+  )
+```
+
+### Import und Vorverarbeitung der Daten
+
+```{r data-import}
+# Import from local
+review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+
+# Create correct data
+review_works_correct <- review_works %>% 
+    mutate(
+        # Create additional factor variables
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        )
+```
+
+## 🛠️ Praktische Anwendung
+
+::: callout-important
+## Achtung, bitte lesen!
+
+-   Bevor Sie mit der Arbeit an den folgenden 📋 **Exercises** beginnen, stellen Sie bitte sicher, dass Sie alle Chunks des Abschnitts [Preparation] gerendert haben. Das können Sie tun, indem Sie den "*Run all chunks above*"-Knopf ![](/img/rstudio-button-render_all_chunks_above.png)des nächsten Chunks benutzen.
+-   Bei Fragen zum Code lohnt sich ein Blick in den **Showcase** (.qmd oder .html). Beim Showcase handelt es sich um eine kompakte Darstellung des in der Präsentation verwenden R-Codes. Sie können das Showcase also nutzen, um sich die Code-Bausteine anzusehen, die für die R-Outputs auf den Slides benutzt wurden.
+:::
+
+### 📋 Exercise 1: Sprache der Publikationen
+
+::: callout-note
+## Ziel der Aufgabe
+
+-   Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis von deren Sprache (`language`)
+-   Hintergrundinformation zur [Variable `language`](https://docs.openalex.org/api-entities/works/work-object#language) finden Sie in der API-Dokumentation von OpenAlex.
+:::
+
+-   Nutzen Sie die Funktion `sjmisc::frq()` und schauen Sie sich im Datensatz `review_works_correct` die Variablen `language` an. Verwenden Sie das Argument `sort.frq = "desc"`, um die Häufigkeit der Sprachen absteigend zu sortieren.
+-   Notieren Sie sich den jeweilgen [ISO 639-1 language code](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes), um Ihn später bei [📋 Exercise 4: Erstellung Subsample] als Filter zu nutzen.
+
+```{r exercise-1}
+# Create frequency table for the variable language
+...
+```
+
+### 📋 Exercise 2: Typ der Publikationen
+
+::: callout-note
+## Ziel der Aufgabe
+
+-   Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis deres Typen (`type`).
+-   Hintergrundinformation zur [Variable `type`](https://docs.openalex.org/api-entities/works/work-object#type) finden Sie in der API-Dokumentation von OpenAlex.
+:::
+
+-   Nutzen Sie die Funktion `sjmisc::frq()` und schauen Sie sich im Datensatz `review_works_correct` die Variablen `type` an. Verwenden Sie das Argument `sort.frq = "desc"`, um die Typen in Abhängigkeit Ihrer Häufigkeit absteigend zu sortieren.
+-   Notieren Sie sich die Ausprägungen der Variable type, die aus Ihrer Sicht später bei [📋 Exercise 4: Erstellung Subsample] als Filter genutzt werden soll.
+
+```{r exercise-2}
+# Create frequency table for the variable type
+...
+```
+
+### 📋 Exercise 3: Forschungsfeld der Publikationen
+
+::: callout-note
+## Ziel der Aufgabe
+
+-   Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis des von OpenAlex dem Artikel zugeordnenten Foschungsfeldes (`field)`
+
+-   Hintergrundinformation zur [Variable `field`](https://docs.openalex.org/api-entities/topics/topic-object#field) finden Sie in der API-Dokumentation von OpenAlex.
+:::
+
+-   Basierend auf dem Datensatz `review_works_correct`
+    -   nutzen Sie die Funktion `unnest()` um die Variablen der `topics`-Liste zu extrahieren. Verwenden Sie dabei das Argument `names_sep = "_"`. um doppelte Variablennamen durch Hinzufügen des Prefixes `topics_` zu verhindern.
+    -   filtern Sie anschließen mit Hilfe der Funktion `filter` und der Variable bzw. dem Argument `topics_name == "field"` nur die Informationen zum Forschungsfeld, sowie mit der Variable bzw. dem Argument `topics_i == "1"` nur die erste Zuordnung.
+    -   Nutzen Sie die Funktion `sjmisc::frq()` und schauen Sie sich die Variablen `topics_display_name` an. Verwenden Sie das Argument `sort.frq = "desc"`, um die Forschungsfelder in Abhängigkeit Ihrer Häufigkeit absteigend zu sortieren.
+-   Notieren Sie sich die Ausprägungen der Variable topics_display_name, die aus Ihrer Sicht später bei [📋 Exercise 4: Erstellung Subsample] als Filter genutzt werden soll.
+
+```{r exercise-3}
+# Unnest topis variable and create frequency table for the variable topics_display_name
+...
+```
+
+### 📋 Exercise 4: Erstellung Subsample
+
+::: callout-note
+## Ziel der Aufgabe
+
+-   Erstellung sie den Datensatz `review_subsample`, in dem Sie mit Hilfe der Funktionen `select()` und/oder `filter()` das Datenmaterial weiter eingrenzen. Sie können sich sowohl auf die Variablen aus der Übung, als auch auf die aus der Sitzung (bzw. den Slides) beziehen.
+-   Der Code dieses Chunks wird in der nächsten Sitzung benötigt bzw. besprochen, halten Sie diesen deshalb bitte bereit.
+:::
+
+```{r exercise-4}
+review_subsample <- review_works_correct %>% 
+    filter(...)
+```

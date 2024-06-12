@@ -1,0 +1,24 @@
+
+# author: 
+#   - name: Christoph Adrian
+#     url: https://faucommsci.github.io/dbd_2023/course-team.html
+#     affiliation: Chair of Communicaion Science
+#     affiliation-url: https://www.kowi.rw.fau.de/person/christoph-adrian/
+  
+format: 
+  html:
+    toc: true
+    toc-depth: 4
+
+callout-appearance: simple
+
+execute: 
+  message: false
+  warning: false
+
+highlight-style: atom-one
+
+editor_options: 
+  chunk_output_type: console
+
+bibliography: references_exercise.bib
