@@ -1,0 +1,38 @@
+title-slide-attributes:
+  data-background-image: img/slide_bg-title.png
+  data-background-color: "#04316a"
+  slide-logo: false
+
+author: 
+  - name: Christoph Adrian
+    url: https://faucommsci.github.io/dbd_2023/course-team.html
+    affiliation: Chair of Communicaion Science
+    affiliation-url: https://www.kowi.rw.fau.de/person/christoph-adrian/
+
+# TODO Change/Hide course logo
+
+format:
+  revealjs:
+    theme: slidetheme.scss
+    logo: ../img/ps24-hex.png
+    footer: "[Home](https://faucommsci.github.io/dbd_2023/)"
+    slide-number: true
+    preview-links: auto
+    # template-partials:
+    #   - title-slide.html
+    chalkboard:
+      buttons: false
+
+highlight-style: atom-one
+
+# filters:
+#   - roughnotation
+#   - line-highlight
+
+execute:
+  echo: true
+
+csl: ../apa.csl
+
+editor_options: 
+  chunk_output_type: console

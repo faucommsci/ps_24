@@ -1,0 +1,142 @@
+---
+title: "API mining and data wrangling with R"
+subtitle: "Session 07 - Showcase"
+date: last-modified
+date-format: "DD.MM.YYYY"
+---
+
+```{r setup}
+#| echo: false
+
+pacman::p_load(qs, here)
+review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+```
+
+## Packages
+
+-   Zum Laden der Pakete wird das Paket `pacman::pload()` genutzt, dass gegenüber der herkömmlichen Methode mit `library()` eine Reihe an Vorteile hat:
+
+    -   Prägnante Syntax
+    -   Automatische Installation (wenn Paket noch nicht vorhanden)
+    -   Laden mehrerer Pakete auf einmal
+    -   Automatische Suche nach `dependencies`
+
+```{r load-packages}
+pacman::p_load(
+  here, qs, 
+  magrittr, janitor,
+  easystats, sjmisc,
+  ggpubr, 
+  openalexR, 
+  tidyverse
+)
+```
+
+## Codechunks aus der Sitzung
+
+### Datenerhebung via API
+
+```{r openalex-define-options}
+# Set openalexR.mailto option so that your requests go to the polite pool for faster response times
+options(openalexR.mailto = "christoph.adrian@fau.de")
+```
+
+```{r openalex-data-download}
+#| eval: false
+
+# Download data via API
+review_works <- openalexR::oa_fetch(
+  entity = "works",
+  title.search = "(literature OR systematic) AND review",
+  primary_topic.domain.id = "domains/2", # Social Science
+  publication_year = "2013 - 2023",
+  verbose = TRUE
+)
+```
+
+```{r openalex-data-overview}
+# Overview
+review_works 
+```
+
+```{r export-openalex-data-local}
+#| echo: false
+#| eval: false
+
+qs::qsave(review_works, file = here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+```
+
+### Initiale Sichtung und Überprüfung der Datem
+
+::: {.callout-note appearance="minimal"}
+## Typische Bestandteile
+
+-   Wie viele **Fälle** sind enthalten? Wie viele **Variablen**? Sind die Variablen**namen aussagekräftig**?
+-   Welchen **Typ** hat jede Variable, z. B. numerisch, kategorisch, logisch?
+:::
+
+```{r table-overview-inital}
+review_works %>% glimpse()
+```
+
+### Datentransformationen
+
+#### Korrektur der Rohdaten
+
+```{r recoding-openalex-data-correct}
+
+review_works_correct <- review_works %>% 
+    mutate(
+        # Create additional factor variables
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        )
+```
+
+#### Unnest `topics`
+
+```{r example-unnest-topics}
+review_works_correct %>% 
+    unnest(topics, names_sep = "_") %>%
+    glimpse()
+```
+
+### Rekonstruktion OpexAlex Dashboard
+
+#### Publikationen im Zeitverlauf
+
+```{r figure-publication-year}
+review_works_correct %>% 
+    ggplot(aes(publication_year)) +
+    geom_bar() +
+    theme_pubr()
+```
+
+#### Häufigkeit Forschungsfelder
+
+```{r table-topics-frequencies}
+review_works_correct %>% 
+    unnest(topics, names_sep = "_") %>% 
+    filter(topics_name == "field") %>% 
+    filter(topics_i == 1) %>% 
+    sjmisc::frq(topics_display_name, sort.frq = "desc")
+```
+
+#### Relevanteste Publikationen
+
+```{r table-top-publications}
+review_works_correct %>% 
+    arrange(desc(relevance_score)) %>%
+    select(publication_year_fct, relevance_score, title) %>% 
+    head(5) %>% 
+    gt::gt()
+```
+
+#### Lageparameter
+
+```{r table-location-parameters}
+review_works_correct %>% 
+  select(where(is.numeric)) %>% 
+  datawizard::describe_distribution() %>% 
+  print_html()
+```

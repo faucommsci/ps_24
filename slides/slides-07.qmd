@@ -1,0 +1,622 @@
+---
+title: "Introduction to Text as Data"
+subtitle: "Sitzung 07"
+date: 13 06 2024
+date-format: "DD.MM.YYYY"
+bibliography: references_slides.bib
+---
+
+```{r setup-slide-session}
+#| echo: false
+ 
+# Load packages
+pacman::p_load(
+    here, fs, 
+    jsonlite, 
+    gt, gtExtras,
+    sjmisc, easystats,
+    ggpubr, 
+    countdown,
+    tidyverse
+)
+
+# Load schedule
+source(here("slides/schedule.R"))
+```
+
+## Seminarplan {.smaller}
+
+```{r table-schedule}
+#| echo: false 
+schedule %>% 
+    gt::gt() %>% 
+    gt::fmt_markdown() %>% 
+    gt::tab_options(
+        table.width = gt::pct(80), 
+        table.font.size = "14px") %>% 
+    gtExtras::gt_theme_nytimes() %>% 
+    # customise column header labels
+    gt::cols_label(
+        session = "Sitzung", 
+        date = "Datum",
+        topic = "Thema (synchron)",
+        exercise = "Übung (asynchron)",
+        presenter = "Dozent:in"
+    ) %>% 
+    gt::cols_width(
+        session ~ pct(10),
+        date ~ pct(10),
+        topic ~ pct(50),
+        exercise ~ pct(20),
+        presenter ~ pct(10)
+    ) %>%
+    # highlight current session
+    gtExtras::gt_highlight_rows(
+        rows = 11,
+        fill = "#C50F3C", alpha = 0.15,
+        bold_target_only = TRUE,
+        target_col = session:topic
+    ) %>%
+    # fade out past sessions
+    gt::tab_style(
+        style = gt::cell_text(
+            style = "italic", 
+            color = "grey"),
+        location = gt::cells_body(
+            columns = everything(), 
+            rows = c(1:9)
+        )
+    )
+```
+
+# Agenda {background-image="img/slide_bg-agenda.png"}
+
+1.  [Organisation & Koordination](#orga)
+
+2.  [A short introduction to *Text as Data*](#introduction)
+
+3.  [Text as Data meets Literaturreviews](#theorie)
+
+4.  [R in the real world](#r-example)
+
+5.  [📋 Hands on working with R](#group-activity)
+
+<!-- TODO Update agenda -->
+
+# Organisation & Koordination {#orga background-image="img/slide_bg-orga.png"}
+
+Typischer Sitzungsablauf & Nutzung RStudio Server
+
+<!-- TODO Add "orga" background -->
+
+## Erst Input, dann Vertiefung
+
+#### Typischer Aufbau der nächsten vier Sitzungen
+
+**Teil 1️⃣: Input (ca. 30-45 Minuten)**
+
+-   Vorstellung der "theoretischen Grundlagen" inklusive zentraler Begriffe und Konzepte
+-   Vorstellung der Methode(n) sowie des Kontext der praktischen Anwendung
+
+**Teil 2️⃣: Praktische Anwendung (ca. 45-60 Minuten)**
+
+-   Vertiefung der Inhalte durch Bearbeitung kleiner Aufgaben, entweder in Einzel- oder Gruppenarbeit
+-   Aufgaben zur Arbeit mit R, die im Kurs angefangen aber (vermutlich) außerhalb der Sitzung abgeschlossen werden
+
+## Bitte RStudio Server benutzen!
+
+#### Information zur Nutzung des RStudio Servers während der Sitzung
+
+::: columns
+::: {.column width="45%"}
+⏰ **Zur Erinnerung:**
+
+-   Funktion der RStudio-Projekte für die praktische Anwendung in Serverumgebung getestet
+-   Nutzung des RStudio Servers vermeidet aufwendiges & zeitraubendes Trouble-Shooting
+:::
+
+::: {.column width="10%"}
+:::
+
+::: {.column width="45%"}
+ℹ️ **Infos zum RStudio Server:**
+
+-   Nutzung nur über W-LAN der FAU (ggf. mit aktivem VPN) möglich
+-   Verfügbar unter: <http://10.204.20.178:8787>
+-   Zugangsdaten auf Teams
+:::
+:::
+
+::: {.callout-important appearance="simple"}
+**Bei Problemen: Fragen in den Teams-Kanal!**
+:::
+
+# Anything else? {background-image="img/slide_bg-participation.png"}
+
+Weitere Fragen zum Ablauf oder zur Nutzung des RStudio Servers
+
+# A short introduction to *Text as Data* {#introduction background-image="img/slide_bg-section.png"}
+
+Was ist *Text as Data* und warum ist es (für uns) relevant?
+
+## Was versteht ihr unter *Text as Data*?
+
+#### Bitte nehmt an einer kurzen Umfrage teil
+
+::: columns
+::: {.column width="50%"}
+<br>
+
+Bitte scannt den **QR-Code** oder nutzt den folgenden **Link** für die Teilnahme an einer kurzen Umfrage:
+
+-   <https://www.menti.com/aly1gft3568e>
+
+-   Temporary Access Code: **2677 1451**
+:::
+
+<!-- TODO Add current temporary access code -->
+
+::: {.column width="10%"}
+:::
+
+::: {.column width="40%"}
+<br> {{< qrcode https://www.menti.com/aly1gft3568e qr1 width=350 height=350 colorDark='#C50F3C' >}}
+:::
+:::
+
+```{r countdown-vote}
+#| echo: false
+
+countdown(
+    minutes = 1,
+    warn_when = 10)
+```
+
+<!-- TODO Add timer (siehe DBD 2023 - Slides 02 - F.8 ) -->
+
+## Ergebnis
+
+::: {style="position: relative; padding-bottom: 56.25%; padding-top: 35px; height: 0; overflow: hidden;"}
+<iframe sandbox="allow-scripts allow-same-origin allow-presentation" allowfullscreen="true" allowtransparency="true" frameborder="0" height="315" src="https://www.mentimeter.com/app/presentation/alsazxdr14cqaf4gsszqddga88k42izd/embed" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" width="420">
+
+</iframe>
+:::
+
+## Altes Phänomen, neue Dimension
+
+#### Hintergrund zu dem Phänomen *Text as Data*
+
+![](https://raw.githubusercontent.com/cbail/textasdata/master/strengths-weaknesses/rmarkdown/Big%20Data.png){fig-align="center"}
+
+-   Lange **Tradition** der Text- und Inhaltsanalyse
+-   Neue **Chancen & Herausforderungen** durch explosionsartige **Vergrößerung des (Text-)Datenaufkommen und deren Verfügbarkeit** in den letzten Jahren (Websites, Plattformen & Digitalisierung)
+Verfügbarkeit von **(neuen) Datenquellen** als Resultat der Digitalisierung
+
+
+## From text to data to data analysis
+
+#### Transformation als essenzieller Bestandteil von *Text as Data* [@benoit2020]
+
+![](img/session-07/text_as_data-process.png){fig-align="center"}
+
+## Possibilities over possibilities {visibility="hidden"}
+
+#### Überblick über verschiedene Methoden der Textanalyse [@grimmer2013]
+
+![](img/session-07/text_as_data-methods_overview.png){fig-align="center"}
+
+
+## Neue Quellen, neue Möglichkeiten {visibility="hidden"}
+
+#### Beispiele für verschiedene Datenquellen
+
+-   Language Corpora (z.B. 🇩🇪 [DWDS](https://www.dwds.de/), 🇩🇪 [DeReKo](https://www.ids-mannheim.de/digspra/kl/projekte/korpora))
+
+-   Library Databases (z.B. [scopus](https://scopus.com/), [Web of Science](https://www.webofscience.com/wos/woscc/basic-search))
+
+-   Open Sources (z.B. [OpenAlex](https://openalex.org/), [Crossref](https://www.crossref.org/), [Project Guthenberg](https://gutenberg.org/))
+
+-   Social Media (z.B. [YouTube API](https://developers.google.com/youtube/v3/docs/), [Reddit API](https://www.reddit.com/dev/api/))
+
+-   Web Scraping (z.B. [rvest](https://rvest.tidyverse.org/), [RSelenium](https://docs.ropensci.org/RSelenium/))
+
+-   Audio/Video Transcripts
+
+::: notes
+DWDS: Digitales Wörterbuch der deutschen Sprache
+
+DeReKo: Deutsches Referenzkorpus
+:::
+
+
+
+## Der Versuch einer Definition {visibility="hidden"}
+
+#### Bestandteile des Konzepts *Text as Data*
+
+-   **Transformation von Text** zum Zweck der Analyse und Interpretation.
+-   Verwendung von einer **neuen Struktur**, die nicht Teil des Prozesses war, der die Daten selbst erzeugt hat
+-   Verwendung von **verschiedenen computergestützere Verfahren** zur Analyse
+-   **Aufdeckung verborgener Muster, Stimmungen und Trends**, die mit traditionellen qualitativen Methoden möglicherweise nicht erkennbar sind
+-   Verwendung und 
+
+# *Text as Data* meets Reviews {#theorie background-image="img/slide_bg-section.png"}
+
+Welche Rolle spielt *Text as Data* bei Literaturreviews?
+
+## Review über Literaturreviews
+
+#### Grundidee, Ziel und Schwerpunkte und der kommenden Sitzungen zu *Text as data*
+
+-   *Idee:* **Überblick über Literatur zu Literaturüberblicken** verschaffen
+-   *Ziel:* Durchführung einer **Kombination** aus (elaboriertem) **Scoping** **Search** & Scoping **Review**
+-   *Fokus:* **Computergestütze** Umsetzung möglichst vieler Bestandteile des **Review-Workflows**, wie z.B.:
+    -   Eigene **Datenerhebung** via (OpenAlex-)API
+    -   Oberflächliche **bibliometrische Analyse** (zur Datenexploration und -bereinigung)
+    -   **Analye der Abstracts** mit Hilfe von unüberwachtem Machine Learning (**Topic Modeling**)
+
+## Was war das nochmal?
+
+#### Zur Erinnerung: Definition von Scoping Search und Scoping Review
+
+🔎 **Scoping searches ...**
+
+::: {style="font-size: smaller;"}
+-   **schnelle explorative Suche**, die sich auf bestimmtes Konzept konzentriert
+-   sind oft Teil der **Suchstringentwicklung**
+-   sind **nicht ausreichend** für ein ***systematic review***
+:::
+
+::: {style="text-align: right"}
+**... Scoping Review** 📋
+:::
+
+::: {style="font-size: smaller;"}
+-   eine spezifische **Form eines literature reviews**
+-   **map** a **vast body of research literature** in a field of interest in terms of the **volume**, **nature**, and **characteristics** of the primary research [@pham2014]
+-   **do not aim to produce a critically appraised and synthesised result/answer** to a particular question, \[they\] rather aim to provide an overview or map of the evidence [@munn2018]
+:::
+
+## What we (do not) do
+
+#### Disclaimer zum Inhalt und der Zielsetzung des Sitzungen zu *Text as Data*
+
+::: columns
+::: {.column width="45%"}
+❌ **Kein vollständig dokumentiertes Scoping Review**, dass alle notwendigen (SALSA-)Schritte in vollem Umfang und **nach wissenschaftlichen Standarts** durchläuft
+
+<br>
+
+❌ **Keine umfassendes Einführung** in die **Textanalyse** mit R
+:::
+
+::: {.column width="10%"}
+:::
+
+::: {.column width="45%"}
+✅ **Exemplarische** Darstellung einzelner **Schritte des Workflows**, mit **Fokus** auf die **computergestützte Umsetzung**
+
+<br> <br>
+
+✅ Überblick über verschiedene Verfahren, mit **Schwerpunkt auf Methoden**, die im Kontext von **Literaturreviews notwendig und nützlich** sind
+:::
+:::
+
+# R in the real world {#r-example background-image="img/slide_bg-example.png"}
+
+**Kontext:** [**OpenAlex**](https://openalex.org/) als Datengrundlage für ein computergestützes Literaturreview
+
+```{r import-data}
+#| echo: false
+review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+```
+
+## Wer oder was ist OpenAlex?
+
+#### Kurze Vorstellung und Hintergrundinformationen zur Datenquelle ([OpenAlex](https://openalex.org/))
+
+![](https://help.openalex.org/~gitbook/image?url=https%3A%2F%2F3117786224-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa3BRxfacarwiv3wTnHuB%252Fuploads%252FhPzAxqHRhfot0wqhQHo5%252FScreenshot%2520by%2520Dropbox%2520Capture.png%3Falt%3Dmedia%26token%3D63255b13-45e0-4737-b14a-89954f4c5367&width=768&dpr=4&quality=100&sign=9165db4157f257f007c6b9728e4c6feeea592a57d7f856f3f6f96f108fe305a3){fig-align="center" width="809"}
+
+-   **open(-source) catalog** of the world's scholarly research system
+-   data is **free and reusable**, available via **bulk download or API**
+-   governed by a **sustainable and transparent nonprofit**
+
+## First scoping search
+
+#### Sichtung der Daten- und Identfikation der Analysegrundlage
+
+::: columns
+::: {.column width="30%"}
+![](img/session-07/openalex-query_challenges.png){width="279"}
+:::
+
+::: {.column width="70%"}
+Eine simple Suchquery resultiert zwar in **sehr vielen Treffer**n, bringt **aber auch** (praktische) **Probleme** mit sich:
+
+-   Deutliche Überschreibung des **tägliches API-Limit** beträgt 100.000 Referenzen
+-   "Lokale" Datenbearbeitung und -analye benötigt bei der Menge an Daten ehrhebliche **Rechenkapazität**
+-   ***Lösung**: Optimierung der Suchquery durch **Spezifizierung** des Untersuchungsgegenstandes*
+:::
+:::
+
+## Fine-Tuning der Search Query
+
+#### Überblick über verwendete Search Query und ausgewählte deskriptive Statistiken
+
+::: columns
+::: {.column width="80%"}
+![](img/session-07/openalex-query_fine_tuning.png){fig-align="center"}
+:::
+
+::: {.column width="20%"}
+{{< qrcode https://openalex.org/works?page=1&filter=display_name.search%3A%28literature%20OR%20systematic%29%20AND%20review,primary_topic.domain.id%3Adomains%2F2,publication_year%3A2014%20-%202024&group_by=publication_year,open_access.is_oa,primary_topic.field.id qr2 width=350 height=350 colorDark='#C50F3C' >}}
+
+[Link](https://openalex.org/works?page=1&filter=display_name.search%3A%28literature%20OR%20systematic%29%20AND%20review,primary_topic.domain.id%3Adomains%2F2,publication_year%3A2014%20-%202024&group_by=publication_year,open_access.is_oa,primary_topic.field.id) zur Suche
+:::
+:::
+
+## OpenAlex 🤝 openalexR
+
+#### Zusammenspiel aus Datenbank und R-Package [openalexR](https://docs.ropensci.org/openalexR/) [@aria2024]
+
+::: {style="font-size: 1rem;"}
+::: columns
+::: {.column width="25%"}
+![](https://docs.ropensci.org/openalexR/logo.png){fig-align="center" width="100"}
+:::
+
+::: {.column width="75%"}
+> **openalexR** helps you interface with the [OpenAlex](https://openalex.org/) API to retrieve bibliographic information about publications, authors, institutions, sources, funders, publishers, topics and concepts.
+:::
+:::
+:::
+
+-   Manueller **Export von Ergebnissen** mit Hilfe des **Web-Interface** von [OpenAlex](https://openalex.org/) möglich, im Bulk aber **umständlich**
+-   Selbstständige **Interaktion mit API ist aufwendig**: Design der Query, Programmierung der Abfrage, Verarbeitung der Daten (nicht im Tabellenformat verfügbar)
+-   **R-Package** bietet **niedrigschwelligere Alternative** für API-Abfragen
+
+## Reproduktion der Webabfrage mit R
+
+#### Abfrage, Download und Transformation der Daten mit einer Funktion
+
+```{r openalex-data-download}
+#| eval: false
+
+# Download data via API
+review_works <- openalexR::oa_fetch(
+  entity = "works",
+  title.search = "(literature OR systematic) AND review",
+  primary_topic.domain.id = "domains/2", # Social Science
+  publication_year = "2013 - 2023",
+  verbose = TRUE
+)
+
+# Overview
+review_works
+```
+
+```{r openalex-data-overview}
+#| echo: false
+review_works %>% print(n = 5)
+```
+
+## Das Ergebnis der Abfrage
+
+#### Flüchtiger Blick auf den R-Datensatz inklusive erster Qualtiätsprüfung
+
+::: {.callout-note appearance="minimal"}
+## Typische Überprüfungen
+
+::: {style="font-size: smaller;"}
+-   Wie viele **Fälle** sind enthalten? Wie viele **Variablen**? Sind die Variablen**namen aussagekräftig**?
+-   Welchen **Typ** hat jede Variable, z. B. numerisch, kategorisch, logisch?
+:::
+:::
+
+```{r table-works-overview}
+review_works %>% glimpse()
+```
+
+## Wichtigkeit von Gewissenhaftigkeit
+
+#### Gute Gewohnheiten helfen bei Qualitätsprüfung und Datenverarbeitung
+
+::: {.callout-note appearance="minimal"}
+## Praktische Empfehlungen
+
+::: {style="font-size: smaller;"}
+-   Einheitlicher Code-Style, Bearbeitungsschritte kommentieren
+-   Veränderungen in neuen Datensatz speichern
+:::
+:::
+
+**Streben nach:**
+
+```{r recoding-openalex-data-correct}
+# Corrections based on first glimpse 
+review_works_correct <- review_works %>% 
+    mutate(
+        # Create additional factor variables
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        )
+```
+
+**Bitte vermeiden:**
+
+```{r bad-code-example}
+#| eval: false 
+
+ReWoCo<-review_works %>% mutate(pub_year_fct = as.factor(publication_year), type_fct = as.factor(type))
+```
+
+## Ein Datensatz im Datensatz
+
+#### Exkurs zu verschachtelten (nested) Daten und Möglichkeiten zur Verabeitung in R
+
+-   *Besonderheit*: Informationen zu (Themen-)Katalogisierung als Liste im Datensatz
+
+```{r}
+review_works_correct$topics %>% head()
+```
+
+## Entpacken der Schachteln steigert die Fallzahl
+
+#### Exkurs zu verschachtelten (nested) Daten und Möglichkeiten zur Verabeitung in R
+
+```{r}
+review_works_correct %>% 
+    unnest(topics, names_sep = "_") %>%
+    glimpse()
+```
+
+## Deskriptive Statistiken zur Datenabfrage
+
+#### Rekonstruktion und Erweiterung des OpenAlex Web-Dashboards mit R
+
+::: columns
+::: {.column width="25%"}
+::: {style="font-size: 16px; color: gray;"}
+**Im Fokus:**
+
+-   🔍 **Publikationen im Zeitverlauf**
+-   Foschungsfelder
+-   Relevante Publikationen
+-   Lageparameter
+:::
+:::
+
+::: {.column width="70%"}
+::: {style="font-size: smaller;"}
+```{r figure-publication-year}
+review_works_correct %>% 
+    ggplot(aes(publication_year_fct)) +
+    geom_bar() +
+    theme_pubr()
+```
+:::
+:::
+:::
+
+## Deskriptive Statistiken zur Datenabfrage
+
+#### Rekonstruktion und Erweiterung des OpenAlex Web-Dashboards mit R
+
+::: columns
+::: {.column width="25%"}
+::: {style="font-size: 16px; color: gray;"}
+**Im Fokus:**
+
+-   Publikationen im Zeitverlauf
+-   🔍 **Foschungsfelder**
+-   Relevante Publikationen
+-   Lageparameter
+:::
+:::
+
+::: {.column width="70%"}
+::: {style="font-size: smaller;"}
+```{r table-topics-frequencies}
+review_works_correct %>% 
+    unnest(topics, names_sep = "_") %>% 
+    filter(topics_name == "field") %>% 
+    filter(topics_i == 1) %>% 
+    sjmisc::frq(topics_display_name, sort.frq = "desc")
+```
+:::
+:::
+:::
+
+## Deskriptive Statistiken zur Datenabfrage
+
+#### Rekonstruktion und Erweiterung des OpenAlex Web-Dashboards mit R
+
+::: columns
+::: {.column width="25%"}
+::: {style="font-size: 16px; color: gray;"}
+**Im Fokus:**
+
+-   Publikationen im Zeitverlauf
+-   Foschungsfelder
+-   🔍 **Relevante Publikationen**
+-   Lageparameter
+:::
+:::
+
+::: {.column width="70%"}
+::: {style="font-size: smaller;"}
+```{r table-top-publications}
+review_works_correct %>% 
+    arrange(desc(relevance_score)) %>%
+    select(publication_year_fct, relevance_score, title) %>% 
+    head(5) %>% 
+    gt::gt()
+```
+:::
+:::
+:::
+
+## Deskriptive Statistiken zur Datenabfrage
+
+#### Rekonstruktion und Erweiterung des OpenAlex Web-Dashboards mit R
+
+::: columns
+::: {.column width="25%"}
+::: {style="font-size: 16px; color: gray;"}
+**Im Fokus:**
+
+-   Publikationen im Zeitverlauf
+-   Foschungsfelder
+-   Relevante Publikationen
+-   🔍 **Lageparameter**
+:::
+:::
+
+::: {.column width="70%"}
+::: {style="font-size: smaller;"}
+```{r table-location-parameters}
+review_works_correct %>% 
+  select(where(is.numeric)) %>% 
+  datawizard::describe_distribution() %>% 
+  print_html()
+```
+:::
+:::
+:::
+
+# 📋 Hands on working with R {#group-activity background-image="img/slide_bg-group_activity.png"}
+
+Weitere Eingrenzung der Suchergebnisse
+
+## 🧪 And now ... you: Übung & Eingrenzung
+
+#### Next Steps: Wiederholung der R-Grundlagen an OpenAlex-Daten
+
+-   Laden Sie die auf StudOn bereitgestellten Dateien für die Sitzungen herunter
+-   Laden Sie die .zip-Datei in Ihren RStudio Workspace
+-   Navigieren Sie zu dem Ordner, in dem die Datei `ps_24_binder.Rproj` liegt. Öffnen Sie diese Datei mit einem Doppelklick. Nur dadurch ist gewährleistet, dass alle Dependencies korrekt funktionieren.
+-   Öffnen Sie die Datei `exercise-07.qmd` im Ordner `exercises` und lesen Sie sich gründlich die Anweisungen durch.
+-   ***Tipp: Sie finden alle in den Folien verwendeten Code-Bausteine in der Datei showcase.qmd (für den "rohen" Code) oder showcase.html (mit gerenderten Ausgaben).***
+
+# Time for questions {background-image="img/slide_bg-question.png"}
+
+# Danke & bis zur nächsten Sitzung! {background-image="img/slide_bg-end_session.png"}
+
+## Literatur
+
+::: {#refs}
+:::
+
+```{=html}
+<!-- ## But, play by the rules!
+
+#### Four principles of automated text analysis
+
+1.  All quantative models of language are wrong - but some are useful.
+
+2.  Quantitative methods for text amplify resources and augment humans.
+
+3.  There is no global best method for automated text analysis.
+
+4.  Validate, validate, validate. -->
+```
