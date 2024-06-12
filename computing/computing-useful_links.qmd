@@ -1,0 +1,11 @@
+---
+title: "Useful sources"
+---
+
+This is selection of useful R sources: 
+
+-   {{< bi youtube >}} [Quarto tutorials](https://youtube.com/playlist?list=PLEzw67WWDg80-fT1hq2IZf7D62tRmKy8f&feature=shared) by Andy Field
+
+-   {{< bi globe >}} [Automatisierte Inhaltsanalyse mit R](http://inhaltsanalyse-mit-r.de/) by Kornelius Puschmann
+
+
