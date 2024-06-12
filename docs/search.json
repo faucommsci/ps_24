@@ -1,0 +1,480 @@
+[
+  {
+    "objectID": "computing/computing-textbooks.html",
+    "href": "computing/computing-textbooks.html",
+    "title": "R textbooks",
+    "section": "",
+    "text": "While there is no official R textbook for the course, there are a few to look at:\n\n🔗 R for Data Science, 2nd Edition\n🔗 Data Visualization: A Practical Introduction\n🔗 Tidy modeling with R\n🔗 Text Mining with R",
+    "crumbs": [
+      "Computing",
+      "R Textbooks"
+    ]
+  },
+  {
+    "objectID": "computing/computing-useful_links.html",
+    "href": "computing/computing-useful_links.html",
+    "title": "Useful sources",
+    "section": "",
+    "text": "This is selection of useful R sources:\n\n Quarto tutorials by Andy Field\n Automatisierte Inhaltsanalyse mit R by Kornelius Puschmann",
+    "crumbs": [
+      "Computing",
+      "Useful R sources"
+    ]
+  },
+  {
+    "objectID": "exercises/showcase-07.html",
+    "href": "exercises/showcase-07.html",
+    "title": "API mining and data wrangling with R",
+    "section": "",
+    "text": "Zum Laden der Pakete wird das Paket pacman::pload() genutzt, dass gegenüber der herkömmlichen Methode mit library() eine Reihe an Vorteile hat:\n\nPrägnante Syntax\nAutomatische Installation (wenn Paket noch nicht vorhanden)\nLaden mehrerer Pakete auf einmal\nAutomatische Suche nach dependencies\n\n\n\npacman::p_load(\n  here, qs, \n  magrittr, janitor,\n  easystats, sjmisc,\n  ggpubr, \n  openalexR, \n  tidyverse\n)",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Showcase"
+    ]
+  },
+  {
+    "objectID": "exercises/showcase-07.html#packages",
+    "href": "exercises/showcase-07.html#packages",
+    "title": "API mining and data wrangling with R",
+    "section": "",
+    "text": "Zum Laden der Pakete wird das Paket pacman::pload() genutzt, dass gegenüber der herkömmlichen Methode mit library() eine Reihe an Vorteile hat:\n\nPrägnante Syntax\nAutomatische Installation (wenn Paket noch nicht vorhanden)\nLaden mehrerer Pakete auf einmal\nAutomatische Suche nach dependencies\n\n\n\npacman::p_load(\n  here, qs, \n  magrittr, janitor,\n  easystats, sjmisc,\n  ggpubr, \n  openalexR, \n  tidyverse\n)",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Showcase"
+    ]
+  },
+  {
+    "objectID": "exercises/showcase-07.html#codechunks-aus-der-sitzung",
+    "href": "exercises/showcase-07.html#codechunks-aus-der-sitzung",
+    "title": "API mining and data wrangling with R",
+    "section": "Codechunks aus der Sitzung",
+    "text": "Codechunks aus der Sitzung\n\nDatenerhebung via API\n\n# Set openalexR.mailto option so that your requests go to the polite pool for faster response times\noptions(openalexR.mailto = \"christoph.adrian@fau.de\")\n\n\n# Download data via API\nreview_works &lt;- openalexR::oa_fetch(\n  entity = \"works\",\n  title.search = \"(literature OR systematic) AND review\",\n  primary_topic.domain.id = \"domains/2\", # Social Science\n  publication_year = \"2013 - 2023\",\n  verbose = TRUE\n)\n\n\n# Overview\nreview_works \n\n# A tibble: 93,655 × 39\n   id     title display_name author ab    publication_date relevance_score so   \n   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;        &lt;list&gt; &lt;chr&gt; &lt;chr&gt;                      &lt;dbl&gt; &lt;chr&gt;\n 1 https… The … The PRISMA … &lt;df&gt;   The … 2021-03-29                 1625. BMJ  \n 2 https… Pref… Preferred r… &lt;df&gt;   Syst… 2015-01-01                 1340. Syst…\n 3 https… Rayy… Rayyan—a we… &lt;df&gt;   Synt… 2016-12-01                 1314. Syst…\n 4 https… Syst… Systematic … &lt;df&gt;   Scop… 2018-11-19                  990. BMC …\n 5 https… Upda… Updated gui… &lt;df&gt;   On a… 2019-10-03                  963. Coch…\n 6 https… The … The WHO-5 W… &lt;df&gt;   The … 2015-01-01                  939. Psyc…\n 7 https… Pref… Preferred r… &lt;df&gt;   Prot… 2015-01-02                  914. BMJ  \n 8 https… Guid… Guidance on… &lt;df&gt;   Lite… 2017-08-28                  752. Jour…\n 9 https… Lite… Literature … &lt;df&gt;   Know… 2019-11-01                  705. Jour…\n10 https… The … The PRISMA … &lt;df&gt;   The … 2021-04-01                  653. Inte…\n# ℹ 93,645 more rows\n# ℹ 31 more variables: so_id &lt;chr&gt;, host_organization &lt;chr&gt;, issn_l &lt;chr&gt;,\n#   url &lt;chr&gt;, pdf_url &lt;chr&gt;, license &lt;chr&gt;, version &lt;chr&gt;, first_page &lt;chr&gt;,\n#   last_page &lt;chr&gt;, volume &lt;chr&gt;, issue &lt;chr&gt;, is_oa &lt;lgl&gt;,\n#   is_oa_anywhere &lt;lgl&gt;, oa_status &lt;chr&gt;, oa_url &lt;chr&gt;,\n#   any_repository_has_fulltext &lt;lgl&gt;, language &lt;chr&gt;, grants &lt;list&gt;,\n#   cited_by_count &lt;int&gt;, counts_by_year &lt;list&gt;, publication_year &lt;int&gt;, …\n\n\n\n\nInitiale Sichtung und Überprüfung der Datem\n\n\n\n\n\n\nTypische Bestandteile\n\n\n\n\nWie viele Fälle sind enthalten? Wie viele Variablen? Sind die Variablennamen aussagekräftig?\nWelchen Typ hat jede Variable, z. B. numerisch, kategorisch, logisch?\n\n\n\n\nreview_works %&gt;% glimpse()\n\nRows: 93,655\nColumns: 39\n$ id                          &lt;chr&gt; \"https://openalex.org/W3118615836\", \"https…\n$ title                       &lt;chr&gt; \"The PRISMA 2020 statement: an updated gui…\n$ display_name                &lt;chr&gt; \"The PRISMA 2020 statement: an updated gui…\n$ author                      &lt;list&gt; [&lt;data.frame[26 x 12]&gt;], [&lt;data.frame[8 x…\n$ ab                          &lt;chr&gt; \"The Preferred Reporting Items for Systema…\n$ publication_date            &lt;chr&gt; \"2021-03-29\", \"2015-01-01\", \"2016-12-01\", …\n$ relevance_score             &lt;dbl&gt; 1625.1708, 1340.1902, 1314.3904, 990.4521,…\n$ so                          &lt;chr&gt; \"BMJ\", \"Systematic reviews\", \"Systematic r…\n$ so_id                       &lt;chr&gt; \"https://openalex.org/S4393917726\", \"https…\n$ host_organization           &lt;chr&gt; NA, \"BioMed Central\", \"BioMed Central\", \"B…\n$ issn_l                      &lt;chr&gt; \"1756-1833\", \"2046-4053\", \"2046-4053\", \"14…\n$ url                         &lt;chr&gt; \"https://doi.org/10.1136/bmj.n71\", \"https:…\n$ pdf_url                     &lt;chr&gt; \"https://www.bmj.com/content/bmj/372/bmj.n…\n$ license                     &lt;chr&gt; \"cc-by\", \"cc-by\", \"cc-by\", \"cc-by\", NA, \"c…\n$ version                     &lt;chr&gt; \"publishedVersion\", \"publishedVersion\", \"p…\n$ first_page                  &lt;chr&gt; \"n71\", NA, NA, NA, NA, \"167\", \"g7647\", \"93…\n$ last_page                   &lt;chr&gt; \"n71\", NA, NA, NA, NA, \"176\", \"g7647\", \"11…\n$ volume                      &lt;chr&gt; NA, \"4\", \"5\", \"18\", NA, \"84\", \"349\", \"39\",…\n$ issue                       &lt;chr&gt; NA, \"1\", \"1\", \"1\", NA, \"3\", \"jan02 1\", \"1\"…\n$ is_oa                       &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE,…\n$ is_oa_anywhere              &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …\n$ oa_status                   &lt;chr&gt; \"hybrid\", \"gold\", \"gold\", \"gold\", \"green\",…\n$ oa_url                      &lt;chr&gt; \"https://www.bmj.com/content/bmj/372/bmj.n…\n$ any_repository_has_fulltext &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE,…\n$ language                    &lt;chr&gt; \"en\", \"en\", \"en\", \"en\", \"en\", \"en\", \"en\", …\n$ grants                      &lt;list&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, &lt;\"htt…\n$ cited_by_count              &lt;int&gt; 30303, 17347, 10540, 5298, 5664, 2657, 909…\n$ counts_by_year              &lt;list&gt; [&lt;data.frame[5 x 2]&gt;], [&lt;data.frame[11 x …\n$ publication_year            &lt;int&gt; 2021, 2015, 2016, 2018, 2019, 2015, 2015, …\n$ cited_by_api_url            &lt;chr&gt; \"https://api.openalex.org/works?filter=cit…\n$ ids                         &lt;list&gt; &lt;\"https://openalex.org/W3118615836\", \"htt…\n$ doi                         &lt;chr&gt; \"https://doi.org/10.1136/bmj.n71\", \"https:…\n$ type                        &lt;chr&gt; \"article\", \"article\", \"article\", \"article\"…\n$ referenced_works            &lt;list&gt; &lt;\"https://openalex.org/W1528251861\", \"htt…\n$ related_works               &lt;list&gt; &lt;\"https://openalex.org/W4234875088\", \"htt…\n$ is_paratext                 &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …\n$ is_retracted                &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …\n$ concepts                    &lt;list&gt; [&lt;data.frame[20 x 5]&gt;], [&lt;data.frame[18 x…\n$ topics                      &lt;list&gt; [&lt;tbl_df[12 x 5]&gt;], [&lt;tbl_df[12 x 5]&gt;], […\n\n\n\n\nDatentransformationen\n\nKorrektur der Rohdaten\n\nreview_works_correct &lt;- review_works %&gt;% \n    mutate(\n        # Create additional factor variables\n        publication_year_fct = as.factor(publication_year), \n        type_fct = as.factor(type)\n        )\n\n\n\nUnnest topics\n\nreview_works_correct %&gt;% \n    unnest(topics, names_sep = \"_\") %&gt;%\n    glimpse()\n\nRows: 942,560\nColumns: 45\n$ id                          &lt;chr&gt; \"https://openalex.org/W3118615836\", \"https…\n$ title                       &lt;chr&gt; \"The PRISMA 2020 statement: an updated gui…\n$ display_name                &lt;chr&gt; \"The PRISMA 2020 statement: an updated gui…\n$ author                      &lt;list&gt; [&lt;data.frame[26 x 12]&gt;], [&lt;data.frame[26 …\n$ ab                          &lt;chr&gt; \"The Preferred Reporting Items for Systema…\n$ publication_date            &lt;chr&gt; \"2021-03-29\", \"2021-03-29\", \"2021-03-29\", …\n$ relevance_score             &lt;dbl&gt; 1625.171, 1625.171, 1625.171, 1625.171, 16…\n$ so                          &lt;chr&gt; \"BMJ\", \"BMJ\", \"BMJ\", \"BMJ\", \"BMJ\", \"BMJ\", …\n$ so_id                       &lt;chr&gt; \"https://openalex.org/S4393917726\", \"https…\n$ host_organization           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ issn_l                      &lt;chr&gt; \"1756-1833\", \"1756-1833\", \"1756-1833\", \"17…\n$ url                         &lt;chr&gt; \"https://doi.org/10.1136/bmj.n71\", \"https:…\n$ pdf_url                     &lt;chr&gt; \"https://www.bmj.com/content/bmj/372/bmj.n…\n$ license                     &lt;chr&gt; \"cc-by\", \"cc-by\", \"cc-by\", \"cc-by\", \"cc-by…\n$ version                     &lt;chr&gt; \"publishedVersion\", \"publishedVersion\", \"p…\n$ first_page                  &lt;chr&gt; \"n71\", \"n71\", \"n71\", \"n71\", \"n71\", \"n71\", …\n$ last_page                   &lt;chr&gt; \"n71\", \"n71\", \"n71\", \"n71\", \"n71\", \"n71\", …\n$ volume                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ issue                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ is_oa                       &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …\n$ is_oa_anywhere              &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …\n$ oa_status                   &lt;chr&gt; \"hybrid\", \"hybrid\", \"hybrid\", \"hybrid\", \"h…\n$ oa_url                      &lt;chr&gt; \"https://www.bmj.com/content/bmj/372/bmj.n…\n$ any_repository_has_fulltext &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …\n$ language                    &lt;chr&gt; \"en\", \"en\", \"en\", \"en\", \"en\", \"en\", \"en\", …\n$ grants                      &lt;list&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…\n$ cited_by_count              &lt;int&gt; 30303, 30303, 30303, 30303, 30303, 30303, …\n$ counts_by_year              &lt;list&gt; [&lt;data.frame[5 x 2]&gt;], [&lt;data.frame[5 x 2…\n$ publication_year            &lt;int&gt; 2021, 2021, 2021, 2021, 2021, 2021, 2021, …\n$ cited_by_api_url            &lt;chr&gt; \"https://api.openalex.org/works?filter=cit…\n$ ids                         &lt;list&gt; &lt;\"https://openalex.org/W3118615836\", \"htt…\n$ doi                         &lt;chr&gt; \"https://doi.org/10.1136/bmj.n71\", \"https:…\n$ type                        &lt;chr&gt; \"article\", \"article\", \"article\", \"article\"…\n$ referenced_works            &lt;list&gt; &lt;\"https://openalex.org/W1528251861\", \"htt…\n$ related_works               &lt;list&gt; &lt;\"https://openalex.org/W4234875088\", \"htt…\n$ is_paratext                 &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …\n$ is_retracted                &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …\n$ concepts                    &lt;list&gt; [&lt;data.frame[20 x 5]&gt;], [&lt;data.frame[20 x…\n$ topics_i                    &lt;int&gt; 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 1, 1, …\n$ topics_score                &lt;dbl&gt; 0.9993, 0.9993, 0.9993, 0.9993, 0.9832, 0.…\n$ topics_name                 &lt;chr&gt; \"topic\", \"subfield\", \"field\", \"domain\", \"t…\n$ topics_id                   &lt;chr&gt; \"https://openalex.org/T10206\", \"https://op…\n$ topics_display_name         &lt;chr&gt; \"Methods for Evidence Synthesis in Researc…\n$ publication_year_fct        &lt;fct&gt; 2021, 2021, 2021, 2021, 2021, 2021, 2021, …\n$ type_fct                    &lt;fct&gt; article, article, article, article, articl…\n\n\n\n\n\nRekonstruktion OpexAlex Dashboard\n\nPublikationen im Zeitverlauf\n\nreview_works_correct %&gt;% \n    ggplot(aes(publication_year)) +\n    geom_bar() +\n    theme_pubr()\n\n\n\n\n\n\n\n\n\n\nHäufigkeit Forschungsfelder\n\nreview_works_correct %&gt;% \n    unnest(topics, names_sep = \"_\") %&gt;% \n    filter(topics_name == \"field\") %&gt;% \n    filter(topics_i == 1) %&gt;% \n    sjmisc::frq(topics_display_name, sort.frq = \"desc\")\n\ntopics_display_name &lt;character&gt; \n# total N=93655 valid N=93655 mean=4.41 sd=1.62\n\nValue                               |     N | Raw % | Valid % | Cum. %\n----------------------------------------------------------------------\nSocial Sciences                     | 30580 | 32.65 |   32.65 |  32.65\nPsychology                          | 29054 | 31.02 |   31.02 |  63.67\nBusiness, Management and Accounting | 15558 | 16.61 |   16.61 |  80.29\nDecision Sciences                   |  7261 |  7.75 |    7.75 |  88.04\nEconomics, Econometrics and Finance |  6796 |  7.26 |    7.26 |  95.30\nArts and Humanities                 |  4406 |  4.70 |    4.70 | 100.00\n&lt;NA&gt;                                |     0 |  0.00 |    &lt;NA&gt; |   &lt;NA&gt;\n\n\n\n\nRelevanteste Publikationen\n\nreview_works_correct %&gt;% \n    arrange(desc(relevance_score)) %&gt;%\n    select(publication_year_fct, relevance_score, title) %&gt;% \n    head(5) %&gt;% \n    gt::gt()\n\n\n\n\n\n\n\npublication_year_fct\nrelevance_score\ntitle\n\n\n\n\n2021\n1625.1708\nThe PRISMA 2020 statement: an updated guideline for reporting systematic reviews\n\n\n2015\n1340.1902\nPreferred reporting items for systematic review and meta-analysis protocols (PRISMA-P) 2015 statement\n\n\n2016\n1314.3904\nRayyan—a web and mobile app for systematic reviews\n\n\n2018\n990.4521\nSystematic review or scoping review? Guidance for authors when choosing between a systematic or scoping review approach\n\n\n2019\n962.6738\nUpdated guidance for trusted systematic reviews: a new edition of the Cochrane Handbook for Systematic Reviews of Interventions\n\n\n\n\n\n\n\n\n\nLageparameter\n\nreview_works_correct %&gt;% \n  select(where(is.numeric)) %&gt;% \n  datawizard::describe_distribution() %&gt;% \n  print_html()\n\n\n\n\n\n\n\nVariable\nMean\nSD\nIQR\nMin\nMax\nSkewness\nKurtosis\nn\nn_Missing\n\n\n\n\nrelevance_score\n31.73\n42.51\n36.48\n1.17\n1625.17\n4.75\n67.87\n93655\n0\n\n\ncited_by_count\n18.33\n146.36\n10.00\n0.00\n30303.00\n123.44\n22236.55\n93655\n0\n\n\npublication_year\n2019.40\n2.97\n5.00\n2013.00\n2023.00\n-0.58\n-0.77\n93655\n0",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Showcase"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#seminarplan",
+    "href": "slides/slides-07.html#seminarplan",
+    "title": "Introduction to Text as Data",
+    "section": "Seminarplan",
+    "text": "Seminarplan\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSitzung\nDatum\nThema (synchron)\nÜbung (asynchron)\nDozent:in\n\n\n\n\n1\n18.04.2024\nEinführung & Überblick\n\nAM & CA\n\n\n\n📚\nTeil 1: Systematic Review\n\n\n\n\n2\n25.04.2024\nEinführung in Systematic Reviews I\nR-Einführung\nAM\n\n\n3\n02.05.2024\nEinführung in Systematic Reviews II\nR-Einführung\nAM\n\n\n\n09.05.2024\n🏖️ Feiertag\nR-Einführung\n\n\n\n4\n16.05.2024\nAutomatisierung von SRs & KI-Tools\nR-Einführung\nAM\n\n\n\n23.05.2024\n🍻 WiSo-Projekt-Woche\nR-Einführung\n\n\n\n5\n04.06.2024\n🍕 Gastvortrag: Prof. Dr. Emese Domahidi\nR-Einführung\nED\n\n\n6\n06.06.2024\nAutomatisierung von SRs & KI-Tools\nR-Einführung\nAM\n\n\n\n💻\nTeil 2: Text as Data & Unsupervised Machine Learning\n\n\n\n\n7\n13.06.2024\nIntroduction to Text as Data\nzur Sitzung\nCA\n\n\n8\n20.06.2024\nText processing\nzur Sitzung\nCA\n\n\n9\n27.06.2024\nUnsupervised Machine Learning I\nzur Sitzung\nCA\n\n\n10\n04.07.2024\nUnsupervised Machine Learning II\nzur Sitzung\nCA & AM\n\n\n11\n11.07.2024\nRecap & Ausblick\nzur Sitzung\nCA & AM\n\n\n12\n18.07.2024\n🏁 Semesterabschluss\nzur Sitzung\nCA & AM",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#erst-input-dann-vertiefung",
+    "href": "slides/slides-07.html#erst-input-dann-vertiefung",
+    "title": "Introduction to Text as Data",
+    "section": "Erst Input, dann Vertiefung",
+    "text": "Erst Input, dann Vertiefung\nTypischer Aufbau der nächsten vier Sitzungen\nTeil 1️⃣: Input (ca. 30-45 Minuten)\n\nVorstellung der “theoretischen Grundlagen” inklusive zentraler Begriffe und Konzepte\nVorstellung der Methode(n) sowie des Kontext der praktischen Anwendung\n\nTeil 2️⃣: Praktische Anwendung (ca. 45-60 Minuten)\n\nVertiefung der Inhalte durch Bearbeitung kleiner Aufgaben, entweder in Einzel- oder Gruppenarbeit\nAufgaben zur Arbeit mit R, die im Kurs angefangen aber (vermutlich) außerhalb der Sitzung abgeschlossen werden",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#bitte-rstudio-server-benutzen",
+    "href": "slides/slides-07.html#bitte-rstudio-server-benutzen",
+    "title": "Introduction to Text as Data",
+    "section": "Bitte RStudio Server benutzen!",
+    "text": "Bitte RStudio Server benutzen!\nInformation zur Nutzung des RStudio Servers während der Sitzung\n\n\n⏰ Zur Erinnerung:\n\nFunktion der RStudio-Projekte für die praktische Anwendung in Serverumgebung getestet\nNutzung des RStudio Servers vermeidet aufwendiges & zeitraubendes Trouble-Shooting\n\n\n\n\nℹ️ Infos zum RStudio Server:\n\nNutzung nur über W-LAN der FAU (ggf. mit aktivem VPN) möglich\nVerfügbar unter: http://10.204.20.178:8787\nZugangsdaten auf Teams\n\n\n\n\n\n\n\n\n\nBei Problemen: Fragen in den Teams-Kanal!",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#was-versteht-ihr-unter-text-as-data",
+    "href": "slides/slides-07.html#was-versteht-ihr-unter-text-as-data",
+    "title": "Introduction to Text as Data",
+    "section": "Was versteht ihr unter Text as Data?",
+    "text": "Was versteht ihr unter Text as Data?\nBitte nehmt an einer kurzen Umfrage teil\n\n\n\nBitte scannt den QR-Code oder nutzt den folgenden Link für die Teilnahme an einer kurzen Umfrage:\n\nhttps://www.menti.com/aly1gft3568e\nTemporary Access Code: 2677 1451\n\n\n\n\n \n\n    \n\n\n\n\n\n−+\n01:00",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#ergebnis",
+    "href": "slides/slides-07.html#ergebnis",
+    "title": "Introduction to Text as Data",
+    "section": "Ergebnis",
+    "text": "Ergebnis",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#altes-phänomen-neue-dimension",
+    "href": "slides/slides-07.html#altes-phänomen-neue-dimension",
+    "title": "Introduction to Text as Data",
+    "section": "Altes Phänomen, neue Dimension",
+    "text": "Altes Phänomen, neue Dimension\nHintergrund zu dem Phänomen Text as Data\n\n\nLange Tradition der Text- und Inhaltsanalyse\nNeue Chancen & Herausforderungen durch explosionsartige Vergrößerung des (Text-)Datenaufkommen und deren Verfügbarkeit in den letzten Jahren (Websites, Plattformen & Digitalisierung) Verfügbarkeit von (neuen) Datenquellen als Resultat der Digitalisierung",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#from-text-to-data-to-data-analysis",
+    "href": "slides/slides-07.html#from-text-to-data-to-data-analysis",
+    "title": "Introduction to Text as Data",
+    "section": "From text to data to data analysis",
+    "text": "From text to data to data analysis\nTransformation als essenzieller Bestandteil von Text as Data (Curini & Franzese, 2020)",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#review-über-literaturreviews",
+    "href": "slides/slides-07.html#review-über-literaturreviews",
+    "title": "Introduction to Text as Data",
+    "section": "Review über Literaturreviews",
+    "text": "Review über Literaturreviews\nGrundidee, Ziel und Schwerpunkte und der kommenden Sitzungen zu Text as data\n\nIdee: Überblick über Literatur zu Literaturüberblicken verschaffen\nZiel: Durchführung einer Kombination aus (elaboriertem) Scoping Search & Scoping Review\nFokus: Computergestütze Umsetzung möglichst vieler Bestandteile des Review-Workflows, wie z.B.:\n\nEigene Datenerhebung via (OpenAlex-)API\nOberflächliche bibliometrische Analyse (zur Datenexploration und -bereinigung)\nAnalye der Abstracts mit Hilfe von unüberwachtem Machine Learning (Topic Modeling)",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#was-war-das-nochmal",
+    "href": "slides/slides-07.html#was-war-das-nochmal",
+    "title": "Introduction to Text as Data",
+    "section": "Was war das nochmal?",
+    "text": "Was war das nochmal?\nZur Erinnerung: Definition von Scoping Search und Scoping Review\n🔎 Scoping searches …\n\n\nschnelle explorative Suche, die sich auf bestimmtes Konzept konzentriert\nsind oft Teil der Suchstringentwicklung\nsind nicht ausreichend für ein systematic review\n\n\n\n… Scoping Review 📋\n\n\n\neine spezifische Form eines literature reviews\nmap a vast body of research literature in a field of interest in terms of the volume, nature, and characteristics of the primary research (Pham et al., 2014)\ndo not aim to produce a critically appraised and synthesised result/answer to a particular question, [they] rather aim to provide an overview or map of the evidence (Munn et al., 2018)",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#what-we-do-not-do",
+    "href": "slides/slides-07.html#what-we-do-not-do",
+    "title": "Introduction to Text as Data",
+    "section": "What we (do not) do",
+    "text": "What we (do not) do\nDisclaimer zum Inhalt und der Zielsetzung des Sitzungen zu Text as Data\n\n\n❌ Kein vollständig dokumentiertes Scoping Review, dass alle notwendigen (SALSA-)Schritte in vollem Umfang und nach wissenschaftlichen Standarts durchläuft\n\n❌ Keine umfassendes Einführung in die Textanalyse mit R\n\n\n\n✅ Exemplarische Darstellung einzelner Schritte des Workflows, mit Fokus auf die computergestützte Umsetzung\n \n✅ Überblick über verschiedene Verfahren, mit Schwerpunkt auf Methoden, die im Kontext von Literaturreviews notwendig und nützlich sind",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#wer-oder-was-ist-openalex",
+    "href": "slides/slides-07.html#wer-oder-was-ist-openalex",
+    "title": "Introduction to Text as Data",
+    "section": "Wer oder was ist OpenAlex?",
+    "text": "Wer oder was ist OpenAlex?\nKurze Vorstellung und Hintergrundinformationen zur Datenquelle (OpenAlex)\n\n\nopen(-source) catalog of the world’s scholarly research system\ndata is free and reusable, available via bulk download or API\ngoverned by a sustainable and transparent nonprofit",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#first-scoping-search",
+    "href": "slides/slides-07.html#first-scoping-search",
+    "title": "Introduction to Text as Data",
+    "section": "First scoping search",
+    "text": "First scoping search\nSichtung der Daten- und Identfikation der Analysegrundlage\n\n\n\n\nEine simple Suchquery resultiert zwar in sehr vielen Treffern, bringt aber auch (praktische) Probleme mit sich:\n\nDeutliche Überschreibung des tägliches API-Limit beträgt 100.000 Referenzen\n“Lokale” Datenbearbeitung und -analye benötigt bei der Menge an Daten ehrhebliche Rechenkapazität\nLösung: Optimierung der Suchquery durch Spezifizierung des Untersuchungsgegenstandes",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#fine-tuning-der-search-query",
+    "href": "slides/slides-07.html#fine-tuning-der-search-query",
+    "title": "Introduction to Text as Data",
+    "section": "Fine-Tuning der Search Query",
+    "text": "Fine-Tuning der Search Query\nÜberblick über verwendete Search Query und ausgewählte deskriptive Statistiken\n\n\n\n\n\n\n\n\n\n\n    \nLink zur Suche",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#openalex-openalexr",
+    "href": "slides/slides-07.html#openalex-openalexr",
+    "title": "Introduction to Text as Data",
+    "section": "OpenAlex 🤝 openalexR",
+    "text": "OpenAlex 🤝 openalexR\nZusammenspiel aus Datenbank und R-Package openalexR (Aria et al., 2024)\n\n\n\n\n\n\n\n\n\n\nopenalexR helps you interface with the OpenAlex API to retrieve bibliographic information about publications, authors, institutions, sources, funders, publishers, topics and concepts.\n\n\n\n\n\nManueller Export von Ergebnissen mit Hilfe des Web-Interface von OpenAlex möglich, im Bulk aber umständlich\nSelbstständige Interaktion mit API ist aufwendig: Design der Query, Programmierung der Abfrage, Verarbeitung der Daten (nicht im Tabellenformat verfügbar)\nR-Package bietet niedrigschwelligere Alternative für API-Abfragen",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#reproduktion-der-webabfrage-mit-r",
+    "href": "slides/slides-07.html#reproduktion-der-webabfrage-mit-r",
+    "title": "Introduction to Text as Data",
+    "section": "Reproduktion der Webabfrage mit R",
+    "text": "Reproduktion der Webabfrage mit R\nAbfrage, Download und Transformation der Daten mit einer Funktion\n\n# Download data via API\nreview_works &lt;- openalexR::oa_fetch(\n  entity = \"works\",\n  title.search = \"(literature OR systematic) AND review\",\n  primary_topic.domain.id = \"domains/2\", # Social Science\n  publication_year = \"2013 - 2023\",\n  verbose = TRUE\n)\n\n# Overview\nreview_works\n\n\n\n# A tibble: 93,655 × 39\n  id      title display_name author ab    publication_date relevance_score so   \n  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;        &lt;list&gt; &lt;chr&gt; &lt;chr&gt;                      &lt;dbl&gt; &lt;chr&gt;\n1 https:… The … The PRISMA … &lt;df&gt;   The … 2021-03-29                 1625. BMJ  \n2 https:… Pref… Preferred r… &lt;df&gt;   Syst… 2015-01-01                 1340. Syst…\n3 https:… Rayy… Rayyan—a we… &lt;df&gt;   Synt… 2016-12-01                 1314. Syst…\n4 https:… Syst… Systematic … &lt;df&gt;   Scop… 2018-11-19                  990. BMC …\n5 https:… Upda… Updated gui… &lt;df&gt;   On a… 2019-10-03                  963. Coch…\n# ℹ 93,650 more rows\n# ℹ 31 more variables: so_id &lt;chr&gt;, host_organization &lt;chr&gt;, issn_l &lt;chr&gt;,\n#   url &lt;chr&gt;, pdf_url &lt;chr&gt;, license &lt;chr&gt;, version &lt;chr&gt;, first_page &lt;chr&gt;,\n#   last_page &lt;chr&gt;, volume &lt;chr&gt;, issue &lt;chr&gt;, is_oa &lt;lgl&gt;,\n#   is_oa_anywhere &lt;lgl&gt;, oa_status &lt;chr&gt;, oa_url &lt;chr&gt;,\n#   any_repository_has_fulltext &lt;lgl&gt;, language &lt;chr&gt;, grants &lt;list&gt;,\n#   cited_by_count &lt;int&gt;, counts_by_year &lt;list&gt;, publication_year &lt;int&gt;, …",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#das-ergebnis-der-abfrage",
+    "href": "slides/slides-07.html#das-ergebnis-der-abfrage",
+    "title": "Introduction to Text as Data",
+    "section": "Das Ergebnis der Abfrage",
+    "text": "Das Ergebnis der Abfrage\nFlüchtiger Blick auf den R-Datensatz inklusive erster Qualtiätsprüfung\n\n\n\nTypische Überprüfungen\n\n\n\n\nWie viele Fälle sind enthalten? Wie viele Variablen? Sind die Variablennamen aussagekräftig?\nWelchen Typ hat jede Variable, z. B. numerisch, kategorisch, logisch?\n\n\n\n\n\n\nreview_works %&gt;% glimpse()\n\nRows: 93,655\nColumns: 39\n$ id                          &lt;chr&gt; \"https://openalex.org/W3118615836\", \"https…\n$ title                       &lt;chr&gt; \"The PRISMA 2020 statement: an updated gui…\n$ display_name                &lt;chr&gt; \"The PRISMA 2020 statement: an updated gui…\n$ author                      &lt;list&gt; [&lt;data.frame[26 x 12]&gt;], [&lt;data.frame[8 x…\n$ ab                          &lt;chr&gt; \"The Preferred Reporting Items for Systema…\n$ publication_date            &lt;chr&gt; \"2021-03-29\", \"2015-01-01\", \"2016-12-01\", …\n$ relevance_score             &lt;dbl&gt; 1625.1708, 1340.1902, 1314.3904, 990.4521,…\n$ so                          &lt;chr&gt; \"BMJ\", \"Systematic reviews\", \"Systematic r…\n$ so_id                       &lt;chr&gt; \"https://openalex.org/S4393917726\", \"https…\n$ host_organization           &lt;chr&gt; NA, \"BioMed Central\", \"BioMed Central\", \"B…\n$ issn_l                      &lt;chr&gt; \"1756-1833\", \"2046-4053\", \"2046-4053\", \"14…\n$ url                         &lt;chr&gt; \"https://doi.org/10.1136/bmj.n71\", \"https:…\n$ pdf_url                     &lt;chr&gt; \"https://www.bmj.com/content/bmj/372/bmj.n…\n$ license                     &lt;chr&gt; \"cc-by\", \"cc-by\", \"cc-by\", \"cc-by\", NA, \"c…\n$ version                     &lt;chr&gt; \"publishedVersion\", \"publishedVersion\", \"p…\n$ first_page                  &lt;chr&gt; \"n71\", NA, NA, NA, NA, \"167\", \"g7647\", \"93…\n$ last_page                   &lt;chr&gt; \"n71\", NA, NA, NA, NA, \"176\", \"g7647\", \"11…\n$ volume                      &lt;chr&gt; NA, \"4\", \"5\", \"18\", NA, \"84\", \"349\", \"39\",…\n$ issue                       &lt;chr&gt; NA, \"1\", \"1\", \"1\", NA, \"3\", \"jan02 1\", \"1\"…\n$ is_oa                       &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE,…\n$ is_oa_anywhere              &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …\n$ oa_status                   &lt;chr&gt; \"hybrid\", \"gold\", \"gold\", \"gold\", \"green\",…\n$ oa_url                      &lt;chr&gt; \"https://www.bmj.com/content/bmj/372/bmj.n…\n$ any_repository_has_fulltext &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, TRUE,…\n$ language                    &lt;chr&gt; \"en\", \"en\", \"en\", \"en\", \"en\", \"en\", \"en\", …\n$ grants                      &lt;list&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, &lt;\"htt…\n$ cited_by_count              &lt;int&gt; 30303, 17347, 10540, 5298, 5664, 2657, 909…\n$ counts_by_year              &lt;list&gt; [&lt;data.frame[5 x 2]&gt;], [&lt;data.frame[11 x …\n$ publication_year            &lt;int&gt; 2021, 2015, 2016, 2018, 2019, 2015, 2015, …\n$ cited_by_api_url            &lt;chr&gt; \"https://api.openalex.org/works?filter=cit…\n$ ids                         &lt;list&gt; &lt;\"https://openalex.org/W3118615836\", \"htt…\n$ doi                         &lt;chr&gt; \"https://doi.org/10.1136/bmj.n71\", \"https:…\n$ type                        &lt;chr&gt; \"article\", \"article\", \"article\", \"article\"…\n$ referenced_works            &lt;list&gt; &lt;\"https://openalex.org/W1528251861\", \"htt…\n$ related_works               &lt;list&gt; &lt;\"https://openalex.org/W4234875088\", \"htt…\n$ is_paratext                 &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …\n$ is_retracted                &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …\n$ concepts                    &lt;list&gt; [&lt;data.frame[20 x 5]&gt;], [&lt;data.frame[18 x…\n$ topics                      &lt;list&gt; [&lt;tbl_df[12 x 5]&gt;], [&lt;tbl_df[12 x 5]&gt;], […",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#wichtigkeit-von-gewissenhaftigkeit",
+    "href": "slides/slides-07.html#wichtigkeit-von-gewissenhaftigkeit",
+    "title": "Introduction to Text as Data",
+    "section": "Wichtigkeit von Gewissenhaftigkeit",
+    "text": "Wichtigkeit von Gewissenhaftigkeit\nGute Gewohnheiten helfen bei Qualitätsprüfung und Datenverarbeitung\n\n\n\nPraktische Empfehlungen\n\n\n\n\nEinheitlicher Code-Style, Bearbeitungsschritte kommentieren\nVeränderungen in neuen Datensatz speichern\n\n\n\n\n\nStreben nach:\n\n# Corrections based on first glimpse \nreview_works_correct &lt;- review_works %&gt;% \n    mutate(\n        # Create additional factor variables\n        publication_year_fct = as.factor(publication_year), \n        type_fct = as.factor(type)\n        )\n\nBitte vermeiden:\n\nReWoCo&lt;-review_works %&gt;% mutate(pub_year_fct = as.factor(publication_year), type_fct = as.factor(type))",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#ein-datensatz-im-datensatz",
+    "href": "slides/slides-07.html#ein-datensatz-im-datensatz",
+    "title": "Introduction to Text as Data",
+    "section": "Ein Datensatz im Datensatz",
+    "text": "Ein Datensatz im Datensatz\nExkurs zu verschachtelten (nested) Daten und Möglichkeiten zur Verabeitung in R\n\nBesonderheit: Informationen zu (Themen-)Katalogisierung als Liste im Datensatz\n\n\nreview_works_correct$topics %&gt;% head()\n\n[[1]]\n# A tibble: 12 × 5\n       i score name     id                                  display_name        \n   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                               &lt;chr&gt;               \n 1     1 0.999 topic    https://openalex.org/T10206         Methods for Evidenc…\n 2     1 0.999 subfield https://openalex.org/subfields/1804 Statistics, Probabi…\n 3     1 0.999 field    https://openalex.org/fields/18      Decision Sciences   \n 4     1 0.999 domain   https://openalex.org/domains/2      Social Sciences     \n 5     2 0.983 topic    https://openalex.org/T10416         Epidemiology and Im…\n 6     2 0.983 subfield https://openalex.org/subfields/2713 Epidemiology        \n 7     2 0.983 field    https://openalex.org/fields/27      Medicine            \n 8     2 0.983 domain   https://openalex.org/domains/4      Health Sciences     \n 9     3 0.946 topic    https://openalex.org/T12443         The Delphi Method i…\n10     3 0.946 subfield https://openalex.org/subfields/3312 Sociology and Polit…\n11     3 0.946 field    https://openalex.org/fields/33      Social Sciences     \n12     3 0.946 domain   https://openalex.org/domains/2      Social Sciences     \n\n[[2]]\n# A tibble: 12 × 5\n       i score name     id                                  display_name        \n   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                               &lt;chr&gt;               \n 1     1 0.999 topic    https://openalex.org/T10206         Methods for Evidenc…\n 2     1 0.999 subfield https://openalex.org/subfields/1804 Statistics, Probabi…\n 3     1 0.999 field    https://openalex.org/fields/18      Decision Sciences   \n 4     1 0.999 domain   https://openalex.org/domains/2      Social Sciences     \n 5     2 0.982 topic    https://openalex.org/T12443         The Delphi Method i…\n 6     2 0.982 subfield https://openalex.org/subfields/3312 Sociology and Polit…\n 7     2 0.982 field    https://openalex.org/fields/33      Social Sciences     \n 8     2 0.982 domain   https://openalex.org/domains/2      Social Sciences     \n 9     3 0.957 topic    https://openalex.org/T10416         Epidemiology and Im…\n10     3 0.957 subfield https://openalex.org/subfields/2713 Epidemiology        \n11     3 0.957 field    https://openalex.org/fields/27      Medicine            \n12     3 0.957 domain   https://openalex.org/domains/4      Health Sciences     \n\n[[3]]\n# A tibble: 4 × 5\n      i score name     id                                  display_name         \n  &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                               &lt;chr&gt;                \n1     1 0.937 topic    https://openalex.org/T10206         Methods for Evidence…\n2     1 0.937 subfield https://openalex.org/subfields/1804 Statistics, Probabil…\n3     1 0.937 field    https://openalex.org/fields/18      Decision Sciences    \n4     1 0.937 domain   https://openalex.org/domains/2      Social Sciences      \n\n[[4]]\n# A tibble: 12 × 5\n       i score name     id                                  display_name        \n   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                               &lt;chr&gt;               \n 1     1 0.997 topic    https://openalex.org/T10206         Methods for Evidenc…\n 2     1 0.997 subfield https://openalex.org/subfields/1804 Statistics, Probabi…\n 3     1 0.997 field    https://openalex.org/fields/18      Decision Sciences   \n 4     1 0.997 domain   https://openalex.org/domains/2      Social Sciences     \n 5     2 0.981 topic    https://openalex.org/T12443         The Delphi Method i…\n 6     2 0.981 subfield https://openalex.org/subfields/3312 Sociology and Polit…\n 7     2 0.981 field    https://openalex.org/fields/33      Social Sciences     \n 8     2 0.981 domain   https://openalex.org/domains/2      Social Sciences     \n 9     3 0.973 topic    https://openalex.org/T10416         Epidemiology and Im…\n10     3 0.973 subfield https://openalex.org/subfields/2713 Epidemiology        \n11     3 0.973 field    https://openalex.org/fields/27      Medicine            \n12     3 0.973 domain   https://openalex.org/domains/4      Health Sciences     \n\n[[5]]\n# A tibble: 12 × 5\n       i score name     id                                  display_name        \n   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                               &lt;chr&gt;               \n 1     1 0.993 topic    https://openalex.org/T10206         Methods for Evidenc…\n 2     1 0.993 subfield https://openalex.org/subfields/1804 Statistics, Probabi…\n 3     1 0.993 field    https://openalex.org/fields/18      Decision Sciences   \n 4     1 0.993 domain   https://openalex.org/domains/2      Social Sciences     \n 5     2 0.964 topic    https://openalex.org/T11744         Implementation of E…\n 6     2 0.964 subfield https://openalex.org/subfields/3600 General Health Prof…\n 7     2 0.964 field    https://openalex.org/fields/36      Health Professions  \n 8     2 0.964 domain   https://openalex.org/domains/4      Health Sciences     \n 9     3 0.954 topic    https://openalex.org/T12664         Development and Eva…\n10     3 0.954 subfield https://openalex.org/subfields/2739 Public Health, Envi…\n11     3 0.954 field    https://openalex.org/fields/27      Medicine            \n12     3 0.954 domain   https://openalex.org/domains/4      Health Sciences     \n\n[[6]]\n# A tibble: 12 × 5\n       i score name     id                                  display_name        \n   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                               &lt;chr&gt;               \n 1     1 0.993 topic    https://openalex.org/T10475         Role of Positive Em…\n 2     1 0.993 subfield https://openalex.org/subfields/3207 Social Psychology   \n 3     1 0.993 field    https://openalex.org/fields/32      Psychology          \n 4     1 0.993 domain   https://openalex.org/domains/2      Social Sciences     \n 5     2 0.992 topic    https://openalex.org/T10804         Health Economics an…\n 6     2 0.992 subfield https://openalex.org/subfields/2002 Economics and Econo…\n 7     2 0.992 field    https://openalex.org/fields/20      Economics, Economet…\n 8     2 0.992 domain   https://openalex.org/domains/2      Social Sciences     \n 9     3 0.984 topic    https://openalex.org/T12947         Salutogenesis and S…\n10     3 0.984 subfield https://openalex.org/subfields/3600 General Health Prof…\n11     3 0.984 field    https://openalex.org/fields/36      Health Professions  \n12     3 0.984 domain   https://openalex.org/domains/4      Health Sciences",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#entpacken-der-schachteln-steigert-die-fallzahl",
+    "href": "slides/slides-07.html#entpacken-der-schachteln-steigert-die-fallzahl",
+    "title": "Introduction to Text as Data",
+    "section": "Entpacken der Schachteln steigert die Fallzahl",
+    "text": "Entpacken der Schachteln steigert die Fallzahl\nExkurs zu verschachtelten (nested) Daten und Möglichkeiten zur Verabeitung in R\n\nreview_works_correct %&gt;% \n    unnest(topics, names_sep = \"_\") %&gt;%\n    glimpse()\n\nRows: 942,560\nColumns: 45\n$ id                          &lt;chr&gt; \"https://openalex.org/W3118615836\", \"https…\n$ title                       &lt;chr&gt; \"The PRISMA 2020 statement: an updated gui…\n$ display_name                &lt;chr&gt; \"The PRISMA 2020 statement: an updated gui…\n$ author                      &lt;list&gt; [&lt;data.frame[26 x 12]&gt;], [&lt;data.frame[26 …\n$ ab                          &lt;chr&gt; \"The Preferred Reporting Items for Systema…\n$ publication_date            &lt;chr&gt; \"2021-03-29\", \"2021-03-29\", \"2021-03-29\", …\n$ relevance_score             &lt;dbl&gt; 1625.171, 1625.171, 1625.171, 1625.171, 16…\n$ so                          &lt;chr&gt; \"BMJ\", \"BMJ\", \"BMJ\", \"BMJ\", \"BMJ\", \"BMJ\", …\n$ so_id                       &lt;chr&gt; \"https://openalex.org/S4393917726\", \"https…\n$ host_organization           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ issn_l                      &lt;chr&gt; \"1756-1833\", \"1756-1833\", \"1756-1833\", \"17…\n$ url                         &lt;chr&gt; \"https://doi.org/10.1136/bmj.n71\", \"https:…\n$ pdf_url                     &lt;chr&gt; \"https://www.bmj.com/content/bmj/372/bmj.n…\n$ license                     &lt;chr&gt; \"cc-by\", \"cc-by\", \"cc-by\", \"cc-by\", \"cc-by…\n$ version                     &lt;chr&gt; \"publishedVersion\", \"publishedVersion\", \"p…\n$ first_page                  &lt;chr&gt; \"n71\", \"n71\", \"n71\", \"n71\", \"n71\", \"n71\", …\n$ last_page                   &lt;chr&gt; \"n71\", \"n71\", \"n71\", \"n71\", \"n71\", \"n71\", …\n$ volume                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ issue                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…\n$ is_oa                       &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …\n$ is_oa_anywhere              &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …\n$ oa_status                   &lt;chr&gt; \"hybrid\", \"hybrid\", \"hybrid\", \"hybrid\", \"h…\n$ oa_url                      &lt;chr&gt; \"https://www.bmj.com/content/bmj/372/bmj.n…\n$ any_repository_has_fulltext &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …\n$ language                    &lt;chr&gt; \"en\", \"en\", \"en\", \"en\", \"en\", \"en\", \"en\", …\n$ grants                      &lt;list&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…\n$ cited_by_count              &lt;int&gt; 30303, 30303, 30303, 30303, 30303, 30303, …\n$ counts_by_year              &lt;list&gt; [&lt;data.frame[5 x 2]&gt;], [&lt;data.frame[5 x 2…\n$ publication_year            &lt;int&gt; 2021, 2021, 2021, 2021, 2021, 2021, 2021, …\n$ cited_by_api_url            &lt;chr&gt; \"https://api.openalex.org/works?filter=cit…\n$ ids                         &lt;list&gt; &lt;\"https://openalex.org/W3118615836\", \"htt…\n$ doi                         &lt;chr&gt; \"https://doi.org/10.1136/bmj.n71\", \"https:…\n$ type                        &lt;chr&gt; \"article\", \"article\", \"article\", \"article\"…\n$ referenced_works            &lt;list&gt; &lt;\"https://openalex.org/W1528251861\", \"htt…\n$ related_works               &lt;list&gt; &lt;\"https://openalex.org/W4234875088\", \"htt…\n$ is_paratext                 &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …\n$ is_retracted                &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …\n$ concepts                    &lt;list&gt; [&lt;data.frame[20 x 5]&gt;], [&lt;data.frame[20 x…\n$ topics_i                    &lt;int&gt; 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 1, 1, …\n$ topics_score                &lt;dbl&gt; 0.9993, 0.9993, 0.9993, 0.9993, 0.9832, 0.…\n$ topics_name                 &lt;chr&gt; \"topic\", \"subfield\", \"field\", \"domain\", \"t…\n$ topics_id                   &lt;chr&gt; \"https://openalex.org/T10206\", \"https://op…\n$ topics_display_name         &lt;chr&gt; \"Methods for Evidence Synthesis in Researc…\n$ publication_year_fct        &lt;fct&gt; 2021, 2021, 2021, 2021, 2021, 2021, 2021, …\n$ type_fct                    &lt;fct&gt; article, article, article, article, articl…",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#deskriptive-statistiken-zur-datenabfrage",
+    "href": "slides/slides-07.html#deskriptive-statistiken-zur-datenabfrage",
+    "title": "Introduction to Text as Data",
+    "section": "Deskriptive Statistiken zur Datenabfrage",
+    "text": "Deskriptive Statistiken zur Datenabfrage\nRekonstruktion und Erweiterung des OpenAlex Web-Dashboards mit R\n\n\n\nIm Fokus:\n\n🔍 Publikationen im Zeitverlauf\nFoschungsfelder\nRelevante Publikationen\nLageparameter\n\n\n\n\n\nreview_works_correct %&gt;% \n    ggplot(aes(publication_year_fct)) +\n    geom_bar() +\n    theme_pubr()",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#deskriptive-statistiken-zur-datenabfrage-1",
+    "href": "slides/slides-07.html#deskriptive-statistiken-zur-datenabfrage-1",
+    "title": "Introduction to Text as Data",
+    "section": "Deskriptive Statistiken zur Datenabfrage",
+    "text": "Deskriptive Statistiken zur Datenabfrage\nRekonstruktion und Erweiterung des OpenAlex Web-Dashboards mit R\n\n\n\nIm Fokus:\n\nPublikationen im Zeitverlauf\n🔍 Foschungsfelder\nRelevante Publikationen\nLageparameter\n\n\n\n\n\nreview_works_correct %&gt;% \n    unnest(topics, names_sep = \"_\") %&gt;% \n    filter(topics_name == \"field\") %&gt;% \n    filter(topics_i == 1) %&gt;% \n    sjmisc::frq(topics_display_name, sort.frq = \"desc\")\n\ntopics_display_name &lt;character&gt; \n# total N=93655 valid N=93655 mean=4.41 sd=1.62\n\nValue                               |     N | Raw % | Valid % | Cum. %\n----------------------------------------------------------------------\nSocial Sciences                     | 30580 | 32.65 |   32.65 |  32.65\nPsychology                          | 29054 | 31.02 |   31.02 |  63.67\nBusiness, Management and Accounting | 15558 | 16.61 |   16.61 |  80.29\nDecision Sciences                   |  7261 |  7.75 |    7.75 |  88.04\nEconomics, Econometrics and Finance |  6796 |  7.26 |    7.26 |  95.30\nArts and Humanities                 |  4406 |  4.70 |    4.70 | 100.00\n&lt;NA&gt;                                |     0 |  0.00 |    &lt;NA&gt; |   &lt;NA&gt;",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#deskriptive-statistiken-zur-datenabfrage-2",
+    "href": "slides/slides-07.html#deskriptive-statistiken-zur-datenabfrage-2",
+    "title": "Introduction to Text as Data",
+    "section": "Deskriptive Statistiken zur Datenabfrage",
+    "text": "Deskriptive Statistiken zur Datenabfrage\nRekonstruktion und Erweiterung des OpenAlex Web-Dashboards mit R\n\n\n\nIm Fokus:\n\nPublikationen im Zeitverlauf\nFoschungsfelder\n🔍 Relevante Publikationen\nLageparameter\n\n\n\n\n\nreview_works_correct %&gt;% \n    arrange(desc(relevance_score)) %&gt;%\n    select(publication_year_fct, relevance_score, title) %&gt;% \n    head(5) %&gt;% \n    gt::gt()\n\n\n\n\n\n\n\npublication_year_fct\nrelevance_score\ntitle\n\n\n\n\n2021\n1625.1708\nThe PRISMA 2020 statement: an updated guideline for reporting systematic reviews\n\n\n2015\n1340.1902\nPreferred reporting items for systematic review and meta-analysis protocols (PRISMA-P) 2015 statement\n\n\n2016\n1314.3904\nRayyan—a web and mobile app for systematic reviews\n\n\n2018\n990.4521\nSystematic review or scoping review? Guidance for authors when choosing between a systematic or scoping review approach\n\n\n2019\n962.6738\nUpdated guidance for trusted systematic reviews: a new edition of the Cochrane Handbook for Systematic Reviews of Interventions",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#deskriptive-statistiken-zur-datenabfrage-3",
+    "href": "slides/slides-07.html#deskriptive-statistiken-zur-datenabfrage-3",
+    "title": "Introduction to Text as Data",
+    "section": "Deskriptive Statistiken zur Datenabfrage",
+    "text": "Deskriptive Statistiken zur Datenabfrage\nRekonstruktion und Erweiterung des OpenAlex Web-Dashboards mit R\n\n\n\nIm Fokus:\n\nPublikationen im Zeitverlauf\nFoschungsfelder\nRelevante Publikationen\n🔍 Lageparameter\n\n\n\n\n\nreview_works_correct %&gt;% \n  select(where(is.numeric)) %&gt;% \n  datawizard::describe_distribution() %&gt;% \n  print_html()\n\n\n\n\n\n\n\nVariable\nMean\nSD\nIQR\nMin\nMax\nSkewness\nKurtosis\nn\nn_Missing\n\n\n\n\nrelevance_score\n31.73\n42.51\n36.48\n1.17\n1625.17\n4.75\n67.87\n93655\n0\n\n\ncited_by_count\n18.33\n146.36\n10.00\n0.00\n30303.00\n123.44\n22236.55\n93655\n0\n\n\npublication_year\n2019.40\n2.97\n5.00\n2013.00\n2023.00\n-0.58\n-0.77\n93655\n0",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#and-now-you-übung-eingrenzung",
+    "href": "slides/slides-07.html#and-now-you-übung-eingrenzung",
+    "title": "Introduction to Text as Data",
+    "section": "🧪 And now … you: Übung & Eingrenzung",
+    "text": "🧪 And now … you: Übung & Eingrenzung\nNext Steps: Wiederholung der R-Grundlagen an OpenAlex-Daten\n\nLaden Sie die auf StudOn bereitgestellten Dateien für die Sitzungen herunter\nLaden Sie die .zip-Datei in Ihren RStudio Workspace\nNavigieren Sie zu dem Ordner, in dem die Datei ps_24_binder.Rproj liegt. Öffnen Sie diese Datei mit einem Doppelklick. Nur dadurch ist gewährleistet, dass alle Dependencies korrekt funktionieren.\nÖffnen Sie die Datei exercise-07.qmd im Ordner exercises und lesen Sie sich gründlich die Anweisungen durch.\nTipp: Sie finden alle in den Folien verwendeten Code-Bausteine in der Datei showcase.qmd (für den “rohen” Code) oder showcase.html (mit gerenderten Ausgaben).",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "slides/slides-07.html#literatur",
+    "href": "slides/slides-07.html#literatur",
+    "title": "Introduction to Text as Data",
+    "section": "Literatur",
+    "text": "Literatur\n\n\nAria, M., Le, T., Cuccurullo, C., Belfiore, A., & Choe, J. (2024). openalexR: An R-Tool for Collecting Bibliometric Data from OpenAlex. The R Journal, 15(4), 167–180. https://doi.org/10.32614/rj-2023-089\n\n\nCurini, L., & Franzese, R. (2020). Text as Data: An Overview. SAGE Publications Ltd. https://methods.sagepub.com/book/research-methods-in-political-science-and-international-relations\n\n\nGrimmer, J., & Stewart, B. M. (2013). Text as Data: The Promise and Pitfalls of Automatic Content Analysis Methods for Political Texts. Political Analysis, 21(3), 267–297. https://doi.org/f458q9\n\n\nMunn, Z., Peters, M. D. J., Stern, C., Tufanaru, C., McArthur, A., & Aromataris, E. (2018). Systematic review or scoping review? Guidance for authors when choosing between a systematic or scoping review approach. BMC Medical Research Methodology, 18(1). https://doi.org/10.1186/s12874-018-0611-x\n\n\nPham, M. T., Rajić, A., Greig, J. D., Sargeant, J. M., Papadopoulos, A., & McEwen, S. A. (2014). A scoping review of scoping reviews: advancing the approach and enhancing the consistency. Research Synthesis Methods, 5(4), 371–385. https://doi.org/10.1002/jrsm.1123\n\n\n\n\n\n\n\nHome",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Slides"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "KI nutzen, um KI-Folgen zu verstehen",
+    "section": "",
+    "text": "Generative und kommunikative KI (bspw. ChatGPT, Bing, Gemini) ist derzeit in aller Munde. Den KI-Innovationen der letzten Jahre wird als „general purpose technology“ eine enorme transformative Kraft zugeschrieben, mit potenziell weitreichenden Folgen für Individuen, Wirtschaft und Gesellschaft. Die sozialwissenschaftliche Forschung auf diesem Gebiet entwickelt sich – ebenso wie ihr soziotechnologischer Gegenstand – rasant. Binnen kürzester Zeit entstehen weltweit hunderte Studien, die die individuellen und gesellschaftlichen Implikationen von generativer KI aus psychologischer, kommunikationswissenschaftlicher oder soziologischer Perspektive untersuchen. Gleichzeitig ist der Bedarf an evidenzbasierten Prognosen über mögliche Folgen von generativer KI groß, etwa im Kontext von Regulierungsvorhaben wie dem AI Act der EU. Wie jedoch lassen sich die rasant anwachsende Forschung kosten- und ressourceneffizient überblicken und Handlungsempfehlungen aus ihr ableiten?\nEine mögliche Antwort liegt in der KI selbst. In diesem Projektseminar wollen wir daher den Versuch wagen, die aktuelle Forschung zu gesellschaftlichen Folgen von generativer und kommunikativer KI mit Hilfe von KI-gestützten Systematic Review Methoden schnell und zuverlässig zu synthetisieren (siehe begleitendes Seminar Angewandte Methoden)."
+  },
+  {
+    "objectID": "course-team.html",
+    "href": "course-team.html",
+    "title": "Teaching team",
+    "section": "",
+    "text": "is Tenure-Track Assistant Professor for Communication Science at Friedrich-Alexander-Universität (FAU) Erlangen-Nürnberg.\nHis work investigates the positive and negative consequences of digital communication (e.g., via smartphones and social media) for users’ well-being, health, and self-regulation. His current research focusses on users’ digital well-being at the interface of work and leisure, for instance, digital stress, availability pressures, procrastinatory media use, and digital communication when working from home.",
+    "crumbs": [
+      "Hintergrundinformationen",
+      "zum Teaching Team"
+    ]
+  },
+  {
+    "objectID": "course-team.html#prof.-dr.-adrian-meier",
+    "href": "course-team.html#prof.-dr.-adrian-meier",
+    "title": "Teaching team",
+    "section": "",
+    "text": "is Tenure-Track Assistant Professor for Communication Science at Friedrich-Alexander-Universität (FAU) Erlangen-Nürnberg.\nHis work investigates the positive and negative consequences of digital communication (e.g., via smartphones and social media) for users’ well-being, health, and self-regulation. His current research focusses on users’ digital well-being at the interface of work and leisure, for instance, digital stress, availability pressures, procrastinatory media use, and digital communication when working from home.",
+    "crumbs": [
+      "Hintergrundinformationen",
+      "zum Teaching Team"
+    ]
+  },
+  {
+    "objectID": "course-team.html#christoph-adrian-hehim",
+    "href": "course-team.html#christoph-adrian-hehim",
+    "title": "Teaching team",
+    "section": "Christoph Adrian (he/him)",
+    "text": "Christoph Adrian (he/him)\n\n   \nis a Research Assistant at the Chair of Communication Science at Friedrich-Alexander-Universität (FAU) Erlangen-Nürnberg.\nHis work focuses on computational methods, especially Text as Data Approaches and workin with Digital behavioral data, with an emphasis on computing, reproducible research, student-centered learning, and open-source education.",
+    "crumbs": [
+      "Hintergrundinformationen",
+      "zum Teaching Team"
+    ]
+  },
+  {
+    "objectID": "sessions/session-01.html",
+    "href": "sessions/session-01.html",
+    "title": "Session 1",
+    "section": "",
+    "text": "Important\n\n\n\nPlease make sure that you answered the survey send to you by (StudOn) mail."
+  },
+  {
+    "objectID": "sessions/session-01.html#prepare",
+    "href": "sessions/session-01.html#prepare",
+    "title": "Session 1",
+    "section": "Prepare",
+    "text": "Prepare\n✍️ Fill out the short survey before the first session (see  StudOn for Link)\n📨 Join  Zulip using the invitation (please check your email address used for StudOn).\n📖 Read the syllabus"
+  },
+  {
+    "objectID": "sessions/session-01.html#participate",
+    "href": "sessions/session-01.html#participate",
+    "title": "Session 1",
+    "section": "Participate",
+    "text": "Participate\n🖥️ Session 01 - Kick Off\n\n\nBack to course schedule ⏎"
+  },
+  {
+    "objectID": "exercises/exercise-07.html",
+    "href": "exercises/exercise-07.html",
+    "title": "API mining and data wrangling with R",
+    "section": "",
+    "text": "Download source file\n Open this exercise in interactive and executable environment",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Übung"
+    ]
+  },
+  {
+    "objectID": "exercises/exercise-07.html#background",
+    "href": "exercises/exercise-07.html#background",
+    "title": "API mining and data wrangling with R",
+    "section": "Background",
+    "text": "Background\n\n\n\n\n\n\nTodays’s data basis: OpenAlex\n\n\n\nOpenAlex is a free and open catalog of the global research system. It’s named after the ancient Library of Alexandria and made by the nonprofit OurResearch.\n\n\n\n\n\n\n\n\nAt the heart of OpenAlex is our dataset—a catalog of works. A work is any sort of scholarly output. A research article is one kind of work, but there are others such as datasets, books, and dissertations. We keep track of these works—their titles (and abstracts and full text in many cases), when they were created, etc. But that’s not all we do. We also keep track of the connections between these works, finding associations through things like journals, authors, institutional affiliations, citations, topics, and funders. There are hundreds of millions of works out there, and tens of thousands more being created every day, so it’s important that we have these relationships to help us make sense of research at a large scale.",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Übung"
+    ]
+  },
+  {
+    "objectID": "exercises/exercise-07.html#preparation",
+    "href": "exercises/exercise-07.html#preparation",
+    "title": "API mining and data wrangling with R",
+    "section": "Preparation",
+    "text": "Preparation\n\n\n\n\n\n\nWichtige Information\n\n\n\n\nBitte stellen Sie sicher, dass Sie das jeweilige R-Studio Projekt zur Übung geöffnet haben. Nur so funktionieren alle Dependencies korrekt.\nUm den einwandfreien Ablauf der Übung zu gewährleisten, wird für die Aufgaben auf eine eigenständige Datenerhebung verzichtet und ein Übungsdatensatz zu verfügung gestelt.\n\n\n\n\nPackages\n\nZum Laden der Pakete wird das Paket pacman::pload() genutzt, dass gegenüber der herkömmlichen Methode mit library() eine Reihe an Vorteile hat:\n\nPrägnante Syntax\nAutomatische Installation (wenn Paket noch nicht vorhanden)\nLaden mehrerer Pakete auf einmal\nAutomatische Suche nach dependencies\n\n\n\nif (!require(\"pacman\")) install.packages(\"pacman\")\npacman::p_load(\n  here, qs, # file management\n  magrittr, janitor, # data wrangling\n  easystats, sjmisc, # data analysis\n  ggpubr, # visualization\n  openalexR, \n  tidyverse # load last to avoid masking issues\n  )\n\n\n\nImport und Vorverarbeitung der Daten\n\n# Import from local\nreview_works &lt;- qs::qread(here(\"data/exercise-07/openalex-review_works-2013_2023.qs\"))\n\n# Create correct data\nreview_works_correct &lt;- review_works %&gt;% \n    mutate(\n        # Create additional factor variables\n        publication_year_fct = as.factor(publication_year), \n        type_fct = as.factor(type)\n        )",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Übung"
+    ]
+  },
+  {
+    "objectID": "exercises/exercise-07.html#praktische-anwendung",
+    "href": "exercises/exercise-07.html#praktische-anwendung",
+    "title": "API mining and data wrangling with R",
+    "section": "🛠️ Praktische Anwendung",
+    "text": "🛠️ Praktische Anwendung\n\n\n\n\n\n\nAchtung, bitte lesen!\n\n\n\n\nBevor Sie mit der Arbeit an den folgenden 📋 Exercises beginnen, stellen Sie bitte sicher, dass Sie alle Chunks des Abschnitts Preparation gerendert haben. Das können Sie tun, indem Sie den “Run all chunks above”-Knopf des nächsten Chunks benutzen.\nBei Fragen zum Code lohnt sich ein Blick in den Showcase (.qmd oder .html). Beim Showcase handelt es sich um eine kompakte Darstellung des in der Präsentation verwenden R-Codes. Sie können das Showcase also nutzen, um sich die Code-Bausteine anzusehen, die für die R-Outputs auf den Slides benutzt wurden.\n\n\n\n\n📋 Exercise 1: Sprache der Publikationen\n\n\n\n\n\n\nZiel der Aufgabe\n\n\n\n\nIdentifizieren Sie die für die Untersuchung relevanten Artikel auf Basis von deren Sprache (language)\nHintergrundinformation zur Variable language finden Sie in der API-Dokumentation von OpenAlex.\n\n\n\n\nNutzen Sie die Funktion sjmisc::frq() und schauen Sie sich im Datensatz review_works_correct die Variablen language an. Verwenden Sie das Argument sort.frq = \"desc\", um die Häufigkeit der Sprachen absteigend zu sortieren.\nNotieren Sie sich den jeweilgen ISO 639-1 language code, um Ihn später bei 📋 Exercise 4: Erstellung Subsample als Filter zu nutzen.\n\n\n# Create frequency table for the variable language\n...\n\n\n\n📋 Exercise 2: Typ der Publikationen\n\n\n\n\n\n\nZiel der Aufgabe\n\n\n\n\nIdentifizieren Sie die für die Untersuchung relevanten Artikel auf Basis deres Typen (type).\nHintergrundinformation zur Variable type finden Sie in der API-Dokumentation von OpenAlex.\n\n\n\n\nNutzen Sie die Funktion sjmisc::frq() und schauen Sie sich im Datensatz review_works_correct die Variablen type an. Verwenden Sie das Argument sort.frq = \"desc\", um die Typen in Abhängigkeit Ihrer Häufigkeit absteigend zu sortieren.\nNotieren Sie sich die Ausprägungen der Variable type, die aus Ihrer Sicht später bei 📋 Exercise 4: Erstellung Subsample als Filter genutzt werden soll.\n\n\n# Create frequency table for the variable type\n...\n\n\n\n📋 Exercise 3: Forschungsfeld der Publikationen\n\n\n\n\n\n\nZiel der Aufgabe\n\n\n\n\nIdentifizieren Sie die für die Untersuchung relevanten Artikel auf Basis des von OpenAlex dem Artikel zugeordnenten Foschungsfeldes (field)\nHintergrundinformation zur Variable field finden Sie in der API-Dokumentation von OpenAlex.\n\n\n\n\nBasierend auf dem Datensatz review_works_correct\n\nnutzen Sie die Funktion unnest() um die Variablen der topics-Liste zu extrahieren. Verwenden Sie dabei das Argument names_sep = \"_\". um doppelte Variablennamen durch Hinzufügen des Prefixes topics_ zu verhindern.\nfiltern Sie anschließen mit Hilfe der Funktion filter und der Variable bzw. dem Argument topics_name == \"field\" nur die Informationen zum Forschungsfeld, sowie mit der Variable bzw. dem Argument topics_i == \"1\" nur die erste Zuordnung.\nNutzen Sie die Funktion sjmisc::frq() und schauen Sie sich die Variablen topics_display_name an. Verwenden Sie das Argument sort.frq = \"desc\", um die Forschungsfelder in Abhängigkeit Ihrer Häufigkeit absteigend zu sortieren.\n\nNotieren Sie sich die Ausprägungen der Variable topics_display_name, die aus Ihrer Sicht später bei 📋 Exercise 4: Erstellung Subsample als Filter genutzt werden soll.\n\n\n# Unnest topis variable and create frequency table for the variable topics_display_name\n...\n\n\n\n📋 Exercise 4: Erstellung Subsample\n\n\n\n\n\n\nZiel der Aufgabe\n\n\n\n\nErstellung sie den Datensatz review_subsample, in dem Sie mit Hilfe der Funktionen select() und/oder filter() das Datenmaterial weiter eingrenzen. Sie können sich sowohl auf die Variablen aus der Übung, als auch auf die aus der Sitzung (bzw. den Slides) beziehen.\nDer Code dieses Chunks wird in der nächsten Sitzung benötigt bzw. besprochen, halten Sie diesen deshalb bitte bereit.\n\n\n\n\nreview_subsample &lt;- review_works_correct %&gt;% \n    filter(...)",
+    "crumbs": [
+      "Methodenseminar",
+      "Session 07",
+      "Übung"
+    ]
+  },
+  {
+    "objectID": "computing/computing-cheatsheets.html",
+    "href": "computing/computing-cheatsheets.html",
+    "title": "R cheatsheets",
+    "section": "",
+    "text": "The following cheatsheets come from https://posit.co/resources/cheatsheets. We haven’t covered every function and functionality listed on them, but you might still find them useful as references.",
+    "crumbs": [
+      "Computing",
+      "R Cheatsheets"
+    ]
+  }
+]
