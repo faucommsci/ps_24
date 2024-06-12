@@ -423,7 +423,7 @@
     "href": "exercises/exercise-07.html",
     "title": "API mining and data wrangling with R",
     "section": "",
-    "text": "Download source file\n Open this exercise in interactive and executable environment",
+    "text": "Ziel der Anwendung: Eingrenzung der Suchergebnisse\n\n\n\n\nIn folgenden Übungsaufgaben dienen dazu, die Datengrundlage für die in den nächsten Sitzungen anstehende(n) Textanalyse(n) weiter inhaltlich plausibel einzugrenzen bzw. zu präzisieren.\nFinales Ziel ist die Erstellung eines Code-Chunks, mit dessen Hilfe der Datensatz review_subsample erstellt werden soll. Bitte arbeitet die Übung durch, wir besprechen zu Anfang der nächsten Sitzung dann eure Vorschläge.",
     "crumbs": [
       "Methodenseminar",
       "Session 07",
