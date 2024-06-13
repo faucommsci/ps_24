@@ -9,8 +9,6 @@ author:
     affiliation: Chair of Communicaion Science
     affiliation-url: https://www.kowi.rw.fau.de/person/christoph-adrian/
 
-# TODO Change/Hide course logo
-
 format:
   revealjs:
     theme: slidetheme.scss
@@ -20,6 +18,7 @@ format:
     preview-links: auto
     # template-partials:
     #   - title-slide.html
+    code-copy: true
     chalkboard:
       buttons: false
 

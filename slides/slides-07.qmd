@@ -81,13 +81,11 @@ schedule %>%
 
 5.  [📋 Hands on working with R](#group-activity)
 
-<!-- TODO Update agenda -->
 
 # Organisation & Koordination {#orga background-image="img/slide_bg-orga.png"}
 
 Typischer Sitzungsablauf & Nutzung RStudio Server
 
-<!-- TODO Add "orga" background -->
 
 ## Erst Input, dann Vertiefung
 
@@ -151,10 +149,9 @@ Bitte scannt den **QR-Code** oder nutzt den folgenden **Link** für die Teilnahm
 
 -   <https://www.menti.com/aly1gft3568e>
 
--   Temporary Access Code: **2677 1451**
+-   Temporary Access Code: **8113 5474**
 :::
 
-<!-- TODO Add current temporary access code -->
 
 ::: {.column width="10%"}
 :::
@@ -172,7 +169,7 @@ countdown(
     warn_when = 10)
 ```
 
-<!-- TODO Add timer (siehe DBD 2023 - Slides 02 - F.8 ) -->
+
 
 ## Ergebnis
 
