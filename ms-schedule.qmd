@@ -7,7 +7,7 @@ date-format: "DD.MM.YYYY"
 ---
 
 ::: callout-note
-Diese Seite erhält eine Übersicht über die Sitzung bzw. Themen des Methodensemianrs im Sommersemester 2024. Bitte beachten Sie, dass die Inhalte des Kurses ({{< bi file-earmark-slides >}} Folien, {{< bi pencil-square >}} Exercises, {{< bi file-earmark-code >}} Showcases und {{< bi book >}} Hintergrundinformationen) im Laufe des Semesters stetig aktualisiert werden, wobei alle Änderungen hier dokumentiert werden.
+Diese Seite erhält eine Übersicht über die Sitzung bzw. Themen des Methodenseminar im Sommersemester 2024. Bitte beachten Sie, dass die Inhalte des Kurses ({{< bi file-earmark-slides >}} Folien, {{< bi pencil-square >}} Exercises, {{< bi file-earmark-code >}} Showcases und {{< bi book >}} Hintergrundinformationen) im Laufe des Semesters stetig aktualisiert werden, wobei alle Änderungen hier dokumentiert werden.
 :::
 
 | Sitzung | Datum      | Thema                                    | Unterlagen                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
