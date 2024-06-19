@@ -76,7 +76,7 @@ schedule %>%
 
 2.  [From Text to Data](#introduction)
 
-3.  [Text as data in R]
+3.  [Text as data in R](#r-example)
 
 4.  [📋 Hands on working with R](#group-activity)
 
@@ -184,7 +184,7 @@ Definition POS: *Zuordnung von Wörtern und Satzzeichen eines Textes zu Wortarte
 *Bag-of-Words*-Modell: es zählt lediglich die Worthäufigkeit je Dokument, die syntaktischen und grammatikalischen Zusammenhänge zwischen einzelnen Wörtern werden ignoriert.
 :::
 
-# *Text as data* in R {#examples background-image="img/slide_bg-example.png"}
+# *Text as data* in R {#r-example background-image="img/slide_bg-example.png"}
 
 Einführung in die Textanalyse mit `tidytext`
 
@@ -481,7 +481,7 @@ review_pairs_corr %>%
 @atteveldt2021 **argue that sentiment, in fact, are quite a complex concepts that are often hard to capture with dictionaries.**
 :::
 
-## Über die Bedeutung von "positiv\|negativ"
+## Über die Bedeutung von "positiv;negativ"
 
 #### Die häufigsten "positiven" und "negativen" Wörter in den Abstracts
 
@@ -516,7 +516,7 @@ review_sentiment_count %>%
 
 ## Anreicherung der Daten
 
-#### Verknüpfung des Sentiemnt ("Scores") mit den Abstracts
+#### Verknüpfung des Sentiemnt (Scores) mit den Abstracts
 
 ```{r output-sentiment-aggregated-by-tweet}
 review_sentiment <- review_tidy %>% 
