@@ -5,13 +5,13 @@ date: last-modified
 date-format: "DD.MM.YYYY"
 execute: 
   eval: false
+editor_options: 
+  chunk_output_type: console
 ---
 
-<!-- ::: {.callout-tip icon="false"}
-[![Quarto Document](/img/badge-quarto_document.svg)](https://github.com/faucommsci/dbd_2023/blob/main/exercise/exercise-03.qmd) Download source file
-
-[![Binder RStudio](/img/badge-binder_rstudio.svg)](https://mybinder.org/v2/gh/faucommsci/dbd_binder/HEAD?urlpath=rstudio) Open this exercise in interactive and executable environment
-::: -->
+::: {.callout-tip icon="false"}
+[![Quarto Document](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg)](https://github.com/faucommsci/ps_24/blob/main/exercises/exercise-07_solution.qmd) Link to source file
+:::
 
 ::: callout-note
 ## Ziel der Anwendung: Eingrenzung der Suchergebnisse
@@ -83,7 +83,7 @@ review_works_correct <- review_works %>%
 ::: callout-important
 ## Achtung, bitte lesen!
 
--   Bevor Sie mit der Arbeit an den folgenden 📋 **Exercises** beginnen, stellen Sie bitte sicher, dass Sie alle Chunks des Abschnitts [Preparation] gerendert haben. Das können Sie tun, indem Sie den "*Run all chunks above*"-Knopf ![](/img/rstudio-button-render_all_chunks_above.png)des nächsten Chunks benutzen.
+-   Bevor Sie mit der Arbeit an den folgenden 📋 **Exercises** beginnen, stellen Sie bitte sicher, dass Sie alle Chunks des Abschnitts [Preparation] gerendert haben. Das können Sie tun, indem Sie den "*Run all chunks above*"-Knopf ![](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/buttons/rstudio-button-render_all_chunks_above.png) des nächsten Chunks benutzen.
 -   Bei Fragen zum Code lohnt sich ein Blick in den **Showcase** (.qmd oder .html). Beim Showcase handelt es sich um eine kompakte Darstellung des in der Präsentation verwenden R-Codes. Sie können das Showcase also nutzen, um sich die Code-Bausteine anzusehen, die für die R-Outputs auf den Slides benutzt wurden.
 :::
 
@@ -100,8 +100,12 @@ review_works_correct <- review_works %>%
 -   Notieren Sie sich den jeweilgen [ISO 639-1 language code](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes), um Ihn später bei [📋 Exercise 4: Erstellung Subsample] als Filter zu nutzen.
 
 ```{r exercise-1}
-# Create frequency table for the variable language
-...
+review_works_correct %>% 
+    sjmisc::frq("language", sort.frq = "desc")
+
+# Notiz(en)
+# - Überwiegende Anzahl der heruntergeladenen Datenbankbeiträge ist in englischer Sprache (en) verfasst.
+# -Die Sprache en wird als Filterkriterium für die Erstellung des Subsamples genutzt, auch um spätere Probleme bei der Analyse durch multi-linguale Texte zu vermeiden.
 ```
 
 ### 📋 Exercise 2: Typ der Publikationen
@@ -117,8 +121,12 @@ review_works_correct <- review_works %>%
 -   Notieren Sie sich die Ausprägungen der Variable type, die aus Ihrer Sicht später bei [📋 Exercise 4: Erstellung Subsample] als Filter genutzt werden soll.
 
 ```{r exercise-2}
-# Create frequency table for the variable type
-...
+review_works_correct %>% 
+    sjmisc::frq("type", sort.frq = "desc")
+
+# Notiz(en)
+# - Überwiegende Anzahl der heruntergeladenen Datenbankbeiträge sind `article.`
+# - Die folgenden Auswertungen beziehen sich auf die Publikationen des Typs article, da uns besonders die praktische Anwendung/Umsetzung der Methode in verschiedenen Kontexten interessiert. Läge der Fokus auf (die Entwicklung) der Methode selbst, wäre vermutlich eher die Typen book oder book-chapter relevant.
 ```
 
 ### 📋 Exercise 3: Forschungsfeld der Publikationen
@@ -126,7 +134,7 @@ review_works_correct <- review_works %>%
 ::: callout-note
 ## Ziel der Aufgabe
 
--   Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis des von OpenAlex dem Artikel zugeordnenten Foschungsfeldes (`field)`
+-   Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis des von OpenAlex dem Artikel zugeordnenten Foschungsfeldes (`field)`)
 
 -   Hintergrundinformation zur [Variable `field`](https://docs.openalex.org/api-entities/topics/topic-object#field) finden Sie in der API-Dokumentation von OpenAlex.
 :::
@@ -138,8 +146,14 @@ review_works_correct <- review_works %>%
 -   Notieren Sie sich die Ausprägungen der Variable topics_display_name, die aus Ihrer Sicht später bei [📋 Exercise 4: Erstellung Subsample] als Filter genutzt werden soll.
 
 ```{r exercise-3}
-# Unnest topis variable and create frequency table for the variable topics_display_name
-...
+review_works_correct %>% 
+    unnest(topics, names_sep = "_") %>%
+    filter(topics_name == "field") %>% 
+    filter(topics_i == "1") %>% 
+    sjmisc::frq("topics_display_name", sort.frq = "desc")
+
+# Notiz(en)
+# - Focus auf "primäre" Forschungsfelder `Social Sciences` & `Psychology`
 ```
 
 ### 📋 Exercise 4: Erstellung Subsample
@@ -153,5 +167,17 @@ review_works_correct <- review_works %>%
 
 ```{r exercise-4}
 review_subsample <- review_works_correct %>% 
-    filter(...)
+  filter(language == "en") %>% # nur englischsprachige Einträge
+  filter(type == "article") %>% # nur Artikel
+  # Datentranformation
+  unnest(topics, names_sep = "_") %>%
+  filter(topics_name == "field") %>% 
+  filter(topics_i == "1") %>% 
+  filter(
+    topics_display_name == "Social Sciences"|
+    topics_display_name == "Psychology"
+    ) %>%
+  glimpse()
 ```
+
+\
