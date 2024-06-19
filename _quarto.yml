@@ -52,10 +52,10 @@ website:
           - href: course-team.qmd
             text: zum Teaching Team
 
-      - section: "Methodenseminar"
+      - section: "Kursunterlagen"
         contents: 
           - href: ms-schedule.qmd
-            text: "Semesterplan"
+            text: "Methodenseminar"
 
       # - section: "Sessions"
       #   contents:

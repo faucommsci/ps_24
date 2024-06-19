@@ -10,7 +10,7 @@ format:
 ---
 
 ::: {.callout-tip icon="false"}
-[![Quarto Document](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg)](https://github.com/faucommsci/ps_24/blob/main/exercises/ms-exercise-08.qmd) Link to source file
+[![Quarto Document](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg)](https://github.com/faucommsci/ps_24/blob/main/exercises/ms-exercise-08_solution.qmd) Link to source file
 :::
 
 ::: callout-note

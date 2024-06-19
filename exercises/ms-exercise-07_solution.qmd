@@ -3,14 +3,14 @@ title: "API mining and data wrangling with R"
 subtitle: "Session 07 - Exercise"
 date: last-modified
 date-format: "DD.MM.YYYY"
-execute: 
-  eval: false
-editor_options: 
-  chunk_output_type: console
+format:
+    html: 
+        code-fold: true
+        code-summary: "Lösung anzeigen"
 ---
 
 ::: {.callout-tip icon="false"}
-[![Quarto Document](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg)](https://github.com/faucommsci/ps_24/blob/main/exercises/exercise-07_solution.qmd) Link to source file
+[![Quarto Document](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg)](https://github.com/faucommsci/ps_24/blob/main/exercises/ms-exercise-07_solution.qmd) Link to source file
 :::
 
 ::: callout-note
@@ -52,6 +52,8 @@ OpenAlex is a free and open catalog of the global research system. It's named af
     -   Automatische Suche nach `dependencies`
 
 ```{r load-packages}
+#| code-fold: false
+
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(
   here, qs, # file management
@@ -66,6 +68,8 @@ pacman::p_load(
 ### Import und Vorverarbeitung der Daten
 
 ```{r data-import}
+#| code-fold: false
+
 # Import from local
 review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
 

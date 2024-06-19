@@ -5,6 +5,11 @@ date: last-modified
 date-format: "DD.MM.YYYY"
 ---
 
+::: {.callout-tip icon="false"}
+[![Quarto Slide](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto-slide.svg)](https://github.com/faucommsci/ps_24/blob/main/slides/ms-slides-07.qmd) Link to slides 
+:::
+
+
 ```{r setup}
 #| echo: false
 
