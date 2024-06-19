@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Kommunikationswissenschaftliches Projektseminar - Text processing with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../img/logo_fau_red.svg" rel="icon" type="image/svg+xml">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Kommunikationswissenschaftliches Projektseminar - Text processing with R">
+<meta property="og:description" content="Session 08 - Exercise">
+<meta property="og:site_name" content="Kommunikationswissenschaftliches Projektseminar">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Text processing with R</li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-center sidebar-header">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../img/ps24-hex.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+      <div class="sidebar-tools-main tools-wide">
+    <a href="https://www.kowi.rw.fau.de/lehre/master/projektseminar/" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-globe"></i></a>
+    <a href="https://github.com/faucommsci/ps_24" title="Course repository" class="quarto-navigation-tool px-1" aria-label="Course repository"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Hintergrundinformationen</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://www.kowi.rw.fau.de/2024/02/21/projektseminar-sommersemester-2024-ki-nutzen-um-ki-folgen-zu-verstehen/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">zum Projektseminar</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://www.kowi.rw.fau.de/2024/03/18/methodenseminar-sose-2024-ki-gestuetzte-systematic-reviews-und-text-as-data-in-r/" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">zum Methodenseminar</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../course-team.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">zum Teaching Team</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Kursunterlagen</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ms-schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Methodenseminar</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Computing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../computing/computing-textbooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Textbooks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../computing/computing-cheatsheets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">R Cheatsheets</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../computing/computing-useful_links.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Useful R sources</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a></li>
+  <li><a href="#preparation" id="toc-preparation" class="nav-link" data-scroll-target="#preparation">Preparation</a>
+  <ul>
+  <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
+  <li><a href="#import-und-vorverarbeitung-der-daten" id="toc-import-und-vorverarbeitung-der-daten" class="nav-link" data-scroll-target="#import-und-vorverarbeitung-der-daten">Import und Vorverarbeitung der Daten</a></li>
+  </ul></li>
+  <li><a href="#praktische-anwendung" id="toc-praktische-anwendung" class="nav-link" data-scroll-target="#praktische-anwendung">🛠️ Praktische Anwendung</a>
+  <ul>
+  <li><a href="#exercise-1-neues-subsample" id="toc-exercise-1-neues-subsample" class="nav-link" data-scroll-target="#exercise-1-neues-subsample">📋 Exercise 1: Neues Subsample</a></li>
+  <li><a href="#exercise-2-umwandlung-zu-tidy-text" id="toc-exercise-2-umwandlung-zu-tidy-text" class="nav-link" data-scroll-target="#exercise-2-umwandlung-zu-tidy-text">📋 Exercise 2: Umwandlung zu ‘tidy text’</a></li>
+  <li><a href="#exercise-3-auswertung-der-token" id="toc-exercise-3-auswertung-der-token" class="nav-link" data-scroll-target="#exercise-3-auswertung-der-token">📋 Exercise 3: Auswertung der Token</a></li>
+  <li><a href="#exercise-4-wortbeziehungen-im-fokus" id="toc-exercise-4-wortbeziehungen-im-fokus" class="nav-link" data-scroll-target="#exercise-4-wortbeziehungen-im-fokus">📋 Exercise 4: Wortbeziehungen im Fokus</a>
+  <ul class="collapse">
+  <li><a href="#couting-word-pairs" id="toc-couting-word-pairs" class="nav-link" data-scroll-target="#couting-word-pairs">4.1 Couting word pairs</a></li>
+  <li><a href="#pairwise-correlation" id="toc-pairwise-correlation" class="nav-link" data-scroll-target="#pairwise-correlation">4.2 Pairwise correlation</a></li>
+  </ul></li>
+  <li><a href="#exercise-5-inhaltlicher-vergleich" id="toc-exercise-5-inhaltlicher-vergleich" class="nav-link" data-scroll-target="#exercise-5-inhaltlicher-vergleich">📋 Exercise 5: Inhaltlicher Vergleich</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/exercises/ms-exercise-08_solution.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Text processing with R</h1>
+<p class="subtitle lead">Session 08 - Exercise</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">19.06.2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-simple callout-tip no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><a href="https://github.com/faucommsci/ps_24/blob/main/exercises/ms-exercise-08_solution.qmd"><img src="https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg" class="img-fluid" alt="Quarto Document"></a> Link to source file</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ziel der Anwendung: Textanalyse in R kennenlernen
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Auffrischung der Grundkenntnisse im Umgang mit R, tidyverse und ggplot2</li>
+<li>Typische Schritte der Textanalyse mit <code>tidytext</code> kennenlernen, von der Tokenisierung bis zur Visualisierung.</li>
+</ul>
+</div>
+</div>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Todays’s data basis: <a href="https://openalex.org/">OpenAlex</a>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>Via API bzw. openalexR <span class="citation" data-cites="aria2024">(<a href="#ref-aria2024" role="doc-biblioref">Aria et al. 2024</a>)</span> gesammelte “works” der Datenbank <a href="https://openalex.org/">OpenAlex</a> mit Bezug zu Literaturriews in den Sozialwissenschaften zwischen 2013 und 2023</p></li>
+<li><p>Detaillierte Informationen und Ergebnisse zur Suchquery finden Sie <a href="https://openalex.org/works?page=1&amp;filter=display_name.search%3A%28literature%20OR%20systematic%29%20AND%20review,primary_topic.domain.id%3Adomains%2F2,publication_year%3A2014%20-%202024&amp;group_by=publication_year,open_access.is_oa,primary_topic.field.id">hier</a>.</p></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="preparation" class="level2">
+<h2 class="anchored" data-anchor-id="preparation">Preparation</h2>
+<div class="callout callout-style-simple callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Wichtige Information
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bitte stellen Sie sicher, dass Sie das jeweilige R-Studio Projekt zur Übung geöffnet haben. Nur so funktionieren alle Dependencies korrekt.</li>
+<li>Um den einwandfreien Ablauf der Übung zu gewährleisten, wird für die Aufgaben auf eine eigenständige Datenerhebung verzichtet und ein Übungsdatensatz zu verfügung gestelt.</li>
+</ul>
+</div>
+</div>
+<section id="packages" class="level3">
+<h3 class="anchored" data-anchor-id="packages">Packages</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    here, qs, <span class="co"># file management</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    magrittr, janitor, <span class="co"># data wrangling</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    easystats, sjmisc, <span class="co"># data analysis</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    gt, gtExtras, <span class="co"># table visualization</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    ggpubr, ggwordcloud, <span class="co"># visualization</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    tidytext, widyr, <span class="co"># text analysis    </span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    openalexR, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    tidyverse <span class="co"># load last to avoid masking issues</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="import-und-vorverarbeitung-der-daten" class="level3">
+<h3 class="anchored" data-anchor-id="import-und-vorverarbeitung-der-daten">Import und Vorverarbeitung der Daten</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import from local</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>review_works <span class="ot">&lt;-</span> qs<span class="sc">::</span><span class="fu">qread</span>(<span class="fu">here</span>(<span class="st">"data/exercise-07/openalex-review_works-2013_2023.qs"</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create correct data</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>review_works_correct <span class="ot">&lt;-</span> review_works <span class="sc">%&gt;%</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create additional factor variables</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">publication_year_fct =</span> <span class="fu">as.factor</span>(publication_year), </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">type_fct =</span> <span class="fu">as.factor</span>(type)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="praktische-anwendung" class="level2">
+<h2 class="anchored" data-anchor-id="praktische-anwendung">🛠️ Praktische Anwendung</h2>
+<div class="callout callout-style-simple callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Achtung, bitte lesen!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bevor Sie mit der Arbeit an den folgenden 📋 <strong>Exercises</strong> beginnen, stellen Sie bitte sicher, dass Sie alle Chunks des Abschnitts <a href="#preparation">Preparation</a> gerendert haben. Das können Sie tun, indem Sie den “<em>Run all chunks above</em>”-Knopf <img src="../img/rstudio-button-render_all_chunks_above.png" class="img-fluid">des nächsten Chunks benutzen.</li>
+<li>Bei Fragen zum Code lohnt sich ein Blick in den <strong>Showcase</strong> (.qmd oder .html). Beim Showcase handelt es sich um eine kompakte Darstellung des in der Präsentation verwenden R-Codes. Sie können das Showcase also nutzen, um sich die Code-Bausteine anzusehen, die für die R-Outputs auf den Slides benutzt wurden.</li>
+</ul>
+</div>
+</div>
+<section id="exercise-1-neues-subsample" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-neues-subsample">📋 Exercise 1: Neues Subsample</h3>
+<div class="callout callout-style-simple callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ziel der Aufgabe
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Erstellung eines neuen Datensatzes <code>review_subsample_new</code>, der sich auf <em>englischsprachig</em> <em>Bücher bzw. Buchrartikel</em> beschränkt.</li>
+</ul>
+</div>
+</div>
+<ol type="1">
+<li>Erstellen Sie einen neuen Datensatz <code>review_subsample_new</code>
+<ul>
+<li>Basierend auf dem Datensatzes <code>review_works_correct</code>:
+<ol type="1">
+<li>Nutzen Sie die <code>filter()</code>-Funktion, um
+<ul>
+<li>nur englischsprachige (<code>language</code>),</li>
+<li>Bücher und Buchkapitel (<code>type</code>) herauszufiltern.</li>
+</ul></li>
+<li>Speichern Sie diese Umwandlung in einem neuen Datensatz mit dem Namen <code>review_subsample_new</code></li>
+</ol></li>
+</ul></li>
+<li>Überprüfen Sie die Transformation mit Hilfe der <code>glimpse()</code>-Funktion.</li>
+<li>✍️ Notieren Sie, wie viele Artikel im neuen Subsample enthalten sind.</li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Lösung anzeigen</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Erstellung Subsample</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>review_subsample_new <span class="ot">&lt;-</span> review_works_correct <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Eingrenzung: Sprache und Typ</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(language <span class="sc">==</span> <span class="st">"en"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">"preprint"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Überprüfung</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>review_subsample_new <span class="sc">%&gt;%</span> glimpse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 3,547
+Columns: 41
+$ id                          &lt;chr&gt; "https://openalex.org/W4236476849", "https…
+$ title                       &lt;chr&gt; "The PRISMA 2020 statement: an updated gui…
+$ display_name                &lt;chr&gt; "The PRISMA 2020 statement: an updated gui…
+$ author                      &lt;list&gt; [&lt;data.frame[26 x 12]&gt;], [&lt;data.frame[3 x…
+$ ab                          &lt;chr&gt; "Background: The Preferred Reporting Items…
+$ publication_date            &lt;chr&gt; "2020-09-14", "2019-07-01", "2017-04-01", …
+$ relevance_score             &lt;dbl&gt; 584.98030, 253.79811, 214.51546, 199.14885…
+$ so                          &lt;chr&gt; NA, "Technological forecasting &amp; social ch…
+$ so_id                       &lt;chr&gt; NA, "https://openalex.org/S39307421", "htt…
+$ host_organization           &lt;chr&gt; NA, "Elsevier BV", "Elsevier BV", "Faculty…
+$ issn_l                      &lt;chr&gt; NA, "0040-1625", "0959-6526", "2046-1402",…
+$ url                         &lt;chr&gt; "https://doi.org/10.31222/osf.io/v7gm2", "…
+$ pdf_url                     &lt;chr&gt; "https://osf.io/v7gm2/download", NA, NA, "…
+$ license                     &lt;chr&gt; NA, NA, NA, "cc-by", NA, NA, "cc-by", NA, …
+$ version                     &lt;chr&gt; "submittedVersion", NA, NA, "publishedVers…
+$ first_page                  &lt;chr&gt; NA, "251", "1278", "588", "281", "113113",…
+$ last_page                   &lt;chr&gt; NA, "269", "1302", "588", "312", "113113",…
+$ volume                      &lt;chr&gt; NA, "144", "149", "6", "32", "125", "6", N…
+$ issue                       &lt;chr&gt; NA, NA, NA, NA, "3-4", NA, NA, NA, NA, NA,…
+$ is_oa                       &lt;lgl&gt; TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, TR…
+$ is_oa_anywhere              &lt;lgl&gt; TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, TR…
+$ oa_status                   &lt;chr&gt; "green", "closed", "closed", "gold", "clos…
+$ oa_url                      &lt;chr&gt; "https://osf.io/v7gm2/download", NA, NA, "…
+$ any_repository_has_fulltext &lt;lgl&gt; TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, TR…
+$ language                    &lt;chr&gt; "en", "en", "en", "en", "en", "en", "en", …
+$ grants                      &lt;list&gt; NA, NA, &lt;"https://openalex.org/F432032109…
+$ cited_by_count              &lt;int&gt; 3320, 222, 153, 190, 105, 140, 132, 57, 95…
+$ counts_by_year              &lt;list&gt; [&lt;data.frame[5 x 2]&gt;], [&lt;data.frame[7 x 2…
+$ publication_year            &lt;int&gt; 2020, 2019, 2017, 2017, 2019, 2019, 2017, …
+$ cited_by_api_url            &lt;chr&gt; "https://api.openalex.org/works?filter=cit…
+$ ids                         &lt;list&gt; &lt;"https://openalex.org/W4236476849", "htt…
+$ doi                         &lt;chr&gt; "https://doi.org/10.31222/osf.io/v7gm2", "…
+$ type                        &lt;chr&gt; "preprint", "preprint", "preprint", "prepr…
+$ referenced_works            &lt;list&gt; &lt;"https://openalex.org/W2022190222", "htt…
+$ related_works               &lt;list&gt; &lt;"https://openalex.org/W2921208823", "htt…
+$ is_paratext                 &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …
+$ is_retracted                &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …
+$ concepts                    &lt;list&gt; [&lt;data.frame[20 x 5]&gt;], [&lt;data.frame[20 x…
+$ topics                      &lt;list&gt; [&lt;tbl_df[4 x 5]&gt;], [&lt;tbl_df[12 x 5]&gt;], [&lt;…
+$ publication_year_fct        &lt;fct&gt; 2020, 2019, 2017, 2017, 2019, 2019, 2017, …
+$ type_fct                    &lt;fct&gt; preprint, preprint, preprint, preprint, pr…</code></pre>
+</div>
+<details class="code-fold">
+<summary>Lösung anzeigen</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Notiz:</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Subsample enthält 3547 Einträge</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="exercise-2-umwandlung-zu-tidy-text" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-umwandlung-zu-tidy-text">📋 Exercise 2: Umwandlung zu ‘tidy text’</h3>
+<ol type="1">
+<li>Erstellen Sie einen neuen Datensatz <code>subsample_new_tidy</code>,
+<ul>
+<li>Basierend auf dem Datensatz <code>review_subsample_new</code>, mit folgenden Schritten:
+<ol type="1">
+<li>Tokenisierung der Abstracts (<code>ab</code>) mit der Funktion <code>unnest_tokens</code>.</li>
+<li>Ausschluss von Stoppwörter mit <code>filter</code> und <code>stopwords$words</code> heraus.</li>
+<li>Speichern Sie diese Umwandlung, indem Sie einen neuen Datensatz mit dem Namen <code>subsample_new_tidy</code> erstellen.</li>
+</ol></li>
+</ul></li>
+<li>Prüfen Sie, ob die Umwandlung erfolgreich war (z.B. mit der Funktion <code>glimpse()</code>)</li>
+<li>✍️ Notieren Sie, wie viele Token im neuen Datensatz <code>subsample_new_tidy</code> enthalten sind.</li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Lösung anzeigen</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Erstellung des neuen Datensatzes `subsample_new_tidy`</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>subsample_new_tidy <span class="ot">&lt;-</span> review_subsample_new <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  tidytext<span class="sc">::</span><span class="fu">unnest_tokens</span>(<span class="st">"text"</span>, ab) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span>text <span class="sc">%in%</span> tidytext<span class="sc">::</span>stop_words<span class="sc">$</span>word)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Überprüfung</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>subsample_new_tidy <span class="sc">%&gt;%</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 498,535 × 41
+   id     title display_name author publication_date relevance_score so    so_id
+   &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;        &lt;list&gt; &lt;chr&gt;                      &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;
+ 1 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+ 2 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+ 3 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+ 4 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+ 5 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+ 6 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+ 7 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+ 8 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+ 9 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+10 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
+# ℹ 498,525 more rows
+# ℹ 33 more variables: host_organization &lt;chr&gt;, issn_l &lt;chr&gt;, url &lt;chr&gt;,
+#   pdf_url &lt;chr&gt;, license &lt;chr&gt;, version &lt;chr&gt;, first_page &lt;chr&gt;,
+#   last_page &lt;chr&gt;, volume &lt;chr&gt;, issue &lt;chr&gt;, is_oa &lt;lgl&gt;,
+#   is_oa_anywhere &lt;lgl&gt;, oa_status &lt;chr&gt;, oa_url &lt;chr&gt;,
+#   any_repository_has_fulltext &lt;lgl&gt;, language &lt;chr&gt;, grants &lt;list&gt;,
+#   cited_by_count &lt;int&gt;, counts_by_year &lt;list&gt;, publication_year &lt;int&gt;, …</code></pre>
+</div>
+<details class="code-fold">
+<summary>Lösung anzeigen</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Notiz:</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Der neue Datensatz enthält 498535 Token. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="exercise-3-auswertung-der-token" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-auswertung-der-token">📋 Exercise 3: Auswertung der Token</h3>
+<ol type="1">
+<li>Erstellen Sie einen neuen Datensatz <code>subsample_new_summarized</code>,
+<ul>
+<li>Fassen Sie auf der Grundlage des Datensatzes <code>subsample_new_tidy</code> die Häufigkeit der einzelnen Token zusammen, indem Sie die Funktion <code>count()</code> auf die Variable <code>text</code> anwenden. Verwenden Sie das Argument <code>sort = TRUE</code>, um den Datensatz nach absteigender Häufigkeit der Token zu sortieren.</li>
+<li>Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen <code>subsample_new_summarized</code> erstellen.</li>
+</ul></li>
+<li>Prüfen Sie, ob die Umwandlung erfolgreich war, indem Sie die Funktion <code>print()</code> verwenden.
+<ul>
+<li>Verwenden Sie das Argument <code>n = 50</code>, um die 50 wichtigsten Token anzuzeigen (nur möglich, wenn das Argument <code>sort = TRUE</code> bei der Ausführung der Funktion <code>count()</code> verwendet wurde)</li>
+</ul></li>
+<li>Verteilung der Token prüfen
+<ul>
+<li>Verwenden Sie die Funktion <code>datawizard::describe_distribution()</code>, um verschiedene Verteilungsparameter des neuen Datensatzes zu überprüfen</li>
+<li>✍️ Notieren Sie, wie viele Token ein Abstract durchschnittlich enthält.</li>
+</ul></li>
+</ol>
+<ul>
+<li><em>Optional:</em> Ergebnisse mit einer Wortwolke überprüfen
+<ul>
+<li>Basierend auf dem sortierten Datensatz <code>subsample_new_summarized</code>
+<ol type="1">
+<li>Auswahl der 50 häufigsten Token mit Hilfe der Funktion <code>top_n()</code></li>
+<li>Erstellen Sie eine <code>ggplot()</code>-Basis mit <code>label = text</code> und <code>size = n</code> als <code>aes()</code> und</li>
+<li>Benutze ggwordcloud::geom_text_wordclout() um die Wortwolke zu erstellen.</li>
+<li>Verwenden Sie scale_size_are(), um die Skalierung der Wortwolke zu übernehmen.</li>
+<li>Verwenden Sie <code>theme_minimal()</code> für eine saubere Visualisierung.</li>
+</ol></li>
+</ul></li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Lösung anzeigen</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Erstellung des neuen Datensatzes `subsample_new_summmarized`</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>subsample_new_summmarized <span class="ot">&lt;-</span> subsample_new_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(text, <span class="at">sort =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview Top 50 token</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>subsample_new_summmarized <span class="sc">%&gt;%</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 22,001 × 2
+   text              n
+   &lt;chr&gt;         &lt;int&gt;
+ 1 studies        7115
+ 2 review         5857
+ 3 title          5223
+ 4 sec            5133
+ 5 health         4591
+ 6 systematic     4197
+ 7 research       3597
+ 8 results        2981
+ 9 study          2949
+10 literature     2881
+11 data           2764
+12 analysis       2600
+13 interventions  2532
+14 included       2491
+15 methods        2469
+16 evidence       2229
+17 meta           2122
+18 quality        2069
+19 based          2017
+20 mental         1998
+21 reviews        1812
+22 social         1752
+23 articles       1734
+24 risk           1653
+25 search         1540
+26 outcomes       1515
+27 conducted      1498
+28 lt             1481
+29 background     1434
+30 19             1426
+31 identified     1420
+32 factors        1307
+33 effects        1300
+34 covid          1279
+35 findings       1254
+36 care           1248
+37 95             1247
+38 gt             1245
+39 published      1241
+40 related        1234
+41 abstract       1214
+42 databases      1211
+43 reported       1191
+44 2              1138
+45 conclusions    1133
+46 effect         1116
+47 ci             1111
+48 intervention   1110
+49 criteria       1077
+50 support        1065
+# ℹ 21,951 more rows</code></pre>
+</div>
+<details class="code-fold">
+<summary>Lösung anzeigen</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check distribution parameters </span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>subsample_new_summmarized <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  datawizard<span class="sc">::</span><span class="fu">describe_distribution</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Variable |  Mean |     SD | IQR |           Range | Skewness | Kurtosis |     n | n_Missing
+-------------------------------------------------------------------------------------------
+n        | 22.66 | 136.91 |   7 | [1.00, 7115.00] |    24.15 |   858.87 | 22001 |         0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Lösung anzeigen</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Notiz:</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Ein Absatz enthält durchschnittlich 22 Token. </span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Optional: Check results with a wordcloud</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>subsample_new_summmarized <span class="sc">%&gt;%</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">top_n</span>(<span class="dv">50</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">label =</span> text, <span class="at">size =</span> n)) <span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    ggwordcloud<span class="sc">::</span><span class="fu">geom_text_wordcloud</span>() <span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_size_area</span>(<span class="at">max_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="ms-exercise-08_solution_files/figure-html/exercise-3-solution-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-4-wortbeziehungen-im-fokus" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-4-wortbeziehungen-im-fokus">📋 Exercise 4: Wortbeziehungen im Fokus</h3>
+<section id="couting-word-pairs" class="level4">
+<h4 class="anchored" data-anchor-id="couting-word-pairs">4.1 Couting word pairs</h4>
+<ol type="1">
+<li>Zählen von häufigen Wortpaaren
+<ul>
+<li>Zählen Sie auf der Grundlage des Datensatzes <code>subsample_new_tidy</code> Wortpaare mit <code>widyr::pairwise_count()</code>, mit den Argumenten <code>item = text</code>, <code>feature = id</code> und <code>sort = TRUE.</code></li>
+<li>Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen <code>subsample_new_word_pairs</code> erstellen.</li>
+</ul></li>
+<li>Prüfen Sie, ob die Umwandlung erfolgreich war, indem Sie die Funktion <code>print()</code> verwenden.
+<ul>
+<li>Verwenden Sie das Argument <code>n = 50</code>, um die 50 wichtigsten Token anzuzeigen (nur möglich, wenn bei der Ausführung der Funktion <code>count()</code> das Argument <code>sort = TRUE</code> verwendet wurde)</li>
+</ul></li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Lösung anzeigen</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Couting word pairs among sections</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>subsample_new_word_pairs <span class="ot">&lt;-</span> subsample_new_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  widyr<span class="sc">::</span><span class="fu">pairwise_count</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">item =</span> text,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">feature =</span> id,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Check </span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>subsample_new_word_pairs <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12,662,794 × 3
+   item1      item2          n
+   &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;
+ 1 review     systematic  2068
+ 2 systematic review      2068
+ 3 studies    review      1909
+ 4 review     studies     1909
+ 5 studies    systematic  1668
+ 6 results    review      1668
+ 7 review     results     1668
+ 8 systematic studies     1668
+ 9 studies    results     1502
+10 results    studies     1502
+11 research   review      1483
+12 review     research    1483
+13 results    systematic  1478
+14 systematic results     1478
+15 literature review      1471
+16 review     literature  1471
+17 methods    review      1453
+18 review     methods     1453
+19 methods    results     1387
+20 results    methods     1387
+21 study      review      1336
+22 review     study       1336
+23 methods    systematic  1320
+24 systematic methods     1320
+25 studies    methods     1306
+26 methods    studies     1306
+27 included   review      1236
+28 review     included    1236
+29 review     background  1227
+30 background review      1227
+31 methods    background  1224
+32 background methods     1224
+33 research   systematic  1216
+34 systematic research    1216
+35 results    background  1204
+36 background results     1204
+37 included   studies     1198
+38 studies    included    1198
+39 study      studies     1197
+40 studies    study       1197
+41 study      systematic  1195
+42 systematic study       1195
+43 research   studies     1178
+44 studies    research    1178
+45 health     review      1153
+46 review     health      1153
+47 analysis   review      1152
+48 review     analysis    1152
+49 studies    background  1148
+50 background studies     1148
+# ℹ 12,662,744 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="pairwise-correlation" class="level4">
+<h4 class="anchored" data-anchor-id="pairwise-correlation">4.2 Pairwise correlation</h4>
+<ol type="1">
+<li>Ermittlung der paarweisen Korrelation
+<ul>
+<li>Basierend auf dem Datensatz <code>subsample_new_tidy</code>,</li>
+<li>gruppieren Sie die Daten mit der Funktion <code>group_by()</code> nach der Variable <code>text</code> und</li>
+<li>verwenden Sie <code>filter(n() &gt;= X)</code>, um nur Token zu verwenden, die mindestens in einer bestimmte Anzahl (<code>X</code>) vorkommen; Sie können für <code>X</code> einen Wert Ihrer Wahl wählen, ich würde jedoch dringend empfehlen, ein <code>X &gt; 100</code> zu wählen, da die folgende Funktion sonst möglicherweise nicht in der Lage ist, die Berechnung durchzuführen.</li>
+<li>Erstellen Sie Wortkorrelationen mit <code>widyr::pairwise_cor()</code>, mit den Argumenten <code>item = text</code>,<code>feature = id</code> und <code>sort = TRUE</code>.</li>
+<li>Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen <code>subsample_new_corr</code> erstellen.</li>
+</ul></li>
+<li>Prüfen Sie die Paare mit der höchsten Korrelation mit der Funktion <code>print().</code>.</li>
+</ol>
+<div class="cell">
+<details class="code-fold">
+<summary>Lösung anzeigen</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Getting pairwise correlation </span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>subsample_new_corr <span class="ot">&lt;-</span> subsample_new_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(text) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&gt;=</span> <span class="dv">250</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairwise_cor</span>(text, id, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check pairs with highest correlation</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>subsample_new_corr <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 131,406 × 3
+   item1        item2        correlation
+   &lt;chr&gt;        &lt;chr&gt;              &lt;dbl&gt;
+ 1 sec          title              0.935
+ 2 title        sec                0.935
+ 3 ci           95                 0.881
+ 4 95           ci                 0.881
+ 5 19           covid              0.844
+ 6 covid        19                 0.844
+ 7 items        preferred          0.835
+ 8 preferred    items              0.835
+ 9 pandemic     covid              0.812
+10 covid        pandemic           0.812
+11 vaccination  vaccine            0.796
+12 vaccine      vaccination        0.796
+13 trials       controlled         0.763
+14 controlled   trials             0.763
+15 web          science            0.755
+16 science      web                0.755
+17 sec          objective          0.715
+18 objective    sec                0.715
+19 srs          sr                 0.710
+20 sr           srs                0.710
+21 randomized   controlled         0.708
+22 controlled   randomized         0.708
+23 pandemic     19                 0.695
+24 19           pandemic           0.695
+25 objective    title              0.669
+26 title        objective          0.669
+27 gt           lt                 0.662
+28 lt           gt                 0.662
+29 trials       randomized         0.658
+30 randomized   trials             0.658
+31 depression   anxiety            0.650
+32 anxiety      depression         0.650
+33 bold         ns4                0.636
+34 ns4          bold               0.636
+35 methods      background         0.613
+36 background   methods            0.613
+37 inclusion    criteria           0.607
+38 criteria     inclusion          0.607
+39 reporting    preferred          0.599
+40 preferred    reporting          0.599
+41 items        reporting          0.599
+42 reporting    items              0.599
+43 peer         reviewed           0.592
+44 reviewed     peer               0.592
+45 1            2                  0.585
+46 2            1                  0.585
+47 sec          conclusions        0.577
+48 conclusions  sec                0.577
+49 registration prospero           0.574
+50 prospero     registration       0.574
+# ℹ 131,356 more rows</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="exercise-5-inhaltlicher-vergleich" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-5-inhaltlicher-vergleich">📋 Exercise 5: Inhaltlicher Vergleich</h3>
+<ul>
+<li>Vergleichen Sie die Ergebnisse der Übung mit den Auswertungen der Folien:
+<ul>
+<li>Wie unterscheiden sich die Ergebnisse?</li>
+<li>Würden Sie die Bücher bzw. Buchabschnitte mit in die Untersuchung integrieren?</li>
+</ul></li>
+</ul>
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-aria2024" class="csl-entry" role="listitem">
+Aria, Massimo, Trang Le, Corrado Cuccurullo, Alessandra Belfiore, and June Choe. 2024. <span>“openalexR: An R-Tool for Collecting Bibliometric Data from OpenAlex.”</span> <em>The R Journal</em> 15 (4): 167–80. <a href="https://doi.org/10.32614/rj-2023-089">https://doi.org/10.32614/rj-2023-089</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Copyright 2024, Christoph Adrian</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/exercises/ms-exercise-08_solution.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>This page is built with ☕ &amp; <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

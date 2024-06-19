@@ -1,0 +1,15 @@
+{
+  "hash": "94b253be3746e3d595b4ebc4120ae9c9",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"KI nutzen, um KI-Folgen zu verstehen\"\nsubtitle: \"Projektseminar 24/25\"\ndate: 04/01/2024\ndate-modified: last-modified\ndate-format: \"DD.MM.YYYY\"\nauthor: \n  - name: Adrian Meier \n    url: /course-team.html\n    affiliation: Chair of Communication Science\n    affiliation-url: https://www.kowi.rw.fau.de/prof-dr-adrian-meier/\n  - name: Christoph Adrian \n    url: /course-team.html\n    affiliation: Chair of Communication Science\n    affiliation-url: https://www.kowi.rw.fau.de/person/christoph-adrian/\n---\n\n\nGenerative und kommunikative KI (bspw. ChatGPT, Bing, Gemini) ist derzeit in aller Munde. Den KI-Innovationen der letzten Jahre wird als „general purpose technology“ eine enorme transformative Kraft zugeschrieben, mit potenziell weitreichenden Folgen für Individuen, Wirtschaft und Gesellschaft. Die sozialwissenschaftliche Forschung auf diesem Gebiet entwickelt sich – ebenso wie ihr soziotechnologischer Gegenstand – rasant. Binnen kürzester Zeit entstehen weltweit hunderte Studien, die die individuellen und gesellschaftlichen Implikationen von generativer KI aus psychologischer, kommunikationswissenschaftlicher oder soziologischer Perspektive untersuchen. Gleichzeitig ist der Bedarf an evidenzbasierten Prognosen über mögliche Folgen von generativer KI groß, etwa im Kontext von Regulierungsvorhaben wie dem AI Act der EU. Wie jedoch lassen sich die rasant anwachsende Forschung kosten- und ressourceneffizient überblicken und Handlungsempfehlungen aus ihr ableiten?\n\nEine mögliche Antwort liegt in der KI selbst. In diesem Projektseminar wollen wir daher den Versuch wagen, die aktuelle Forschung zu gesellschaftlichen Folgen von generativer und kommunikativer KI mit Hilfe von KI-gestützten Systematic Review Methoden schnell und zuverlässig zu synthetisieren (siehe begleitendes Seminar Angewandte Methoden).\n\n\n::: {.cell}\n\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

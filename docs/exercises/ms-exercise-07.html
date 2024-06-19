@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Kommunikationswissenschaftliches Projektseminar - Session 1</title>
+<title>Kommunikationswissenschaftliches Projektseminar - API mining and data wrangling with R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -72,8 +106,8 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Kommunikationswissenschaftliches Projektseminar - Session 1">
-<meta property="og:description" content="Kick-Off">
+<meta property="og:title" content="Kommunikationswissenschaftliches Projektseminar - API mining and data wrangling with R">
+<meta property="og:description" content="Session 07 - Exercise">
 <meta property="og:site_name" content="Kommunikationswissenschaftliches Projektseminar">
 </head>
 
@@ -86,7 +120,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Session 1</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">API mining and data wrangling with R</li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -148,41 +182,18 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
- <span class="menu-text">Methodenseminar</span></a>
+ <span class="menu-text">Kursunterlagen</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#" aria-expanded="true">
- <span class="menu-text">Session 07</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../slides/slides-07.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Slides</span></a>
+  <a href="../ms-schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Methodenseminar</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../exercises/exercise-07.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Übung</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../exercises/showcase-07.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Showcase</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -224,18 +235,29 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#prepare" id="toc-prepare" class="nav-link active" data-scroll-target="#prepare">Prepare</a></li>
-  <li><a href="#participate" id="toc-participate" class="nav-link" data-scroll-target="#participate">Participate</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a></li>
+  <li><a href="#preparation" id="toc-preparation" class="nav-link" data-scroll-target="#preparation">Preparation</a>
+  <ul>
+  <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
+  <li><a href="#import-und-vorverarbeitung-der-daten" id="toc-import-und-vorverarbeitung-der-daten" class="nav-link" data-scroll-target="#import-und-vorverarbeitung-der-daten">Import und Vorverarbeitung der Daten</a></li>
+  </ul></li>
+  <li><a href="#praktische-anwendung" id="toc-praktische-anwendung" class="nav-link" data-scroll-target="#praktische-anwendung">🛠️ Praktische Anwendung</a>
+  <ul>
+  <li><a href="#exercise-1-sprache-der-publikationen" id="toc-exercise-1-sprache-der-publikationen" class="nav-link" data-scroll-target="#exercise-1-sprache-der-publikationen">📋 Exercise 1: Sprache der Publikationen</a></li>
+  <li><a href="#exercise-2-typ-der-publikationen" id="toc-exercise-2-typ-der-publikationen" class="nav-link" data-scroll-target="#exercise-2-typ-der-publikationen">📋 Exercise 2: Typ der Publikationen</a></li>
+  <li><a href="#exercise-3-forschungsfeld-der-publikationen" id="toc-exercise-3-forschungsfeld-der-publikationen" class="nav-link" data-scroll-target="#exercise-3-forschungsfeld-der-publikationen">📋 Exercise 3: Forschungsfeld der Publikationen</a></li>
+  <li><a href="#exercise-4-erstellung-subsample" id="toc-exercise-4-erstellung-subsample" class="nav-link" data-scroll-target="#exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</a></li>
+  </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/sessions/session-01.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/exercises/ms-exercise-07.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Session 1</h1>
-<p class="subtitle lead">Kick-Off</p>
+<h1 class="title">API mining and data wrangling with R</h1>
+<p class="subtitle lead">Session 07 - Exercise</p>
 </div>
 
 
@@ -243,6 +265,12 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">19.06.2024</p>
+    </div>
+  </div>
   
     
   </div>
@@ -252,34 +280,233 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout callout-style-simple callout-tip no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><a href="https://github.com/faucommsci/ps_24/blob/main/exercises/ms-exercise-07.qmd"><img src="https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg" class="img-fluid" alt="Quarto Document"></a> Link to source file</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important
+Ziel der Anwendung: Textanalyse in R kennenlernen
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Please make sure that you answered the survey send to you by (StudOn) mail.</p>
+<ul>
+<li><p>In folgenden Übungsaufgaben dienen dazu, die Datengrundlage für die in den nächsten Sitzungen anstehende(n) Textanalyse(n) weiter inhaltlich plausibel einzugrenzen bzw. zu präzisieren.</p></li>
+<li><p>Finales Ziel ist die Erstellung eines Code-Chunks, mit dessen Hilfe der Datensatz review_subsample erstellt werden soll. Bitte arbeitet die Übung durch, wir besprechen zu Anfang der nächsten Sitzung dann eure Vorschläge.</p></li>
+</ul>
 </div>
 </div>
-<section id="prepare" class="level2">
-<h2 class="anchored" data-anchor-id="prepare">Prepare</h2>
-<p>✍️ Fill out the short survey before the first session (see <img src="https://www.studon.fau.de/favicon.ico" class="img-fluid" width="16"> <a href="https://www.studon.fau.de/crs5349138.html">StudOn</a> for Link)</p>
-<p>📨 Join <img src="https://raw.githubusercontent.com/zulip/zulip/main/static/images/favicon.svg" class="img-fluid" width="16"> <a href="https://fau-dbd.zulipchat.com">Zulip</a> using the invitation (please check your email address used for StudOn).</p>
-<p>📖 Read the <a href="../course-syllabus.html">syllabus</a></p>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Todays’s data basis: <a href="https://openalex.org/">OpenAlex</a>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>OpenAlex is a free and open catalog of the global research system. It’s named after the ancient Library of Alexandria and made by the nonprofit OurResearch.</p>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://help.openalex.org/~gitbook/image?url=https%3A%2F%2F3117786224-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa3BRxfacarwiv3wTnHuB%252Fuploads%252FHk254kXRAMOIXVCYDDT9%252Fopenalex-overview-diagram.png%3Falt%3Dmedia%26token%3D133a87f6-6435-47c8-a272-0b108576e36a&amp;width=768&amp;dpr=1&amp;quality=100&amp;sign=4876c8bb81a37dece37cdee19427efddbfa9d6d6337a2ca8a03524c0c8791982" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<blockquote class="blockquote">
+<p><em>At the heart of OpenAlex is our dataset—a catalog of <a href="https://help.openalex.org/how-it-works/works">works</a>. A work is any sort of scholarly output. A research article is one kind of work, but there are others such as datasets, books, and dissertations. We keep track of these works—their titles (and abstracts and full text in many cases), when they were created, etc. But that’s not all we do. We also keep track of the connections between these works, finding associations through things like <a href="https://help.openalex.org/how-it-works/sources">journals</a>, <a href="https://help.openalex.org/how-it-works/authors">authors</a>, <a href="https://help.openalex.org/how-it-works/institutions">institutional affiliations</a>, citations, <a href="https://help.openalex.org/how-it-works/topics">topics</a>, and <a href="https://help.openalex.org/how-it-works/funders">funders</a>. There are hundreds of millions of works out there, and tens of thousands more being created every day, so it’s important that we have these relationships to help us make sense of research at a large scale.</em></p>
+</blockquote>
 </section>
-<section id="participate" class="level2">
-<h2 class="anchored" data-anchor-id="participate">Participate</h2>
-<p>🖥️ <a href="../slides/slides-01.html">Session 01 - Kick Off</a></p>
-<p><br></p>
-<div style="font-size: 0.875em;">
-<p>Back to <a href="../index.html" title="Course schedule">course schedule</a> ⏎</p>
+<section id="preparation" class="level2">
+<h2 class="anchored" data-anchor-id="preparation">Preparation</h2>
+<div class="callout callout-style-simple callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Wichtige Information
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bitte stellen Sie sicher, dass Sie das jeweilige R-Studio Projekt zur Übung geöffnet haben. Nur so funktionieren alle Dependencies korrekt.</li>
+<li>Um den einwandfreien Ablauf der Übung zu gewährleisten, wird für die Aufgaben auf eine eigenständige Datenerhebung verzichtet und ein Übungsdatensatz zu verfügung gestelt.</li>
+</ul>
+</div>
+</div>
+<section id="packages" class="level3">
+<h3 class="anchored" data-anchor-id="packages">Packages</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  here, qs, <span class="co"># file management</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  magrittr, janitor, <span class="co"># data wrangling</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  easystats, sjmisc, <span class="co"># data analysis</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ggpubr, <span class="co"># visualization</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  openalexR, </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  tidyverse <span class="co"># load last to avoid masking issues</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="import-und-vorverarbeitung-der-daten" class="level3">
+<h3 class="anchored" data-anchor-id="import-und-vorverarbeitung-der-daten">Import und Vorverarbeitung der Daten</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import from local</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>review_works <span class="ot">&lt;-</span> qs<span class="sc">::</span><span class="fu">qread</span>(<span class="fu">here</span>(<span class="st">"data/exercise-07/openalex-review_works-2013_2023.qs"</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create correct data</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>review_works_correct <span class="ot">&lt;-</span> review_works <span class="sc">%&gt;%</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create additional factor variables</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">publication_year_fct =</span> <span class="fu">as.factor</span>(publication_year), </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">type_fct =</span> <span class="fu">as.factor</span>(type)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="praktische-anwendung" class="level2">
+<h2 class="anchored" data-anchor-id="praktische-anwendung">🛠️ Praktische Anwendung</h2>
+<div class="callout callout-style-simple callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Achtung, bitte lesen!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bevor Sie mit der Arbeit an den folgenden 📋 <strong>Exercises</strong> beginnen, stellen Sie bitte sicher, dass Sie alle Chunks des Abschnitts <a href="#preparation">Preparation</a> gerendert haben. Das können Sie tun, indem Sie den “<em>Run all chunks above</em>”-Knopf <img src="../img/rstudio-button-render_all_chunks_above.png" class="img-fluid">des nächsten Chunks benutzen.</li>
+<li>Bei Fragen zum Code lohnt sich ein Blick in den <strong>Showcase</strong> (.qmd oder .html). Beim Showcase handelt es sich um eine kompakte Darstellung des in der Präsentation verwenden R-Codes. Sie können das Showcase also nutzen, um sich die Code-Bausteine anzusehen, die für die R-Outputs auf den Slides benutzt wurden.</li>
+</ul>
+</div>
+</div>
+<section id="exercise-1-sprache-der-publikationen" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-sprache-der-publikationen">📋 Exercise 1: Sprache der Publikationen</h3>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ziel der Aufgabe
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis von deren Sprache (<code>language</code>)</li>
+<li>Hintergrundinformation zur <a href="https://docs.openalex.org/api-entities/works/work-object#language">Variable <code>language</code></a> finden Sie in der API-Dokumentation von OpenAlex.</li>
+</ul>
+</div>
+</div>
+<ul>
+<li>Nutzen Sie die Funktion <code>sjmisc::frq()</code> und schauen Sie sich im Datensatz <code>review_works_correct</code> die Variablen <code>language</code> an. Verwenden Sie das Argument <code>sort.frq = "desc"</code>, um die Häufigkeit der Sprachen absteigend zu sortieren.</li>
+<li>Notieren Sie sich den jeweilgen <a href="https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes">ISO 639-1 language code</a>, um Ihn später bei <a href="#exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</a> als Filter zu nutzen.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create frequency table for the variable language</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exercise-2-typ-der-publikationen" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-typ-der-publikationen">📋 Exercise 2: Typ der Publikationen</h3>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ziel der Aufgabe
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis deres Typen (<code>type</code>).</li>
+<li>Hintergrundinformation zur <a href="https://docs.openalex.org/api-entities/works/work-object#type">Variable <code>type</code></a> finden Sie in der API-Dokumentation von OpenAlex.</li>
+</ul>
+</div>
+</div>
+<ul>
+<li>Nutzen Sie die Funktion <code>sjmisc::frq()</code> und schauen Sie sich im Datensatz <code>review_works_correct</code> die Variablen <code>type</code> an. Verwenden Sie das Argument <code>sort.frq = "desc"</code>, um die Typen in Abhängigkeit Ihrer Häufigkeit absteigend zu sortieren.</li>
+<li>Notieren Sie sich die Ausprägungen der Variable type, die aus Ihrer Sicht später bei <a href="#exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</a> als Filter genutzt werden soll.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create frequency table for the variable type</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exercise-3-forschungsfeld-der-publikationen" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-forschungsfeld-der-publikationen">📋 Exercise 3: Forschungsfeld der Publikationen</h3>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ziel der Aufgabe
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><p>Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis des von OpenAlex dem Artikel zugeordnenten Foschungsfeldes (<code>field)</code></p></li>
+<li><p>Hintergrundinformation zur <a href="https://docs.openalex.org/api-entities/topics/topic-object#field">Variable <code>field</code></a> finden Sie in der API-Dokumentation von OpenAlex.</p></li>
+</ul>
+</div>
+</div>
+<ul>
+<li>Basierend auf dem Datensatz <code>review_works_correct</code>
+<ul>
+<li>nutzen Sie die Funktion <code>unnest()</code> um die Variablen der <code>topics</code>-Liste zu extrahieren. Verwenden Sie dabei das Argument <code>names_sep = "_"</code>. um doppelte Variablennamen durch Hinzufügen des Prefixes <code>topics_</code> zu verhindern.</li>
+<li>filtern Sie anschließen mit Hilfe der Funktion <code>filter</code> und der Variable bzw. dem Argument <code>topics_name == "field"</code> nur die Informationen zum Forschungsfeld, sowie mit der Variable bzw. dem Argument <code>topics_i == "1"</code> nur die erste Zuordnung.</li>
+<li>Nutzen Sie die Funktion <code>sjmisc::frq()</code> und schauen Sie sich die Variablen <code>topics_display_name</code> an. Verwenden Sie das Argument <code>sort.frq = "desc"</code>, um die Forschungsfelder in Abhängigkeit Ihrer Häufigkeit absteigend zu sortieren.</li>
+</ul></li>
+<li>Notieren Sie sich die Ausprägungen der Variable topics_display_name, die aus Ihrer Sicht später bei <a href="#exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</a> als Filter genutzt werden soll.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Unnest topis variable and create frequency table for the variable topics_display_name</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exercise-4-erstellung-subsample" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</h3>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ziel der Aufgabe
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Erstellung sie den Datensatz <code>review_subsample</code>, in dem Sie mit Hilfe der Funktionen <code>select()</code> und/oder <code>filter()</code> das Datenmaterial weiter eingrenzen. Sie können sich sowohl auf die Variablen aus der Übung, als auch auf die aus der Sitzung (bzw. den Slides) beziehen.</li>
+<li>Der Code dieses Chunks wird in der nächsten Sitzung benötigt bzw. besprochen, halten Sie diesen deshalb bitte bereit.</li>
+</ul>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>review_subsample <span class="ot">&lt;-</span> review_works_correct <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -844,7 +1071,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/sessions/session-01.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/exercises/ms-exercise-07.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with ☕ &amp; <a href="https://quarto.org/">Quarto</a>.</p>
 </div>

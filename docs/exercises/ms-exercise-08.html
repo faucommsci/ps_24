@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Kommunikationswissenschaftliches Projektseminar - API mining and data wrangling with R</title>
+<title>Kommunikationswissenschaftliches Projektseminar - Text processing with R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -54,7 +54,27 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -64,8 +84,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../exercises/showcase-07.html" rel="next">
-<link href="../slides/slides-07.html" rel="prev">
 <link href="../img/logo_fau_red.svg" rel="icon" type="image/svg+xml">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -108,8 +126,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Kommunikationswissenschaftliches Projektseminar - API mining and data wrangling with R">
-<meta property="og:description" content="Session 07 - Exercise">
+<meta property="og:title" content="Kommunikationswissenschaftliches Projektseminar - Text processing with R">
+<meta property="og:description" content="Session 08 - Exercise">
 <meta property="og:site_name" content="Kommunikationswissenschaftliches Projektseminar">
 </head>
 
@@ -122,7 +140,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Methodenseminar</li><li class="breadcrumb-item"><a href="../slides/slides-07.html">Session 07</a></li><li class="breadcrumb-item"><a href="../exercises/exercise-07.html">Übung</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Text processing with R</li></ol></nav>
         <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -184,41 +202,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
- <span class="menu-text">Methodenseminar</span></a>
+ <span class="menu-text">Kursunterlagen</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#" aria-expanded="true">
- <span class="menu-text">Session 07</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../slides/slides-07.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Slides</span></a>
+  <a href="../ms-schedule.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Methodenseminar</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../exercises/exercise-07.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Übung</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../exercises/showcase-07.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Showcase</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -268,21 +263,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#praktische-anwendung" id="toc-praktische-anwendung" class="nav-link" data-scroll-target="#praktische-anwendung">🛠️ Praktische Anwendung</a>
   <ul>
-  <li><a href="#exercise-1-sprache-der-publikationen" id="toc-exercise-1-sprache-der-publikationen" class="nav-link" data-scroll-target="#exercise-1-sprache-der-publikationen">📋 Exercise 1: Sprache der Publikationen</a></li>
-  <li><a href="#exercise-2-typ-der-publikationen" id="toc-exercise-2-typ-der-publikationen" class="nav-link" data-scroll-target="#exercise-2-typ-der-publikationen">📋 Exercise 2: Typ der Publikationen</a></li>
-  <li><a href="#exercise-3-forschungsfeld-der-publikationen" id="toc-exercise-3-forschungsfeld-der-publikationen" class="nav-link" data-scroll-target="#exercise-3-forschungsfeld-der-publikationen">📋 Exercise 3: Forschungsfeld der Publikationen</a></li>
-  <li><a href="#exercise-4-erstellung-subsample" id="toc-exercise-4-erstellung-subsample" class="nav-link" data-scroll-target="#exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</a></li>
+  <li><a href="#exercise-1-neues-subsample" id="toc-exercise-1-neues-subsample" class="nav-link" data-scroll-target="#exercise-1-neues-subsample">📋 Exercise 1: Neues Subsample</a></li>
+  <li><a href="#exercise-2-umwandlung-zu-tidy-text" id="toc-exercise-2-umwandlung-zu-tidy-text" class="nav-link" data-scroll-target="#exercise-2-umwandlung-zu-tidy-text">📋 Exercise 2: Umwandlung zu ‘tidy text’</a></li>
+  <li><a href="#exercise-3-auswertung-der-token" id="toc-exercise-3-auswertung-der-token" class="nav-link" data-scroll-target="#exercise-3-auswertung-der-token">📋 Exercise 3: Auswertung der Token</a></li>
+  <li><a href="#exercise-4-wortbeziehungen-im-fokus" id="toc-exercise-4-wortbeziehungen-im-fokus" class="nav-link" data-scroll-target="#exercise-4-wortbeziehungen-im-fokus">📋 Exercise 4: Wortbeziehungen im Fokus</a>
+  <ul class="collapse">
+  <li><a href="#couting-word-pairs" id="toc-couting-word-pairs" class="nav-link" data-scroll-target="#couting-word-pairs">4.1 Couting word pairs</a></li>
+  <li><a href="#pairwise-correlation" id="toc-pairwise-correlation" class="nav-link" data-scroll-target="#pairwise-correlation">4.2 Pairwise correlation</a></li>
+  </ul></li>
+  <li><a href="#exercise-5-inhaltlicher-vergleich" id="toc-exercise-5-inhaltlicher-vergleich" class="nav-link" data-scroll-target="#exercise-5-inhaltlicher-vergleich">📋 Exercise 5: Inhaltlicher Vergleich</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/exercises/exercise-07.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/exercises/ms-exercise-08.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Methodenseminar</li><li class="breadcrumb-item"><a href="../slides/slides-07.html">Session 07</a></li><li class="breadcrumb-item"><a href="../exercises/exercise-07.html">Übung</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">API mining and data wrangling with R</h1>
-<p class="subtitle lead">Session 07 - Exercise</p>
+<h1 class="title">Text processing with R</h1>
+<p class="subtitle lead">Session 08 - Exercise</p>
 </div>
 
 
@@ -293,7 +293,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">13.06.2024</p>
+      <p class="date">19.06.2024</p>
     </div>
   </div>
   
@@ -305,24 +305,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<!-- ::: {.callout-tip icon="false"}
-[![Quarto Document](/img/badge-quarto_document.svg)](https://github.com/faucommsci/dbd_2023/blob/main/exercise/exercise-03.qmd) Download source file
-
-[![Binder RStudio](/img/badge-binder_rstudio.svg)](https://mybinder.org/v2/gh/faucommsci/dbd_binder/HEAD?urlpath=rstudio) Open this exercise in interactive and executable environment
-::: -->
+<div class="callout callout-style-simple callout-tip no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><a href="https://github.com/faucommsci/ps_24/blob/main/exercises/ms-exercise-08.qmd"><img src="https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg" class="img-fluid" alt="Quarto Document"></a> Link to source file</p>
+</div>
+</div>
+</div>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Ziel der Anwendung: Eingrenzung der Suchergebnisse
+Ziel der Anwendung: Textanalyse in R kennenlernen
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><p>In folgenden Übungsaufgaben dienen dazu, die Datengrundlage für die in den nächsten Sitzungen anstehende(n) Textanalyse(n) weiter inhaltlich plausibel einzugrenzen bzw. zu präzisieren.</p></li>
-<li><p>Finales Ziel ist die Erstellung eines Code-Chunks, mit dessen Hilfe der Datensatz review_subsample erstellt werden soll. Bitte arbeitet die Übung durch, wir besprechen zu Anfang der nächsten Sitzung dann eure Vorschläge.</p></li>
+<li>Auffrischung der Grundkenntnisse im Umgang mit R, tidyverse und ggplot2</li>
+<li>Typische Schritte der Textanalyse mit <code>tidytext</code> kennenlernen, von der Tokenisierung bis zur Visualisierung.</li>
 </ul>
 </div>
 </div>
@@ -338,17 +343,12 @@ Todays’s data basis: <a href="https://openalex.org/">OpenAlex</a>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>OpenAlex is a free and open catalog of the global research system. It’s named after the ancient Library of Alexandria and made by the nonprofit OurResearch.</p>
+<ul>
+<li><p>Via API bzw. openalexR <span class="citation" data-cites="aria2024">(<a href="#ref-aria2024" role="doc-biblioref">Aria et al. 2024</a>)</span> gesammelte “works” der Datenbank <a href="https://openalex.org/">OpenAlex</a> mit Bezug zu Literaturriews in den Sozialwissenschaften zwischen 2013 und 2023</p></li>
+<li><p>Detaillierte Informationen und Ergebnisse zur Suchquery finden Sie <a href="https://openalex.org/works?page=1&amp;filter=display_name.search%3A%28literature%20OR%20systematic%29%20AND%20review,primary_topic.domain.id%3Adomains%2F2,publication_year%3A2014%20-%202024&amp;group_by=publication_year,open_access.is_oa,primary_topic.field.id">hier</a>.</p></li>
+</ul>
 </div>
 </div>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://help.openalex.org/~gitbook/image?url=https%3A%2F%2F3117786224-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa3BRxfacarwiv3wTnHuB%252Fuploads%252FHk254kXRAMOIXVCYDDT9%252Fopenalex-overview-diagram.png%3Falt%3Dmedia%26token%3D133a87f6-6435-47c8-a272-0b108576e36a&amp;width=768&amp;dpr=1&amp;quality=100&amp;sign=4876c8bb81a37dece37cdee19427efddbfa9d6d6337a2ca8a03524c0c8791982" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
-</figure>
-</div>
-<blockquote class="blockquote">
-<p><em>At the heart of OpenAlex is our dataset—a catalog of <a href="https://help.openalex.org/how-it-works/works">works</a>. A work is any sort of scholarly output. A research article is one kind of work, but there are others such as datasets, books, and dissertations. We keep track of these works—their titles (and abstracts and full text in many cases), when they were created, etc. But that’s not all we do. We also keep track of the connections between these works, finding associations through things like <a href="https://help.openalex.org/how-it-works/sources">journals</a>, <a href="https://help.openalex.org/how-it-works/authors">authors</a>, <a href="https://help.openalex.org/how-it-works/institutions">institutional affiliations</a>, citations, <a href="https://help.openalex.org/how-it-works/topics">topics</a>, and <a href="https://help.openalex.org/how-it-works/funders">funders</a>. There are hundreds of millions of works out there, and tens of thousands more being created every day, so it’s important that we have these relationships to help us make sense of research at a large scale.</em></p>
-</blockquote>
 </section>
 <section id="preparation" class="level2">
 <h2 class="anchored" data-anchor-id="preparation">Preparation</h2>
@@ -370,25 +370,18 @@ Wichtige Information
 </div>
 <section id="packages" class="level3">
 <h3 class="anchored" data-anchor-id="packages">Packages</h3>
-<ul>
-<li><p>Zum Laden der Pakete wird das Paket <code>pacman::pload()</code> genutzt, dass gegenüber der herkömmlichen Methode mit <code>library()</code> eine Reihe an Vorteile hat:</p>
-<ul>
-<li>Prägnante Syntax</li>
-<li>Automatische Installation (wenn Paket noch nicht vorhanden)</li>
-<li>Laden mehrerer Pakete auf einmal</li>
-<li>Automatische Suche nach <code>dependencies</code></li>
-</ul></li>
-</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">"pacman"</span>)) <span class="fu">install.packages</span>(<span class="st">"pacman"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  here, qs, <span class="co"># file management</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  magrittr, janitor, <span class="co"># data wrangling</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  easystats, sjmisc, <span class="co"># data analysis</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ggpubr, <span class="co"># visualization</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  openalexR, </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  tidyverse <span class="co"># load last to avoid masking issues</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    here, qs, <span class="co"># file management</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    magrittr, janitor, <span class="co"># data wrangling</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    easystats, sjmisc, <span class="co"># data analysis</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    gt, gtExtras, <span class="co"># table visualization</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    ggpubr, ggwordcloud, <span class="co"># visualization</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    tidytext, widyr, <span class="co"># text analysis    </span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    openalexR, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    tidyverse <span class="co"># load last to avoid masking issues</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="import-und-vorverarbeitung-der-daten" class="level3">
@@ -425,9 +418,9 @@ Achtung, bitte lesen!
 </ul>
 </div>
 </div>
-<section id="exercise-1-sprache-der-publikationen" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-1-sprache-der-publikationen">📋 Exercise 1: Sprache der Publikationen</h3>
-<div class="callout callout-style-simple callout-note callout-titled">
+<section id="exercise-1-neues-subsample" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-1-neues-subsample">📋 Exercise 1: Neues Subsample</h3>
+<div class="callout callout-style-simple callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
@@ -438,107 +431,165 @@ Ziel der Aufgabe
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis von deren Sprache (<code>language</code>)</li>
-<li>Hintergrundinformation zur <a href="https://docs.openalex.org/api-entities/works/work-object#language">Variable <code>language</code></a> finden Sie in der API-Dokumentation von OpenAlex.</li>
+<li>Erstellung eines neuen Datensatzes <code>review_subsample_new</code>, der sich auf <em>englischsprachig</em> <em>Bücher bzw. Buchrartikel</em> beschränkt.</li>
 </ul>
 </div>
 </div>
+<ol type="1">
+<li>Erstellen Sie einen neuen Datensatz <code>review_subsample_new</code>
 <ul>
-<li>Nutzen Sie die Funktion <code>sjmisc::frq()</code> und schauen Sie sich im Datensatz <code>review_works_correct</code> die Variablen <code>language</code> an. Verwenden Sie das Argument <code>sort.frq = "desc"</code>, um die Häufigkeit der Sprachen absteigend zu sortieren.</li>
-<li>Notieren Sie sich den jeweilgen <a href="https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes">ISO 639-1 language code</a>, um Ihn später bei <a href="#exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</a> als Filter zu nutzen.</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create frequency table for the variable language</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="exercise-2-typ-der-publikationen" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-2-typ-der-publikationen">📋 Exercise 2: Typ der Publikationen</h3>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Ziel der Aufgabe
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<li>Basierend auf dem Datensatzes <code>review_works_correct</code>:
+<ol type="1">
+<li>Nutzen Sie die <code>filter()</code>-Funktion, um
 <ul>
-<li>Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis deres Typen (<code>type</code>).</li>
-<li>Hintergrundinformation zur <a href="https://docs.openalex.org/api-entities/works/work-object#type">Variable <code>type</code></a> finden Sie in der API-Dokumentation von OpenAlex.</li>
-</ul>
-</div>
-</div>
-<ul>
-<li>Nutzen Sie die Funktion <code>sjmisc::frq()</code> und schauen Sie sich im Datensatz <code>review_works_correct</code> die Variablen <code>type</code> an. Verwenden Sie das Argument <code>sort.frq = "desc"</code>, um die Typen in Abhängigkeit Ihrer Häufigkeit absteigend zu sortieren.</li>
-<li>Notieren Sie sich die Ausprägungen der Variable type, die aus Ihrer Sicht später bei <a href="#exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</a> als Filter genutzt werden soll.</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create frequency table for the variable type</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</section>
-<section id="exercise-3-forschungsfeld-der-publikationen" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-3-forschungsfeld-der-publikationen">📋 Exercise 3: Forschungsfeld der Publikationen</h3>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Ziel der Aufgabe
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li><p>Identifizieren Sie die für die Untersuchung relevanten Artikel auf Basis des von OpenAlex dem Artikel zugeordnenten Foschungsfeldes (<code>field)</code></p></li>
-<li><p>Hintergrundinformation zur <a href="https://docs.openalex.org/api-entities/topics/topic-object#field">Variable <code>field</code></a> finden Sie in der API-Dokumentation von OpenAlex.</p></li>
-</ul>
-</div>
-</div>
-<ul>
-<li>Basierend auf dem Datensatz <code>review_works_correct</code>
-<ul>
-<li>nutzen Sie die Funktion <code>unnest()</code> um die Variablen der <code>topics</code>-Liste zu extrahieren. Verwenden Sie dabei das Argument <code>names_sep = "_"</code>. um doppelte Variablennamen durch Hinzufügen des Prefixes <code>topics_</code> zu verhindern.</li>
-<li>filtern Sie anschließen mit Hilfe der Funktion <code>filter</code> und der Variable bzw. dem Argument <code>topics_name == "field"</code> nur die Informationen zum Forschungsfeld, sowie mit der Variable bzw. dem Argument <code>topics_i == "1"</code> nur die erste Zuordnung.</li>
-<li>Nutzen Sie die Funktion <code>sjmisc::frq()</code> und schauen Sie sich die Variablen <code>topics_display_name</code> an. Verwenden Sie das Argument <code>sort.frq = "desc"</code>, um die Forschungsfelder in Abhängigkeit Ihrer Häufigkeit absteigend zu sortieren.</li>
+<li>nur englischsprachige (<code>language</code>),</li>
+<li>Bücher und Buchkapitel (<code>type</code>) herauszufiltern.</li>
 </ul></li>
-<li>Notieren Sie sich die Ausprägungen der Variable topics_display_name, die aus Ihrer Sicht später bei <a href="#exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</a> als Filter genutzt werden soll.</li>
-</ul>
+<li>Speichern Sie diese Umwandlung in einem neuen Datensatz mit dem Namen <code>review_subsample_new</code></li>
+</ol></li>
+</ul></li>
+<li>Überprüfen Sie die Transformation mit Hilfe der <code>glimpse()</code>-Funktion.</li>
+<li>✍️ Notieren Sie, wie viele Artikel im neuen Subsample enthalten sind.</li>
+</ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Unnest topis variable and create frequency table for the variable topics_display_name</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Erstellung Subsample</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Überprüfung</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Notiz:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Subsample enthält ... Einträge</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="exercise-4-erstellung-subsample" class="level3">
-<h3 class="anchored" data-anchor-id="exercise-4-erstellung-subsample">📋 Exercise 4: Erstellung Subsample</h3>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Ziel der Aufgabe
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="exercise-2-umwandlung-zu-tidy-text" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-2-umwandlung-zu-tidy-text">📋 Exercise 2: Umwandlung zu ‘tidy text’</h3>
+<ol type="1">
+<li>Erstellen Sie einen neuen Datensatz <code>subsample_new_tidy</code>,
 <ul>
-<li>Erstellung sie den Datensatz <code>review_subsample</code>, in dem Sie mit Hilfe der Funktionen <code>select()</code> und/oder <code>filter()</code> das Datenmaterial weiter eingrenzen. Sie können sich sowohl auf die Variablen aus der Übung, als auch auf die aus der Sitzung (bzw. den Slides) beziehen.</li>
-<li>Der Code dieses Chunks wird in der nächsten Sitzung benötigt bzw. besprochen, halten Sie diesen deshalb bitte bereit.</li>
-</ul>
+<li>Basierend auf dem Datensatz <code>review_subsample_new</code>, mit folgenden Schritten:
+<ol type="1">
+<li>Tokenisierung der Abstracts (<code>ab</code>) mit der Funktion <code>unnest_tokens</code>.</li>
+<li>Ausschluss von Stoppwörter mit <code>filter</code> und <code>stopwords$words</code> heraus.</li>
+<li>Speichern Sie diese Umwandlung, indem Sie einen neuen Datensatz mit dem Namen <code>subsample_new_tidy</code> erstellen.</li>
+</ol></li>
+</ul></li>
+<li>Prüfen Sie, ob die Umwandlung erfolgreich war (z.B. mit der Funktion <code>glimpse()</code>)</li>
+<li>✍️ Notieren Sie, wie viele Token im neuen Datensatz <code>subsample_new_tidy</code> enthalten sind.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Erstellung des neuen Datensatzes `subsample_new_tidy`</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Überprüfung</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Notiz:</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Der neue Datensatz enthält ... Token. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="exercise-3-auswertung-der-token" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-3-auswertung-der-token">📋 Exercise 3: Auswertung der Token</h3>
+<ol type="1">
+<li>Erstellen Sie einen neuen Datensatz <code>subsample_new_summarized</code>,
+<ul>
+<li>Fassen Sie auf der Grundlage des Datensatzes <code>subsample_new_tidy</code> die Häufigkeit der einzelnen Token zusammen, indem Sie die Funktion <code>count()</code> auf die Variable <code>text</code> anwenden. Verwenden Sie das Argument <code>sort = TRUE</code>, um den Datensatz nach absteigender Häufigkeit der Token zu sortieren.</li>
+<li>Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen <code>subsample_new_summarized</code> erstellen.</li>
+</ul></li>
+<li>Prüfen Sie, ob die Umwandlung erfolgreich war, indem Sie die Funktion <code>print()</code> verwenden.
+<ul>
+<li>Verwenden Sie das Argument <code>n = 50</code>, um die 50 wichtigsten Token anzuzeigen (nur möglich, wenn das Argument <code>sort = TRUE</code> bei der Ausführung der Funktion <code>count()</code> verwendet wurde)</li>
+</ul></li>
+<li>Verteilung der Token prüfen
+<ul>
+<li>Verwenden Sie die Funktion <code>datawizard::describe_distribution()</code>, um verschiedene Verteilungsparameter des neuen Datensatzes zu überprüfen</li>
+<li>✍️ Notieren Sie, wie viele Token ein Abstract durchschnittlich enthält.</li>
+</ul></li>
+</ol>
+<ul>
+<li><em>Optional:</em> Ergebnisse mit einer Wortwolke überprüfen
+<ul>
+<li>Basierend auf dem sortierten Datensatz <code>subsample_new_summarized</code>
+<ol type="1">
+<li>Auswahl der 50 häufigsten Token mit Hilfe der Funktion <code>top_n()</code></li>
+<li>Erstellen Sie eine <code>ggplot()</code>-Basis mit <code>label = text</code> und <code>size = n</code> als <code>aes()</code> und</li>
+<li>Benutze ggwordcloud::geom_text_wordclout() um die Wortwolke zu erstellen.</li>
+<li>Verwenden Sie scale_size_are(), um die Skalierung der Wortwolke zu übernehmen.</li>
+<li>Verwenden Sie <code>theme_minimal()</code> für eine saubere Visualisierung.</li>
+</ol></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Erstellung des neuen Datensatzes `subsample_new_summmarized`</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview Top 50 token</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check distribution parameters </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Notiz:</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Ein Absatz enthält durchschnittlich ... Token. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>review_subsample <span class="ot">&lt;-</span> review_works_correct <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Optional: Check results with a wordcloud</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="exercise-4-wortbeziehungen-im-fokus" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-4-wortbeziehungen-im-fokus">📋 Exercise 4: Wortbeziehungen im Fokus</h3>
+<section id="couting-word-pairs" class="level4">
+<h4 class="anchored" data-anchor-id="couting-word-pairs">4.1 Couting word pairs</h4>
+<ol type="1">
+<li>Zählen von häufigen Wortpaaren
+<ul>
+<li>Zählen Sie auf der Grundlage des Datensatzes <code>subsample_new_tidy</code> Wortpaare mit <code>widyr::pairwise_count()</code>, mit den Argumenten <code>item = text</code>, <code>feature = id</code> und <code>sort = TRUE.</code></li>
+<li>Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen <code>subsample_new_word_pairs</code> erstellen.</li>
+</ul></li>
+<li>Prüfen Sie, ob die Umwandlung erfolgreich war, indem Sie die Funktion <code>print()</code> verwenden.
+<ul>
+<li>Verwenden Sie das Argument <code>n = 50</code>, um die 50 wichtigsten Token anzuzeigen (nur möglich, wenn bei der Ausführung der Funktion <code>count()</code> das Argument <code>sort = TRUE</code> verwendet wurde)</li>
+</ul></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Couting word pairs among sections</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Überprüfung </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="pairwise-correlation" class="level4">
+<h4 class="anchored" data-anchor-id="pairwise-correlation">4.2 Pairwise correlation</h4>
+<ol type="1">
+<li>Ermittlung der paarweisen Korrelation
+<ul>
+<li>Basierend auf dem Datensatz <code>subsample_new_tidy</code>,</li>
+<li>gruppieren Sie die Daten mit der Funktion <code>group_by()</code> nach der Variable <code>text</code> und</li>
+<li>verwenden Sie <code>filter(n() &gt;= X)</code>, um nur Token zu verwenden, die mindestens in einer bestimmte Anzahl (<code>X</code>) vorkommen; Sie können für <code>X</code> einen Wert Ihrer Wahl wählen, ich würde jedoch dringend empfehlen, ein <code>X &gt; 100</code> zu wählen, da die folgende Funktion sonst möglicherweise nicht in der Lage ist, die Berechnung durchzuführen.</li>
+<li>Erstellen Sie Wortkorrelationen mit <code>widyr::pairwise_cor()</code>, mit den Argumenten <code>item = text</code>,<code>feature = id</code> und <code>sort = TRUE</code>.</li>
+<li>Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen <code>subsample_new_corr</code> erstellen.</li>
+</ul></li>
+<li>Prüfen Sie die Paare mit der höchsten Korrelation mit der Funktion <code>print().</code>.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Getting pairwise correlation </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Check pairs with highest correlation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="exercise-5-inhaltlicher-vergleich" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-5-inhaltlicher-vergleich">📋 Exercise 5: Inhaltlicher Vergleich</h3>
+<ul>
+<li>Vergleichen Sie die Ergebnisse der Übung mit den Auswertungen der Folien:
+<ul>
+<li>Wie unterscheiden sich die Ergebnisse?</li>
+<li>Würden Sie die Bücher bzw. Buchabschnitte mit in die Untersuchung integrieren?</li>
+</ul></li>
+</ul>
+
 
 
 </section>
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-aria2024" class="csl-entry" role="listitem">
+Aria, Massimo, Trang Le, Corrado Cuccurullo, Alessandra Belfiore, and June Choe. 2024. <span>“openalexR: An R-Tool for Collecting Bibliometric Data from OpenAlex.”</span> <em>The R Journal</em> 15 (4): 167–80. <a href="https://doi.org/10.32614/rj-2023-089">https://doi.org/10.32614/rj-2023-089</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -1092,18 +1143,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<nav class="page-navigation">
-  <div class="nav-page nav-page-previous">
-      <a href="../slides/slides-07.html" class="pagination-link" aria-label="Slides">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Slides</span>
-      </a>          
-  </div>
-  <div class="nav-page nav-page-next">
-      <a href="../exercises/showcase-07.html" class="pagination-link" aria-label="Showcase">
-        <span class="nav-page-text">Showcase</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
-  </div>
-</nav>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
@@ -1112,7 +1151,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/exercises/exercise-07.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/faucommsci/ps_24/edit/main/exercises/ms-exercise-08.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/faucommsci/ps_24/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
 <p>This page is built with ☕ &amp; <a href="https://quarto.org/">Quarto</a>.</p>
 </div>
