@@ -1,0 +1,319 @@
+---
+title: "Text processing in R"
+subtitle: "Session 08 - Showcase"
+date: last-modified
+date-format: "DD.MM.YYYY"
+---
+
+::: {.callout-tip icon="false"}
+[![Quarto Slide](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto-slide.svg)](https://github.com/faucommsci/ps_24/blob/main/slides/ms-slides-08.qmd) Link to slides 
+:::
+
+## Preparation
+
+```{r load-packages}
+#| code-fold: false
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    here, qs, # file management
+    magrittr, janitor, # data wrangling
+    easystats, sjmisc, # data analysis
+    gt, gtExtras, # table visualization
+    ggpubr, ggwordcloud, # visualization
+    tidytext, widyr, # text analysis    
+    openalexR, 
+    tidyverse # load last to avoid masking issues
+  )
+```
+
+```{r import-data}
+#| echo: false
+review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+
+# Create correct data
+review_works_correct <- review_works %>% 
+    mutate(
+        # Create additional factor variables
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        )
+```
+
+
+## Codechunks aus der Sitzung
+
+### Erstelle Subsample
+
+```{r recode-create-subsample}
+review_subsample <- review_works_correct %>% 
+  # Eingrenzung: Sprache und Typ
+  filter(language == "en") %>% 
+  filter(type == "article") %>%
+  # Datentranformation
+  unnest(topics, names_sep = "_") %>%
+  filter(topics_name == "field") %>% 
+  filter(topics_i == "1") %>% 
+  # Eingrenzung: Forschungsfeldes
+  filter(
+   topics_display_name == "Social Sciences"|
+   topics_display_name == "Psychology"
+    )
+```
+
+### Subsample im Zeitverlauf
+```{r figure-subsample-distribution-over-time}
+#| fig-align: "center"
+
+review_works_correct %>% 
+  mutate(
+    included = ifelse(id %in% review_subsample$id, "Ja", "Nein"),
+    included = factor(included, levels = c("Nein", "Ja"))
+    ) %>%
+  ggplot(aes(x = publication_year_fct, fill = included)) +
+    geom_bar() +
+    labs(
+      x = "",
+      y = "Anzahl der Einträge", 
+      fill = "In Subsample enthalten?"
+     ) +
+    scale_fill_manual(values = c("#A0ACBD50", "#FF707F")) +
+    theme_pubr() 
+```
+
+### Tokenization der Abstracts
+
+```{r output-tokenization}
+# Create tidy data
+review_tidy <- review_subsample %>% 
+    # Tokenization
+    tidytext::unnest_tokens("text", ab) %>% 
+    # Remove stopwords
+    filter(!text %in% tidytext::stop_words$word)
+
+# Preview
+review_tidy %>% 
+  select(id, text) %>% 
+  print(n = 10)
+```
+
+#### Vergleich eines Abstraktes in Rohform und nach Tokenisierung
+
+```{r output-tokenization-comparison-before}
+review_subsample$ab[[1]]
+```
+
+```{r output-tokenization-comparison-after}
+review_tidy %>% 
+  filter(id == "https://openalex.org/W4293003987") %>% 
+  pull(text) %>% 
+  paste(collapse = " ")
+```
+
+
+### Count token frequency
+```{r output-summarization}
+# Create summarized data
+review_summarized <- review_tidy %>% 
+  count(text, sort = TRUE) 
+
+# Preview Top 15 token
+review_summarized %>% 
+    print(n = 15)
+```
+
+## The (Unavoidable) Word Cloud
+```{r figure-wordcloud}
+#| fig-align: "center"
+
+review_summarized %>% 
+    top_n(50) %>% 
+    ggplot(aes(label = text, size = n)) +
+    ggwordcloud::geom_text_wordcloud() +
+    scale_size_area(max_size = 20) +
+    theme_minimal()
+```
+
+
+### Wortkombinationen (n-grams) 
+```{r output-word-pairs-count}
+# Create word paris
+review_word_pairs <- review_tidy %>% 
+    widyr::pairwise_count(
+        text,
+        id,
+        sort = TRUE)
+
+# Preview
+review_word_pairs %>% 
+    print(n = 14)
+```
+
+### Wortkorrelationen
+
+```{r ouptput-word-pairs-correlation}
+# Create word correlation
+review_pairs_corr <- review_tidy %>% 
+    group_by(text) %>% 
+    filter(n() >= 300) %>% 
+    pairwise_cor(
+        text, 
+        id, 
+        sort = TRUE)
+
+# Preview
+review_pairs_corr %>% 
+    print(n = 15)
+```
+
+### Spezifische "Partner" in spezifischen Umgebungen
+
+```{r figure-word-pairs-correlates}
+#| fig-align: "center"
+
+review_pairs_corr %>% #| 
+  filter(
+    item1 %in% c(
+      "review",
+      "literature",
+      "systematic")
+    ) %>% 
+  group_by(item1) %>% 
+  slice_max(correlation, n = 5) %>% 
+  ungroup() %>% 
+  mutate(
+    item2 = reorder(item2, correlation)
+    ) %>% 
+  ggplot(
+    aes(item2, correlation, fill = item1)
+    ) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ item1, scales = "free_y") +
+  coord_flip() +
+  scale_fill_manual(
+    values = c(
+      "#04316A",
+      "#C50F3C",
+      "#00B2D1")) +
+  theme_pubr()
+```
+
+### Die häufigsten "positiven" und "negativen" Wörter in den Abstracts
+
+```{r figure-sentiment-most-frequent-words}
+#| fig-align: "center"
+
+review_sentiment_count <- review_tidy %>% 
+  inner_join(
+     get_sentiments("bing"),
+     by = c("text" = "word"),
+     relationship = "many-to-many") %>% 
+  count(text, sentiment)
+  
+# Preview
+review_sentiment_count %>% 
+  group_by(sentiment) %>%
+  slice_max(n, n = 10) %>% 
+  ungroup() %>% 
+  mutate(text = reorder(text, n)) %>%
+  ggplot(aes(n, text, fill = sentiment)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(
+    ~sentiment, scales = "free_y") +
+  labs(x = "Contribution to sentiment",
+       y = NULL) +
+  scale_fill_manual(
+    values = c("#C50F3C", "#007900")) +
+  theme_pubr()
+```
+
+### Verknüpfung des Sentiemnt ("Scores") mit den Abstracts
+
+```{r output-sentiment-aggregated-by-tweet}
+review_sentiment <- review_tidy %>% 
+  inner_join(
+     get_sentiments("bing"),
+     by = c("text" = "word"),
+     relationship = "many-to-many") %>% 
+  count(id, sentiment) %>% 
+  pivot_wider(names_from = sentiment, values_from = n, values_fill = 0) %>% 
+  mutate(sentiment = positive - negative)
+  
+# Check
+review_sentiment 
+```
+
+### Verteilung des Sentiment (Scores) in den Abstracts
+
+```{r bindwidth-calculation}
+#| echo: false
+#| eval: false 
+
+# Using: Freedman-Diaconis Rule, which is robust to outliers and skewed data.
+fd_binwidth <- 2 * IQR(review_sentiment$sentiment) / length(review_sentiment$sentiment)^(1/3)
+fd_binwidth
+```
+
+```{r figure-sentiment-distribution}
+#| fig-align: center
+review_sentiment %>% 
+  ggplot(aes(sentiment)) +
+  geom_histogram(binwidth = 0.5, fill = "#FF707F") +
+  labs(
+    x = "Sentiment (Score) des Abstracts", 
+    y = "Anzahl der Einträge"
+  ) +
+  theme_pubr() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+### Entwicklung des Sentiment (Scores) der Abstracts im Zeitverlauf
+
+```{r figure-sentiment-distribution-over-time}
+#| fig-align: center
+
+# Create first graph
+g1 <- review_works_correct %>% 
+  filter(id %in% review_sentiment$id) %>% 
+  left_join(review_sentiment, by = join_by(id)) %>% 
+  sjmisc::rec(
+    sentiment,
+    rec = "min:-2=negative; -1:1=neutral; 2:max=positive") %>% 
+  ggplot(aes(x = publication_year_fct, fill = as.factor(sentiment_r))) +
+    geom_bar() +
+    labs(
+      x = "",
+      y = "Anzahl der Einträge", 
+      fill = "Sentiment (Score)") +
+    scale_fill_manual(values = c("#C50F3C", "#90A0AF", "#007900")) +
+    theme_pubr() 
+    #theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# Create second graph
+g2 <- review_works_correct %>% 
+  filter(id %in% review_sentiment$id) %>% 
+  left_join(review_sentiment, by = join_by(id)) %>% 
+  sjmisc::rec(
+    sentiment,
+    rec = "min:-2=negative; -1:1=neutral; 2:max=positive") %>% 
+  ggplot(aes(x = publication_year_fct, fill = as.factor(sentiment_r))) +
+    geom_bar(position = "fill") +
+    labs(
+      x = "",
+      y = "Anteil der Einträge", 
+      fill = "Sentiment (Score)") +
+    scale_fill_manual(values = c("#C50F3C", "#90A0AF", "#007D29")) +
+    theme_pubr() 
+
+# COMBINE GRPAHS
+ggarrange(g1, g2,
+          nrow = 1, ncol = 2, 
+          align = "hv",
+          common.legend = TRUE) 
+```
+
+
+
+
+
+
