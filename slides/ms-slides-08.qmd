@@ -1,0 +1,635 @@
+---
+title: "Text processing"
+subtitle: "Sitzung 08"
+date: 20 06 2024
+date-format: "DD.MM.YYYY"
+bibliography: references_slides.bib
+---
+
+```{r setup-slide-session}
+#| echo: false
+ 
+# Load packages
+pacman::p_load(
+    here, fs, 
+    jsonlite, 
+    gt, gtExtras,
+    sjmisc, easystats,
+    ggpubr, ggwordcloud,
+    countdown, widyr,
+    tidytext, 
+    tidyverse
+)
+
+# Load schedule
+source(here("slides/schedule.R"))
+```
+
+## Seminarplan {.smaller}
+
+```{r table-schedule}
+#| echo: false 
+schedule %>% 
+    gt::gt() %>% 
+    gt::fmt_markdown() %>% 
+    gt::tab_options(
+        table.width = gt::pct(80), 
+        table.font.size = "14px") %>% 
+    gtExtras::gt_theme_nytimes() %>% 
+    # customise column header labels
+    gt::cols_label(
+        session = "Sitzung", 
+        date = "Datum",
+        topic = "Thema (synchron)",
+        exercise = "Übung (asynchron)",
+        presenter = "Dozent:in"
+    ) %>% 
+    gt::cols_width(
+        session ~ pct(10),
+        date ~ pct(10),
+        topic ~ pct(50),
+        exercise ~ pct(20),
+        presenter ~ pct(10)
+    ) %>%
+    # highlight current session
+    gtExtras::gt_highlight_rows(
+        rows = 12,
+        fill = "#C50F3C", alpha = 0.15,
+        bold_target_only = TRUE,
+        target_col = session:topic
+    ) %>%
+    # fade out past sessions
+    gt::tab_style(
+        style = gt::cell_text(
+            style = "italic", 
+            color = "grey"),
+        location = gt::cells_body(
+            columns = everything(), 
+            rows = c(1:9, 11)
+        )
+    )
+```
+
+# Agenda {background-image="img/slide_bg-agenda.png"}
+
+1.  [Organisation & Koordination](#orga)
+
+2.  [From Text to Data](#introduction)
+
+3.  [Text as Data meets Literaturreviews](#theorie)
+
+4.  [R in the real world](#r-example)
+
+5.  [📋 Hands on working with R](#group-activity)
+
+# Organisation & Koordination {#orga background-image="img/slide_bg-orga.png"}
+
+Umorganisation der Kurs-Seite
+
+# From *Text* to *Data* {#introduction background-image="img/slide_bg-section.png"}
+
+Grundbegriffe und Prozess der Texttransformation
+
+## Building a shared vocabulary
+
+#### Wichtige Begriffe und Konzepte
+
+![{{< bi card-image >}} by [Analytics Vidhya](https://www.analyticsvidhya.com/blog/2022/03/learn-basics-of-natural-language-processing-nlp-using-gensim-part-1/)](https://cdn.analyticsvidhya.com/wp-content/uploads/2021/10/Text_heirarchy_crop.png){fig-align="center"}
+
+::: notes
+Token: A token is a string with a known meaning, and a token may be a word, number or just characters like punctuation. “Hello”, “123”, and “-” are some examples of tokens.
+
+Sentence: A sentence is a group of tokens that is complete in meaning. “The weather looks good” is an example of a sentence, and the tokens of the sentence are \[“The”, “weather”, “looks”, “good\].
+
+Paragraph: A paragraph is a collection of sentences or phrases, and a sentence can alternatively be viewed as a token of a paragraph.
+
+Documents: A document might be a sentence, a paragraph, or a set of paragraphs. A text message sent to an individual is an example of a document.
+
+Corpus: A corpus is typically an extensive collection of documents as a Bag-of-words. A corpus comprises each word’s id and frequency count in each record. An example of a corpus is a collection of emails or text messages sent to a particular person.
+:::
+
+## A "bag of words"
+
+#### Einfache Technik im Natural Language Processing (NLP)
+
+![{{< bi card-image >}} by [Shubham Gandhi](https://dudeperf3ct.github.io/lstm/gru/nlp/2019/01/28/Force-of-LSTM-and-GRU)](https://miro.medium.com/v2/resize:fit:720/format:webp/0*cf1wq8eIix-Z2qIf.png){fig-align="center"}
+
+-   a collection of words, disregarding grammar, word order, and context.
+
+## [Digitales Wörterbuch der deutschen Sprache](https://www.dwds.de/)
+
+#### Großes, frei verfügbares & deutschsprachiges Textkorpora
+
+<iframe src="https://www.dwds.de/wb/Korpus" width="100%" height="500px">
+
+</iframe>
+
+## Vom Korpus zum Token
+
+#### Einfaches Beispiel zur Darstellung der verschiedenen Konzepte
+
+![{{< bi card-image >}} by [Mina Ghashami](https://towardsdatascience.com/byte-pair-encoding-for-beginners-708d4472c0c7)](https://miro.medium.com/v2/resize:fit:1400/1*RtROExePiUDNclwwXbUfNQ.png)
+
+## Vom Korpus zum Token zum Model
+
+#### Komplexer Prozess der Textverarbeitung
+
+![{{< bi card-image >}} by [Jiawei Hu](https://towardsdatascience.com/an-overview-for-text-representations-in-nlp-311253730af1)](https://miro.medium.com/max/1400/1*DocMTV7nTAomKxcu3m-tyw.webp){fig-align="center"}
+
+## Sätze ➜ Token ➜ Lemma ➜ POS
+
+#### Beispielhafte Darstellung des Text Preprocessing
+
+<!-- TODO Darstellung übearbeiten? -->
+
+::: {.callout-note appearance="simple"}
+## 1. Satzerkennung
+
+Was gibt's in New York zu sehen?
+:::
+
+::: callout-note
+## 2. Tokenisierung
+
+was; gibt; \`s; in; new; york; zu; sehen; ?
+:::
+
+::: callout-important
+## 3. Lemmatisierung
+
+was; geben; \`s; in; new; york; zu; sehen; ?
+:::
+
+::: callout-tip
+## 4. Part-Of-Speech (POS) Tagging
+
+\>Was`/PWS` \>gibt`/VVFIN` \>'s`/PPER` \>in`/APPR` \>New`/NE` \>York`/NE` \>zu`/PTKZU` \>sehen`/VVINF`
+:::
+
+::: notes
+Satzerkennung: *Auflösung der Satzstruktur; Aber: Probleme mit Datumsangaben, Uhrzeit, Abkürzungen, URLS*
+
+Tokenisierung: *Zerteilung in kleinste Einheiten, Abtrennung von Satzzeichen; Fragen: Umgang mit Zeichen, Symbolen, Zahlen, N-Gramme ...*
+
+Definition Lemmatisierung: *Grundform eines Worters, als diejenige Form, unter dem an einen Begriff in einem Nachschlagewerk findet / Rückführung auf die „Vollfrom"*
+
+Definition POS: *Zuordnung von Wörtern und Satzzeichen eines Textes zu Wortarten*
+:::
+
+## Von BoW zu DFM
+
+#### Transformation des Bag-of-Words (BOW) zur Document-Feature-Matrix (DFM)
+
+![{{< bi card-image >}} by [OpenClassrooms](https://openclassrooms.com/en/courses/6532301-introduction-to-natural-language-processing/8081284-apply-a-simple-bag-of-words-approach)](img/ms-session-08/bow_dfm_example.png)
+
+::: notes
+*Bag-of-Words*-Modell: es zählt lediglich die Worthäufigkeit je Dokument, die syntaktischen und grammatikalischen Zusammenhänge zwischen einzelnen Wörtern werden ignoriert.
+:::
+
+# *Text as data* in R {#examples background-image="img/slide_bg-example.png"}
+
+Einführung in die Textanalyse mit `tidytext`
+
+```{r import-data}
+#| echo: false
+review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+
+# Create correct data
+review_works_correct <- review_works %>% 
+    mutate(
+        # Create additional factor variables
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        )
+```
+
+## What we did so far
+
+#### Informationen zur Datengrundlage und -quelle
+
+-   Suche nach **Literatur zur (Sytematischen) Literaturüberblicken** auf [OpenAlex](https://openalex.org/)
+-   Download von **knapp 100.000 Literaturverweisen** via API mit [openalexR](https://docs.ropensci.org/openalexR/) [@aria2024a]
+-   Deskriptive Auswertung der Daten ("Rekonstruktion" des OpenAlex Web-Dashboards) mit R
+
+#### Heutige Ziele:
+
+-   **Eingrenzung der Datenbasis** für weiterführende Analysen
+-   Anwendung einfacher Textanalyseverfahren zur Untersuchung der Abstracts
+
+## Euer Input ist gefragt!
+
+#### Wie sollen die Daten weiter eingegrenzt werden?
+
+::: columns
+::: {.column width="50%"}
+<br>
+
+Bitte scannt den **QR-Code** oder nutzt den folgenden **Link** für die Teilnahme an einer kurzen Umfrage:
+
+-   <https://www.menti.com/albpi1xur7et>
+
+-   Temporary Access Code: **3332 2971**
+:::
+
+::: {.column width="10%"}
+:::
+
+::: {.column width="40%"}
+<br> {{< qrcode https://www.menti.com/albpi1xur7et qr1 width=350 height=350 colorDark='#C50F3C' >}}
+:::
+:::
+
+```{r countdown-vote}
+#| echo: false
+
+countdown(
+    minutes = 1,
+    warn_when = 10)
+```
+
+## Ergebnis
+
+::: {style="position: relative; padding-bottom: 56.25%; padding-top: 35px; height: 0; overflow: hidden;"}
+<iframe sandbox="allow-scripts allow-same-origin allow-presentation" allowfullscreen="true" allowtransparency="true" frameborder="0" height="315" src="https://www.mentimeter.com/app/presentation/alngi62kthtqr5eg1kx537ids9u5u3bv/hy7ztrvdmnxy/embed" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" width="420">
+
+</iframe>
+:::
+
+## Build the subsample
+
+#### Fokus auf englische Artikel aus den Sozialwissenschaften und der Psychologie
+
+::: columns
+::: {.column width="50%"}
+```{r recode-create-subsample}
+review_subsample <- review_works_correct %>% 
+  # Eingrenzung: Sprache und Typ
+  filter(language == "en") %>% 
+  filter(type == "article") %>%
+  # Datentranformation
+  unnest(topics, names_sep = "_") %>%
+  filter(topics_name == "field") %>% 
+  filter(topics_i == "1") %>% 
+  # Eingrenzung: Forschungsfeldes
+  filter(
+   topics_display_name == "Social Sciences"|
+   topics_display_name == "Psychology"
+    )
+```
+:::
+
+::: {.column width="50%"}
+```{r figure-subsample-distribution-over-time}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+#| fig-align: "center"
+
+review_works_correct %>% 
+  mutate(
+    included = ifelse(id %in% review_subsample$id, "Ja", "Nein"),
+    included = factor(included, levels = c("Nein", "Ja"))
+    ) %>%
+  ggplot(aes(x = publication_year_fct, fill = included)) +
+    geom_bar() +
+    labs(
+      x = "",
+      y = "Anzahl der Einträge", 
+      fill = "In Subsample enthalten?"
+     ) +
+    scale_fill_manual(values = c("#A0ACBD50", "#FF707F")) +
+    theme_pubr() 
+```
+:::
+:::
+
+## Explore abstracts
+
+#### Tidy data principles als Grundlage für Analyse-Workflow
+
+![\[\@silge2017\]](https://www.tidytextmining.com/images/tmwr_0101.png){fig-alt="Test"}
+
+-   **Tidy data struture** (each variable is column, each observation a row, each value is a cell, each type of observaional unit is a table) results in [**a table with one-token-per-row**]{.underline} [@silge2017].
+
+
+## Tokenization der Abstracts
+
+#### Transform data to tidy text
+
+```{r output-tokenization}
+# Create tidy data
+review_tidy <- review_subsample %>% 
+    # Tokenization
+    tidytext::unnest_tokens("text", ab) %>% 
+    # Remove stopwords
+    filter(!text %in% tidytext::stop_words$word)
+
+# Preview
+review_tidy %>% 
+  select(id, text) %>% 
+  print(n = 10)
+```
+
+## Before and after the transformation
+
+#### Vergleich eines Abstraktes in Rohform und nach Tokenisierung
+
+::: columns
+::: {.column width="50%"}
+```{r}
+review_subsample$ab[[1]]
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+review_tidy %>% 
+  filter(id == "https://openalex.org/W4293003987") %>% 
+  pull(text) %>% 
+  paste(collapse = " ")
+```
+:::
+:::
+
+## Count token frequency
+
+#### Summarize all tokens over all tweets
+
+```{r output-summarization}
+#| output-location: column
+
+# Create summarized data
+review_summarized <- review_tidy %>% 
+  count(text, sort = TRUE) 
+
+# Preview Top 15 token
+review_summarized %>% 
+    print(n = 15)
+```
+
+## The (Unavoidable) Word Cloud
+
+#### Visualization of Top 50 token
+
+```{r figure-wordcloud}
+#| fig-align: "center"
+
+review_summarized %>% 
+    top_n(50) %>% 
+    ggplot(aes(label = text, size = n)) +
+    ggwordcloud::geom_text_wordcloud() +
+    scale_size_area(max_size = 20) +
+    theme_minimal()
+```
+
+## Mehr als nur ein Wort
+
+#### Modellierung von Wortzusammenhängen: n-grams and correlations
+
+::: columns
+::: {.column width="50%"}
+Viele der wirklich interessanten Ergebnisse von Textanalysen basieren auf den Beziehungen zwischen Wörtern, z.B. 
+
+- welche Wörter dazu "neigen", unmittelbar auf einander zu folgen (n-grams),
+- oder innerhalb desselben Dokuments gemeinsam aufzutreten (Korrelation)
+:::
+
+::: {.column width="50%"}
+![[@silge2017]](https://www.tidytextmining.com/images/tmwr_0407.png){fig-align="center"}
+:::
+:::
+
+## Häufige Wortpaare
+
+#### Wortkombinationen (n-grams) im FokusH
+
+```{r output-word-pairs-count}
+#| output-location: column
+
+# Create word paris
+review_word_pairs <- review_tidy %>% 
+    widyr::pairwise_count(
+        text,
+        id,
+        sort = TRUE)
+
+# Preview
+review_word_pairs %>% 
+    print(n = 14)
+```
+
+## Häufig zusammen, selten allein
+
+#### Wortkorrelationen im Fokus
+
+```{r ouptput-word-pairs-correlation}
+#| output-location: column
+
+# Create word correlation
+review_pairs_corr <- review_tidy %>% 
+    group_by(text) %>% 
+    filter(n() >= 300) %>% 
+    pairwise_cor(
+        text, 
+        id, 
+        sort = TRUE)
+
+# Preview
+review_pairs_corr %>% 
+    print(n = 15)
+```
+
+## Spezifische "Partner" in spezifischen Umgebungen
+
+#### Häufig auftretenden Wörter in der Umgebung von *review*, *literature*, *systematic* 
+
+```{r figure-word-pairs-correlates}
+#| output-location: column
+#| fig-height: 7
+#| fig-width: 8
+
+review_pairs_corr %>% 
+  filter(
+    item1 %in% c(
+      "review",
+      "literature",
+      "systematic")
+    ) %>% 
+  group_by(item1) %>% 
+  slice_max(correlation, n = 5) %>% 
+  ungroup() %>% 
+  mutate(
+    item2 = reorder(item2, correlation)
+    ) %>% 
+  ggplot(
+    aes(item2, correlation, fill = item1)
+    ) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ item1, scales = "free_y") +
+  coord_flip() +
+  scale_fill_manual(
+    values = c(
+      "#04316A",
+      "#C50F3C",
+      "#00B2D1")) +
+  theme_pubr()
+```
+
+
+## Let's talk about sentiments
+
+#### Dictionary based approach of text analysis
+
+![[@silge2017]](https://www.tidytextmining.com/images/tmwr_0201.png){fig-align="center"}
+
+::: {.callout-important appearance="simple"}
+@atteveldt2021 **argue that sentiment, in fact, are quite a complex concepts that are often hard to capture with dictionaries.**
+:::
+
+## Über die Bedeutung von "positiv|negativ"
+
+#### Die häufigsten "positiven" und "negativen" Wörter in den Abstracts
+
+```{r figure-sentiment-most-frequent-words}
+#| output-location: column
+#| fig-height: 7
+#| fig-width: 7
+
+review_sentiment_count <- review_tidy %>% 
+  inner_join(
+     get_sentiments("bing"),
+     by = c("text" = "word"),
+     relationship = "many-to-many") %>% 
+  count(text, sentiment)
+  
+# Preview
+review_sentiment_count %>% 
+  group_by(sentiment) %>%
+  slice_max(n, n = 10) %>% 
+  ungroup() %>% 
+  mutate(text = reorder(text, n)) %>%
+  ggplot(aes(n, text, fill = sentiment)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(
+    ~sentiment, scales = "free_y") +
+  labs(x = "Contribution to sentiment",
+       y = NULL) +
+  scale_fill_manual(
+    values = c("#C50F3C", "#007900")) +
+  theme_pubr()
+```
+
+## Anreicherung der Daten
+
+#### Verknüpfung des Sentiemnt ("Scores") mit den Abstracts
+
+```{r output-sentiment-aggregated-by-tweet}
+review_sentiment <- review_tidy %>% 
+  inner_join(
+     get_sentiments("bing"),
+     by = c("text" = "word"),
+     relationship = "many-to-many") %>% 
+  count(id, sentiment) %>% 
+  pivot_wider(names_from = sentiment, values_from = n, values_fill = 0) %>% 
+  mutate(sentiment = positive - negative)
+  
+# Check
+review_sentiment 
+```
+
+## Neutral, mit einem leicht "negativen" Unterton
+
+#### Verteilung des Sentiment (Scores) in den Abstracts
+
+```{r bindwidth-calculation}
+#| echo: false
+#| eval: false 
+
+# Using: Freedman-Diaconis Rule, which is robust to outliers and skewed data.
+fd_binwidth <- 2 * IQR(review_sentiment$sentiment) / length(review_sentiment$sentiment)^(1/3)
+fd_binwidth
+```
+
+```{r figure-sentiment-distribution}
+#| fig-align: center
+review_sentiment %>% 
+  ggplot(aes(sentiment)) +
+  geom_histogram(binwidth = 0.5, fill = "#FF707F") +
+  labs(
+    x = "Sentiment (Score) des Abstracts", 
+    y = "Anzahl der Einträge"
+  ) +
+  theme_pubr() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+## Keep it neutral
+
+#### Entwicklung des Sentiment (Scores) der Abstracts im Zeitverlauf
+
+```{r figure-sentiment-distribution-over-time}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+#| fig-height: 8
+#| fig-width: 12
+#| fig-align: center
+
+# Create first graph
+g1 <- review_works_correct %>% 
+  filter(id %in% review_sentiment$id) %>% 
+  left_join(review_sentiment, by = join_by(id)) %>% 
+  sjmisc::rec(
+    sentiment,
+    rec = "min:-2=negative; -1:1=neutral; 2:max=positive") %>% 
+  ggplot(aes(x = publication_year_fct, fill = as.factor(sentiment_r))) +
+    geom_bar() +
+    labs(
+      x = "",
+      y = "Anzahl der Einträge", 
+      fill = "Sentiment (Score)") +
+    scale_fill_manual(values = c("#C50F3C", "#90A0AF", "#007900")) +
+    theme_pubr() 
+    #theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+# Create second graph
+g2 <- review_works_correct %>% 
+  filter(id %in% review_sentiment$id) %>% 
+  left_join(review_sentiment, by = join_by(id)) %>% 
+  sjmisc::rec(
+    sentiment,
+    rec = "min:-2=negative; -1:1=neutral; 2:max=positive") %>% 
+  ggplot(aes(x = publication_year_fct, fill = as.factor(sentiment_r))) +
+    geom_bar(position = "fill") +
+    labs(
+      x = "",
+      y = "Anteil der Einträge", 
+      fill = "Sentiment (Score)") +
+    scale_fill_manual(values = c("#C50F3C", "#90A0AF", "#007D29")) +
+    theme_pubr() 
+
+# COMBINE GRPAHS
+ggarrange(g1, g2,
+          nrow = 1, ncol = 2, 
+          align = "hv",
+          common.legend = TRUE) 
+```
+
+
+## 🧪 And now ... you: Wiederholung
+
+#### Next Steps: Wiederholung der R-Grundlagen an OpenAlex-Daten
+
+-   Laden Sie die auf StudOn bereitgestellten Dateien für die Sitzungen herunter
+-   Laden Sie die .zip-Datei in Ihren RStudio Workspace
+-   Navigieren Sie zu dem Ordner, in dem die Datei `ps_24_binder.Rproj` liegt. Öffnen Sie diese Datei mit einem Doppelklick. Nur dadurch ist gewährleistet, dass alle Dependencies korrekt funktionieren.
+-   Öffnen Sie die Datei `exercise-07.qmd` im Ordner `exercises` und lesen Sie sich gründlich die Anweisungen durch.
+-   ***Tipp: Sie finden alle in den Folien verwendeten Code-Bausteine in der Datei showcase.qmd (für den "rohen" Code) oder showcase.html (mit gerenderten Ausgaben).***
+
+# Time for questions {background-image="img/slide_bg-question.png"}
+
+# Danke & bis zur nächsten Sitzung! {background-image="img/slide_bg-end_session.png"}
+
+## Literatur
+
+::: {#refs}
+:::
+
