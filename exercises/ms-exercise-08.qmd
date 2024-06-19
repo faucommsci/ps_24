@@ -1,0 +1,204 @@
+---
+title: "Text processing with R"
+subtitle: "Session 08 - Exercise"
+date: last-modified
+date-format: "DD.MM.YYYY"
+---
+
+::: {.callout-tip icon="false"}
+[![Quarto Document](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg)](https://github.com/faucommsci/ps_24/blob/main/exercises/exercise-08.qmd) Link to source file
+:::
+
+::: callout-note
+## Ziel der Anwendung: Textanalyse in R kennenlernen
+
+-   Auffrischung der Grundkenntnisse im Umgang mit R, tidyverse und ggplot2
+-   Typische Schritte der Textanalyse mit `tidytext` kennenlernen, von der Tokenisierung bis zur Visualisierung.
+:::
+
+## Background
+
+::: callout-tip
+## Todays's data basis: [OpenAlex](https://openalex.org/)
+
+-   Via API bzw. openalexR [@aria2024] gesammelte "works" der Datenbank [OpenAlex](https://openalex.org/) mit Bezug zu Literaturriews in den Sozialwissenschaften zwischen 2013 und 2023
+
+-   Detaillierte Informationen und Ergebnisse zur Suchquery finden Sie [hier](https://openalex.org/works?page=1&filter=display_name.search%3A%28literature%20OR%20systematic%29%20AND%20review,primary_topic.domain.id%3Adomains%2F2,publication_year%3A2014%20-%202024&group_by=publication_year,open_access.is_oa,primary_topic.field.id).
+:::
+
+## Preparation
+
+::: callout-important
+## Wichtige Information
+
+-   Bitte stellen Sie sicher, dass Sie das jeweilige R-Studio Projekt zur Übung geöffnet haben. Nur so funktionieren alle Dependencies korrekt.
+-   Um den einwandfreien Ablauf der Übung zu gewährleisten, wird für die Aufgaben auf eine eigenständige Datenerhebung verzichtet und ein Übungsdatensatz zu verfügung gestelt.
+:::
+
+### Packages
+
+```{r load-packages}
+#| code-fold: false
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    here, qs, # file management
+    magrittr, janitor, # data wrangling
+    easystats, sjmisc, # data analysis
+    gt, gtExtras, # table visualization
+    ggpubr, ggwordcloud, # visualization
+    tidytext, widyr, # text analysis    
+    openalexR, 
+    tidyverse # load last to avoid masking issues
+  )
+```
+
+### Import und Vorverarbeitung der Daten
+
+```{r data-import}
+#| code-fold: false
+
+# Import from local
+review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+
+# Create correct data
+review_works_correct <- review_works %>% 
+    mutate(
+        # Create additional factor variables
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        )
+```
+
+## 🛠️ Praktische Anwendung
+
+::: callout-important
+## Achtung, bitte lesen!
+
+-   Bevor Sie mit der Arbeit an den folgenden 📋 **Exercises** beginnen, stellen Sie bitte sicher, dass Sie alle Chunks des Abschnitts [Preparation] gerendert haben. Das können Sie tun, indem Sie den "*Run all chunks above*"-Knopf ![](/img/rstudio-button-render_all_chunks_above.png)des nächsten Chunks benutzen.
+-   Bei Fragen zum Code lohnt sich ein Blick in den **Showcase** (.qmd oder .html). Beim Showcase handelt es sich um eine kompakte Darstellung des in der Präsentation verwenden R-Codes. Sie können das Showcase also nutzen, um sich die Code-Bausteine anzusehen, die für die R-Outputs auf den Slides benutzt wurden.
+:::
+
+### 📋 Exercise 1: Neues Subsample
+
+::: callout-caution
+## Ziel der Aufgabe
+
+-   Erstellung eines neuen Datensatzes `review_subsample_new`, der sich auf *englischsprachig* *Bücher bzw. Buchrartikel* beschränkt.
+:::
+
+1.  Erstellen Sie einen neuen Datensatz `review_subsample_new`
+    -   Basierend auf dem Datensatzes `review_works_correct`:
+        1.  Nutzen Sie die `filter()`-Funktion, um
+            -   nur englischsprachige (`language`),
+            -   Bücher und Buchkapitel (`type`) herauszufiltern.
+        2.  Speichern Sie diese Umwandlung in einem neuen Datensatz mit dem Namen `review_subsample_new`
+2.  Überprüfen Sie die Transformation mit Hilfe der `glimpse()`-Funktion.
+3.  ✍️ Notieren Sie, wie viele Artikel im neuen Subsample enthalten sind.
+
+```{r exercise-1}
+
+# Erstellung Subsample
+
+# Überprüfung
+
+# Notiz:
+# Subsample enthält ... Einträge
+```
+
+### 📋 Exercise 2: Umwandlung zu 'tidy text'
+
+1.  Erstellen Sie einen neuen Datensatz `subsample_new_tidy`,
+    -   Basierend auf dem Datensatz `review_subsample_new`, mit folgenden Schritten:
+        1.  Tokenisierung der Abstracts (`ab`) mit der Funktion `unnest_tokens`.
+        2.  Ausschluss von Stoppwörter mit `filter` und `stopwords$words` heraus.
+        3.  Speichern Sie diese Umwandlung, indem Sie einen neuen Datensatz mit dem Namen `subsample_new_tidy` erstellen.
+2.  Prüfen Sie, ob die Umwandlung erfolgreich war (z.B. mit der Funktion `glimpse()`)
+3.  ✍️ Notieren Sie, wie viele Token im neuen Datensatz `subsample_new_tidy` enthalten sind.
+
+```{r exercise-2}
+
+# Erstellung des neuen Datensatzes `subsample_new_tidy`
+
+# Überprüfung
+
+# Notiz:
+# Der neue Datensatz enthält ... Token. 
+```
+
+### 📋 Exercise 3: Auswertung der Token
+
+1.  Erstellen Sie einen neuen Datensatz `subsample_new_summarized`,
+    -   Fassen Sie auf der Grundlage des Datensatzes `subsample_new_tidy` die Häufigkeit der einzelnen Token zusammen, indem Sie die Funktion `count()` auf die Variable `text` anwenden. Verwenden Sie das Argument `sort = TRUE`, um den Datensatz nach absteigender Häufigkeit der Token zu sortieren.
+    -   Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen `subsample_new_summarized` erstellen.
+2.  Prüfen Sie, ob die Umwandlung erfolgreich war, indem Sie die Funktion `print()` verwenden.
+    -   Verwenden Sie das Argument `n = 50`, um die 50 wichtigsten Token anzuzeigen (nur möglich, wenn das Argument `sort = TRUE` bei der Ausführung der Funktion `count()` verwendet wurde)
+3.  Verteilung der Token prüfen
+    -   Verwenden Sie die Funktion `datawizard::describe_distribution()`, um verschiedene Verteilungsparameter des neuen Datensatzes zu überprüfen
+    -   ✍️ Notieren Sie, wie viele Token ein Abstract durchschnittlich enthält.
+
+-   *Optional:* Ergebnisse mit einer Wortwolke überprüfen
+    -   Basierend auf dem sortierten Datensatz `subsample_new_summarized`
+        1.  Auswahl der 50 häufigsten Token mit Hilfe der Funktion `top_n()`
+        2.  Erstellen Sie eine `ggplot()`-Basis mit `label = text` und `size = n` als `aes()` und
+        3.  Benutze ggwordcloud::geom_text_wordclout() um die Wortwolke zu erstellen.
+        4.  Verwenden Sie scale_size_are(), um die Skalierung der Wortwolke zu übernehmen.
+        5.  Verwenden Sie `theme_minimal()` für eine saubere Visualisierung.
+
+```{r exercise-3}
+
+# Erstellung des neuen Datensatzes `subsample_new_summmarized`
+
+# Preview Top 50 token
+
+# Check distribution parameters 
+
+# Notiz:
+# Ein Absatz enthält durchschnittlich ... Token. 
+```
+
+```{r exercise-3-optional}
+# Optional: Check results with a wordcloud
+
+```
+
+### 📋 Exercise 4: Wortbeziehungen im Fokus
+
+#### 4.1 Couting word pairs
+
+1.  Zählen von häufigen Wortpaaren
+    -   Zählen Sie auf der Grundlage des Datensatzes `subsample_new_tidy` Wortpaare mit `widyr::pairwise_count()`, mit den Argumenten `item = text`, `feature = id` und `sort = TRUE.`
+    -   Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen `subsample_new_word_pairs` erstellen.
+2.  Prüfen Sie, ob die Umwandlung erfolgreich war, indem Sie die Funktion `print()` verwenden.
+    -   Verwenden Sie das Argument `n = 50`, um die 50 wichtigsten Token anzuzeigen (nur möglich, wenn bei der Ausführung der Funktion `count()` das Argument `sort = TRUE` verwendet wurde)
+
+```{r exercise-4-1-solution}
+
+# Couting word pairs among sections
+
+# Überprüfung 
+
+```
+
+#### 4.2 Pairwise correlation
+
+1.  Ermittlung der paarweisen Korrelation
+    -   Basierend auf dem Datensatz `subsample_new_tidy`,
+    -   gruppieren Sie die Daten mit der Funktion `group_by()` nach der Variable `text` und
+    -   verwenden Sie `filter(n() >= X)`, um nur Token zu verwenden, die mindestens in einer bestimmte Anzahl (`X`) vorkommen; Sie können für `X` einen Wert Ihrer Wahl wählen, ich würde jedoch dringend empfehlen, ein `X > 100` zu wählen, da die folgende Funktion sonst möglicherweise nicht in der Lage ist, die Berechnung durchzuführen.
+    -   Erstellen Sie Wortkorrelationen mit `widyr::pairwise_cor()`, mit den Argumenten `item = text`,`feature = id` und `sort = TRUE`.
+    -   Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen `subsample_new_corr` erstellen.
+2.  Prüfen Sie die Paare mit der höchsten Korrelation mit der Funktion `print().`.
+
+```{r exercise-4-2-solution}
+# Getting pairwise correlation 
+
+# Check pairs with highest correlation
+
+```
+
+### 📋 Exercise 5: Inhaltlicher Vergleich
+
+-   Vergleichen Sie die Ergebnisse der Übung mit den Auswertungen der Folien:
+    -   Wie unterscheiden sich die Ergebnisse?
+    -   Würden Sie die Bücher bzw. Buchabschnitte mit in die Untersuchung integrieren?
