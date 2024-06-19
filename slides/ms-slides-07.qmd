@@ -443,7 +443,7 @@ ReWoCo<-review_works %>% mutate(pub_year_fct = as.factor(publication_year), type
 
 -   *Besonderheit*: Informationen zu (Themen-)Katalogisierung als Liste im Datensatz
 
-```{r}
+```{r example-nested-data}
 review_works_correct$topics %>% head()
 ```
 
@@ -451,7 +451,7 @@ review_works_correct$topics %>% head()
 
 #### Exkurs zu verschachtelten (nested) Daten und Möglichkeiten zur Verabeitung in R
 
-```{r}
+```{r example-nested-data-unpack}
 review_works_correct %>% 
     unnest(topics, names_sep = "_") %>%
     glimpse()

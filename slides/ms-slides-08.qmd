@@ -335,13 +335,13 @@ review_tidy %>%
 
 ::: columns
 ::: {.column width="50%"}
-```{r}
+```{r output-tokenization-comparison-before}
 review_subsample$ab[[1]]
 ```
 :::
 
 ::: {.column width="50%"}
-```{r}
+```{r output-tokenization-comparison-after}
 review_tidy %>% 
   filter(id == "https://openalex.org/W4293003987") %>% 
   pull(text) %>% 
