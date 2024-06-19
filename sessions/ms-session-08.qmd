@@ -1,0 +1,34 @@
+---
+title: "Introduction to Text as Data "
+subtitle: "Methodenseminar: Session 07"
+date: 13 06 2024
+bibliography: references_sessions.bib
+csl: ../apa-cv.csl 
+suppress-bibliography: true
+link-citations: false
+citations-hover: false
+---
+
+## Participate
+
+🖥️ [Slides](/slides/ms-slides-07.html)
+
+📋 [Showcase](/exercises/ms-showcase-07.html)
+
+## Practice
+
+✍️ [Exercise](/exercises/ms-exercise-07_solution.html)
+
+## Suggested readings
+
+-   @benoit2020
+
+-   @grimmer2022
+
+-   @grimmer2013
+
+<br>
+
+::: {style="font-size: 0.875em;"}
+Back to [course schedule](/ms-schedule.html "Course schedule") ⏎
+:::
