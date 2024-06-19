@@ -54,15 +54,8 @@ website:
 
       - section: "Methodenseminar"
         contents: 
-          - text: "Session 07"
-            contents: 
-              - href: slides/slides-07.qmd
-                text: "Slides"
-              - href: exercises/exercise-07.qmd
-                text: "Übung"
-              - href: exercises/showcase-07.qmd 
-                text: "Showcase"
-
+          - href: ms-schedule.qmd
+            text: "Semesterplan"
 
       # - section: "Sessions"
       #   contents:
