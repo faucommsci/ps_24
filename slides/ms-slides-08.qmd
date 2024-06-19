@@ -76,11 +76,9 @@ schedule %>%
 
 2.  [From Text to Data](#introduction)
 
-3.  [Text as Data meets Literaturreviews](#theorie)
+3.  [Text as data in R]
 
-4.  [R in the real world](#r-example)
-
-5.  [📋 Hands on working with R](#group-activity)
+4.  [📋 Hands on working with R](#group-activity)
 
 # Organisation & Koordination {#orga background-image="img/slide_bg-orga.png"}
 
@@ -306,10 +304,9 @@ review_works_correct %>%
 
 #### Tidy data principles als Grundlage für Analyse-Workflow
 
-![\[\@silge2017\]](https://www.tidytextmining.com/images/tmwr_0101.png){fig-alt="Test"}
+![[@silge2017]](https://www.tidytextmining.com/images/tmwr_0101.png){fig-alt="Test"}
 
 -   **Tidy data struture** (each variable is column, each observation a row, each value is a cell, each type of observaional unit is a table) results in [**a table with one-token-per-row**]{.underline} [@silge2017].
-
 
 ## Tokenization der Abstracts
 
@@ -387,10 +384,10 @@ review_summarized %>%
 
 ::: columns
 ::: {.column width="50%"}
-Viele der wirklich interessanten Ergebnisse von Textanalysen basieren auf den Beziehungen zwischen Wörtern, z.B. 
+Viele der wirklich interessanten Ergebnisse von Textanalysen basieren auf den Beziehungen zwischen Wörtern, z.B.
 
-- welche Wörter dazu "neigen", unmittelbar auf einander zu folgen (n-grams),
-- oder innerhalb desselben Dokuments gemeinsam aufzutreten (Korrelation)
+-   welche Wörter dazu "neigen", unmittelbar auf einander zu folgen (n-grams),
+-   oder innerhalb desselben Dokuments gemeinsam aufzutreten (Korrelation)
 :::
 
 ::: {.column width="50%"}
@@ -440,7 +437,7 @@ review_pairs_corr %>%
 
 ## Spezifische "Partner" in spezifischen Umgebungen
 
-#### Häufig auftretenden Wörter in der Umgebung von *review*, *literature*, *systematic* 
+#### Häufig auftretenden Wörter in der Umgebung von *review*, *literature*, *systematic*
 
 ```{r figure-word-pairs-correlates}
 #| output-location: column
@@ -474,7 +471,6 @@ review_pairs_corr %>%
   theme_pubr()
 ```
 
-
 ## Let's talk about sentiments
 
 #### Dictionary based approach of text analysis
@@ -485,7 +481,7 @@ review_pairs_corr %>%
 @atteveldt2021 **argue that sentiment, in fact, are quite a complex concepts that are often hard to capture with dictionaries.**
 :::
 
-## Über die Bedeutung von "positiv|negativ"
+## Über die Bedeutung von "positiv\|negativ"
 
 #### Die häufigsten "positiven" und "negativen" Wörter in den Abstracts
 
@@ -613,7 +609,6 @@ ggarrange(g1, g2,
           common.legend = TRUE) 
 ```
 
-
 ## 🧪 And now ... you: Wiederholung
 
 #### Next Steps: Wiederholung der R-Grundlagen an OpenAlex-Daten
@@ -621,7 +616,7 @@ ggarrange(g1, g2,
 -   Laden Sie die auf StudOn bereitgestellten Dateien für die Sitzungen herunter
 -   Laden Sie die .zip-Datei in Ihren RStudio Workspace
 -   Navigieren Sie zu dem Ordner, in dem die Datei `ps_24_binder.Rproj` liegt. Öffnen Sie diese Datei mit einem Doppelklick. Nur dadurch ist gewährleistet, dass alle Dependencies korrekt funktionieren.
--   Öffnen Sie die Datei `exercise-07.qmd` im Ordner `exercises` und lesen Sie sich gründlich die Anweisungen durch.
+-   Öffnen Sie die Datei `exercise-08.qmd` im Ordner `exercises` und lesen Sie sich gründlich die Anweisungen durch.
 -   ***Tipp: Sie finden alle in den Folien verwendeten Code-Bausteine in der Datei showcase.qmd (für den "rohen" Code) oder showcase.html (mit gerenderten Ausgaben).***
 
 # Time for questions {background-image="img/slide_bg-question.png"}
@@ -632,4 +627,3 @@ ggarrange(g1, g2,
 
 ::: {#refs}
 :::
-
