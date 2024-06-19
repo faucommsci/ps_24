@@ -1,7 +1,7 @@
 ---
-title: "Text processing in R "
-subtitle: "Methodenseminar: Session 08"
-date: 20 06 2024
+title: "Introduction to Text as Data "
+subtitle: "Methodenseminar: Session 07"
+date: 13 06 2024
 bibliography: references_sessions.bib
 csl: ../apa-cv.csl 
 suppress-bibliography: true
@@ -11,29 +11,21 @@ citations-hover: false
 
 ## Participate
 
-🖥️ [Slides](/slides/ms-slides-08.html)
+🖥️ [Slides](/slides/ms-slides-07.html)
 
-📋 [Showcase](/exercises/ms-showcase-08.html)
+📋 [Showcase](/exercises/ms-showcase-07.html)
 
 ## Practice
 
-✍️ [Exercise](/exercises/ms-exercise-08.html)
+✍️ [Exercise](/exercises/ms-exercise-07_solution.html)
 
 ## Suggested readings
 
--   @atteveldt2021
+-   @benoit2020
 
--   @silge
+-   @grimmer2022
 
--   @silge2017
-
--   @welbers2017
-
-## Useful resources
-
--   Tutorials des CCS-Amsterdam zu "tidytext-based" Textanalyse:
-    -   📖 [TidyText basics](https://github.com/ccs-amsterdam/r-course-material/blob/master/tutorials/tidytext.md)
-    -   📖 [Dictionary analysis with TidyText](https://github.com/ccs-amsterdam/r-course-material/blob/master/tutorials/tidytext-dictionary.md)
+-   @grimmer2013
 
 <br>
 
