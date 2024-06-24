@@ -190,7 +190,7 @@ Einführung in die Textanalyse mit `tidytext`
 
 ```{r import-data}
 #| echo: false
-review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
 
 # Create correct data
 review_works_correct <- review_works %>% 
@@ -608,6 +608,10 @@ ggarrange(g1, g2,
           align = "hv",
           common.legend = TRUE) 
 ```
+
+# 📋 Hands on working with R {#group-activity background-image="img/slide_bg-group_activity.png"}
+
+Verschiedene R-Übungsaufgaben zum Inhalt der heutigen Sitzung
 
 ## 🧪 And now ... you: Wiederholung
 

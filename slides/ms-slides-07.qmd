@@ -295,7 +295,7 @@ Welche Rolle spielt *Text as Data* bei Literaturreviews?
 
 ```{r import-data}
 #| echo: false
-review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
 ```
 
 ## Wer oder was ist OpenAlex?
@@ -573,7 +573,8 @@ review_works_correct %>%
 
 # 📋 Hands on working with R {#group-activity background-image="img/slide_bg-group_activity.png"}
 
-Weitere Eingrenzung der Suchergebnisse
+Verschiedene R-Übungsaufgaben zum Inhalt der heutigen Sitzung
+
 
 ## 🧪 And now ... you: Übung & Eingrenzung
 

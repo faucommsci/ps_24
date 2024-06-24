@@ -29,7 +29,7 @@ pacman::p_load(
 
 ```{r import-data}
 #| echo: false
-review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
 
 # Create correct data
 review_works_correct <- review_works %>% 

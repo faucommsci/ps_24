@@ -14,7 +14,7 @@ date-format: "DD.MM.YYYY"
 #| echo: false
 
 pacman::p_load(qs, here)
-review_works <- qs::qread(here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
 ```
 
 ## Packages
@@ -68,7 +68,7 @@ review_works
 #| echo: false
 #| eval: false
 
-qs::qsave(review_works, file = here("data/exercise-07/openalex-review_works-2013_2023.qs"))
+qs::qsave(review_works, file = here("data/session-07/openalex-review_works-2013_2023.qs"))
 ```
 
 ### Initiale Sichtung und Überprüfung der Datem
