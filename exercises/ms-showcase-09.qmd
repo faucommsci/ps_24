@@ -1,0 +1,305 @@
+---
+title: "Unsupervised Machine Learning I"
+subtitle: "Session 09 - Showcase"
+date: last-modified
+date-format: "DD.MM.YYYY"
+---
+
+::: {.callout-tip icon="false"}
+[![Quarto Slide](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto-slide.svg)](https://github.com/faucommsci/ps_24/blob/main/slides/ms-slides-08.qmd) Link to slides
+:::
+
+## Preparation
+
+```{r load-packages}
+#| code-fold: false
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    here, qs, # file management
+    magrittr, janitor, # data wrangling
+    easystats, sjmisc, # data analysis
+    gt, gtExtras, # table visualization
+    ggpubr, ggwordcloud, # visualization
+    # text analysis    
+    tidytext, widyr, # based on tidytext
+    quanteda, # based on quanteda
+    quanteda.textmodels, quanteda.textplots, quanteda.textstats, 
+    stm, # structural topic modeling
+    openalexR, 
+    tidyverse # load last to avoid masking issues
+  )
+```
+
+```{r import-data}
+#| echo: false
+review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
+
+# Create correct data
+review_works_correct <- review_works %>% 
+    mutate(
+        # Create additional factor variables
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        )
+
+# Import stm results
+stm_mdl <- qs::qread(here("data/session-09/stm-mdl.qs"))
+```
+
+## Codechunks aus der Sitzung
+
+### Erstellung und Bearbeitung der Subsample
+
+```{r recode-create-subsample}
+review_subsample <- review_works_correct %>% 
+  # Eingrenzung: Sprache und Typ
+  filter(language == "en") %>% 
+  filter(type == "article") %>%
+  # Datentranformation
+  unnest(topics, names_sep = "_") %>%
+  filter(topics_name == "field") %>% 
+  filter(topics_i == "1") %>% 
+  # Eingrenzung: Forschungsfeldes
+  filter(
+   topics_display_name == "Social Sciences"|
+   topics_display_name == "Psychology"
+    )
+
+# Überblick 
+review_subsample %>% glimpse
+```
+
+### Exkurs: Identfikation von fehlenden Werten
+
+```{r fig-missing-analysis}
+visdat::vis_miss(review_subsample, warn_large_data = FALSE)
+```
+
+### Anpassung der Subsample
+```{r recode-create-subsample-edited}
+review_subsample <- review_works_correct %>%
+  # Eingrenzung: Sprache und Typ
+  filter(language == "en") %>% 
+  filter(type == "article") %>%
+  # Datentranformation
+  unnest(topics, names_sep = "_") %>%
+  filter(topics_name == "field") %>% 
+  filter(topics_i == "1") %>% 
+  # Eingrenzung: Forschungsfeldes
+  filter(
+   topics_display_name == "Social Sciences"|
+   topics_display_name == "Psychology"
+   ) %>% 
+  # Eingrenzung: Keine Einträge ohne Abstract
+  filter(!is.na(ab))
+
+# Überblick 
+review_subsample %>% glimpse
+```
+
+### DTM/DFM Erstellung
+
+#### `tidytext``
+```{r create-dtm-tidytext}
+# Create tidy data
+subsample_tidy <- review_subsample %>% 
+    tidytext::unnest_tokens("text", ab) %>% 
+    filter(!text %in% tidytext::stop_words$word)
+
+# Create summarized data
+subsample_summarized <- subsample_tidy %>% 
+  count(id, text) 
+
+# Create DTM
+subsample_dtm <- subsample_summarized %>% 
+  cast_dtm(id, text, n)
+
+# Preview
+subsample_dtm
+```
+
+#### `quanteda`
+```{r create-dfm-quanteda}
+#| output: false
+
+# Create corpus
+quanteda_corpus <- review_subsample %>% 
+  quanteda::corpus(
+    docid_field = "id", 
+    text_field = "ab"
+  )
+
+# Tokenize
+quanteda_token <- quanteda_corpus %>% 
+  quanteda::tokens(
+    remove_punct = TRUE,
+    remove_symbols = TRUE, 
+    remove_numbers = TRUE, 
+    remove_url = TRUE, 
+    split_tags = FALSE # keep hashtags and mentions
+  ) %>% 
+  quanteda::tokens_tolower() %>% 
+  quanteda::tokens_remove(
+    pattern = stopwords("en")
+    )
+
+# Convert to Document-Feature-Matrix (DFM)
+quanteda_dfm <- quanteda_token %>% 
+  quanteda::dfm()
+
+# Preview
+quanteda_dfm
+```
+
+### Netzwerk der Top-Begriffe
+#### `tidytext`
+```{r figure-hashtags-cooccurence-tidytext}
+
+# Extract most common hashtags
+top50_features_tidy <- subsample_tidy %>% 
+  count(text, sort = TRUE) %>%
+  slice_head(n = 50) %>% 
+  pull(text)
+
+# Visualize
+subsample_tidy %>% 
+  count(id, text, sort = TRUE) %>% 
+  filter(!is.na(text)) %>% 
+  cast_dfm(id, text, n) %>% 
+  quanteda::fcm() %>% 
+  quanteda::fcm_select(
+    pattern = top50_features_tidy,
+    case_insensitive = FALSE
+  ) %>%  
+  quanteda.textplots::textplot_network(
+    edge_color = "#04316A"
+  )
+```
+
+
+#### `quanteda`
+
+```{r figure-hashtags-cooccurence-quanteda}
+# Extract most common features 
+top50_features_quanteda <- quanteda_dfm %>% 
+  topfeatures(50) %>% 
+  names()
+
+# Construct feature-occurrence matrix of features
+quanteda_dfm %>% 
+  fcm() %>% 
+  fcm_select(pattern = top50_features_quanteda) %>% 
+  textplot_network(
+    edge_color = "#C50F3C"
+  ) 
+```
+
+### Preparation for STM
+```{r create-stm-data}
+#| eval: false
+
+# Pruning
+quanteda_dfm_trim <- quanteda_dfm %>% 
+  dfm_trim( 
+    min_docfreq = 10/nrow(review_subsample),
+    max_docfreq = 0.99, 
+    docfreq_type = "prop")
+
+# Convert for stm topic modeling
+quanteda_stm <- quanteda_dfm_trim %>% 
+   convert(to = "stm")
+```
+
+
+### Structural Topic Model
+
+#### Schätzung
+
+```{r create-stm-model}
+#| eval: false
+
+tictoc::tic()
+stm_mdl <- stm::stm(
+  documents = quanteda_stm$documents,
+  vocab = quanteda_stm$vocab, 
+  K = 20, 
+  seed = 42,
+  max.em.its = 10,
+  init.type = "Spectral",
+  verbose = TRUE)
+tictoc::toc(log = TRUE)
+```
+
+#### Modelinformationen
+
+```{r stm-overview}
+# Überblick über STM
+stm_mdl
+```
+
+#### Überblick über die Themen
+
+```{r stm-topic-overview-graph}
+#| fig-height: 9
+#| fig-width: 16
+
+# Simple
+plot(stm_mdl, type = "summary")
+```
+
+```{r stm-topic-overview-table}
+# Komplex
+top_gamma <- stm_mdl %>%
+  tidy(matrix = "gamma") %>% 
+  dplyr::group_by(topic) %>%
+  dplyr::summarise(gamma = mean(gamma), .groups = "drop") %>%
+  dplyr::arrange(desc(gamma))
+
+top_beta <- stm_mdl %>%
+  tidytext::tidy(.) %>% 
+  dplyr::group_by(topic) %>%
+  dplyr::arrange(-beta) %>%
+  dplyr::top_n(10, wt = beta) %>% 
+  dplyr::select(topic, term) %>%
+  dplyr::summarise(terms_beta = toString(term), .groups = "drop")
+
+top_topics_terms <- top_beta %>% 
+  dplyr::left_join(top_gamma, by = "topic") %>%
+  dplyr::mutate(
+          topic = reorder(topic, gamma)
+      )
+
+# Preview
+top_topics_terms %>%
+  mutate(across(gamma, ~round(.,3))) %>% 
+  dplyr::arrange(-gamma) %>% 
+  gt() %>% 
+  cols_label(
+    topic = "Topic", 
+    terms_beta = "Top Terms (based on beta)",
+    gamma = "Gamma"
+  ) %>% 
+  gtExtras::gt_theme_538()
+```
+
+#### Themenkorrelation
+
+```{r stm-topic-correlation}
+#| fig-height: 9
+#| fig-width: 16
+
+stm_corr <- stm::topicCorr(stm_mdl)
+plot(stm_corr)
+
+```
+
+#### Fokus auf einzele Themen
+##### Prominente Wörter
+```{r stm-topic-prominent-words}
+# Fokus auf Themas 16
+stm::labelTopics(stm_mdl, topic=16)
+
+# Fokus auf Thema 10
+stm::labelTopics(stm_mdl, topic=10)
+```
