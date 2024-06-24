@@ -37,8 +37,6 @@ website:
     #   href: http://10.204.20.178:8787/
     #   text: RStudio Server
 
-# TODO Add link (icon) to RStudio Server
-
     style: "floating"
     search: true
     collapse-level: 4
@@ -56,36 +54,6 @@ website:
         contents: 
           - href: ms-schedule.qmd
             text: "Methodenseminar"
-
-      # - section: "Sessions"
-      #   contents:
-      #     - href: sessions/session-01.qmd
-      #       text: "Session 01"
-      #     - href: sessions/session-02.qmd
-      #       text: "Session 02"
-      #     - href: sessions/session-03.qmd
-      #       text: "Session 03"
-      #     - href: sessions/session-04.qmd
-      #       text: "Session 04"
-      #     - href: sessions/session-06.qmd
-      #       text: "Session 06"
-      #     - href: sessions/session-07.qmd
-      #       text: "Session 07"
-      #     - href: sessions/session-08.qmd
-      #       text: "Session 08"
-      #     - href: sessions/session-09.qmd
-      #       text: "Session 09"
-      #     - href: sessions/session-10.qmd
-      #       text: "Session 10"
-
-      # - section: "Exercises"
-      #   contents:
-      #     - href: exercise/exercise-03.qmd
-      #       text: "Exercise 03"
-      #     - href: exercise/exercise-09_solution.qmd
-      #       text: "Exercise 09"
-      #     - href: exercise/exercise-10.qmd
-      #       text: "Exercise 10"
 
       - section: "Computing"
         contents:
