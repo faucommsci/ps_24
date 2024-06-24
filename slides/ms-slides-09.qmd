@@ -1,0 +1,754 @@
+---
+title: "Unsupervised Machine Learning (I)"
+subtitle: "Session 09"
+date: 27 06 2024
+date-format: "DD.MM.YYYY"
+bibliography: references_slides.bib
+---
+
+```{r setup-slide-session}
+#| echo: false
+ 
+# Load packages
+pacman::p_load(
+    here, fs, 
+    jsonlite, 
+    gt, gtExtras,
+    sjmisc, easystats,
+    ggpubr, ggwordcloud,
+    countdown, widyr,
+    tidytext, quanteda,
+    quanteda.textmodels, quanteda.textplots, quanteda.textstats, 
+    stm,
+    tidyverse
+)
+
+# Load schedule
+source(here("slides/schedule.R"))
+```
+
+## Seminarplan {.smaller}
+
+```{r table-schedule}
+#| echo: false 
+schedule %>% 
+    gt::gt() %>% 
+    gt::fmt_markdown() %>% 
+    gt::tab_options(
+        table.width = gt::pct(80), 
+        table.font.size = "14px") %>% 
+    gtExtras::gt_theme_nytimes() %>% 
+    # customise column header labels
+    gt::cols_label(
+        session = "Sitzung", 
+        date = "Datum",
+        topic = "Thema (synchron)",
+        exercise = "Übung (asynchron)",
+        presenter = "Dozent:in"
+    ) %>% 
+    gt::cols_width(
+        session ~ pct(10),
+        date ~ pct(10),
+        topic ~ pct(50),
+        exercise ~ pct(20),
+        presenter ~ pct(10)
+    ) %>%
+    # highlight current session
+    gtExtras::gt_highlight_rows(
+        rows = 13,
+        fill = "#C50F3C", alpha = 0.15,
+        bold_target_only = TRUE,
+        target_col = session:topic
+    ) %>%
+    # fade out past sessions
+    gt::tab_style(
+        style = gt::cell_text(
+            style = "italic", 
+            color = "grey"),
+        location = gt::cells_body(
+            columns = everything(), 
+            rows = c(1:9, 11:12)
+        )
+    )
+```
+
+```{r import-data}
+#| echo: false
+review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
+
+# Create correct data
+review_works_correct <- review_works %>% 
+    mutate(
+        # Create additional factor variables
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        )
+
+# Import stm
+stm_mdl <- qs::qread(here("data/session-09/stm-mdl.qs"))
+```
+
+# Agenda {background-image="img/slide_bg-agenda.png"}
+
+1.  [Organisation & Koordination](#orga)
+2.  [Analyse von *Text as Data*](#introduction)
+3.  [Text as data in R](#r-example)
+4.  [📋 Hands on working with R](#exercises)
+
+<!-- FIXME Netzwerkgraphik: Top 25 Begriffe verwenden -->
+
+# Organisation & Koordination {#orga background-image="img/slide_bg-orga.png"}
+
+Fragen zur R und zur Übung
+
+## Besprechung der R-Übung
+
+#### Sollten wir die Daten weiter eingrenzen?
+
+::: columns
+::: {.column width="50%"}
+<br>
+
+Bitte scannt den **QR-Code** oder nutzt den folgenden **Link** für die Teilnahme an einer kurzen Umfrage:
+
+-   <https://www.menti.com/als6ys2e2y69>
+
+-   Temporary Access Code: **2250 1954**
+:::
+
+::: {.column width="10%"}
+:::
+
+::: {.column width="40%"}
+<br> {{< qrcode https://www.menti.com/als6ys2e2y69 qr1 width=350 height=350 colorDark='#C50F3C' >}}
+:::
+:::
+
+```{r countdown-vote}
+#| echo: false
+
+countdown(
+    minutes = 2,
+    warn_when = 30)
+```
+
+## Ergebnis
+
+::: {style="position: relative; padding-bottom: 56.25%; padding-top: 35px; height: 0; overflow: hidden;"}
+<iframe sandbox="allow-scripts allow-same-origin allow-presentation" allowfullscreen="true" allowtransparency="true" frameborder="0" height="315" src="https://www.mentimeter.com/app/presentation/alm2ezym9yiig9dmdx3bs81ys4kfs71o/embed" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" width="420">
+
+</iframe>
+:::
+
+# Analyse von *Text as Data* {#intro background-image="img/slide_bg-section.png"}
+
+Document-Term-Matrices & Unsupervised Text Analysis (Topic Modeling)
+
+## Quick reminder: Die tidytext Pipeline
+
+#### Fokus auf einzelne Wörter, deren Beziehungen zueinander und Sentiments
+
+::: r-stack
+![](https://www.tidytextmining.com/images/tmwr_0101.png){fig-align="center"}
+
+![](https://www.tidytextmining.com/images/tmwr_0201.png){.fragment fig-align="center" width="1361"}
+:::
+
+::: {style="text-align: center"}
+@silge2017
+:::
+
+## Expansion der Pipeline
+
+#### Fokus auf die Modelierung der Beziehung zwischen Wörtern & Dokumenten
+
+::: r-stack
+![](https://www.tidytextmining.com/images/tmwr_0501.png){fig-align="center" width="840"}
+
+![](https://www.tidytextmining.com/images/tmwr_0601.png){.fragment fig-align="center" width="840"}
+:::
+
+::: {style="text-align: center"}
+@silge2017
+:::
+
+## Possibilities over possibilities
+
+#### Überblick über verschiedene Methoden der Textanalyse [@grimmer2013]
+
+![](img/ms-session-07/text_as_data-methods_overview.png){fig-align="center"}
+
+## Promises & pitfalls
+
+#### Vier Grundsätze der quantitativen Textanalyse [@grimmer2013]
+
+1.  **All** quantitative **models** of language are **wrong** — but **some** are **useful**.
+2.  Quantitative methods for text **amplify resources and augment humans**.
+3.  There is **no globally best method** for automated text analysis.
+4.  **Validate, Validate, Validate!**
+
+## Verteilung von Wörtern auf Themen auf Dokumente
+
+#### Die Grundidee des (LDA) Topic Modeling
+
+![[@blei2012]](img/ms-session-09/tpm.jpg){fig-align="center"}
+
+::: notes
+Each topic is a distribution of words
+
+Each document is a mixture of corpus-wide topics
+
+Each words is drawn from one of those topics
+:::
+
+## In a nutshell
+
+#### Topic Modeling kurz erklärt
+
+-   Verfahren des ***unüberwachten maschinellen Lernens***, das sich daher insbesondere zur **Exploration und Deskription großer Textmengen** eignet
+
+-   **Themen** werden strikt auf Basis von **Worthäufigkeiten in den einzelnen Dokumenten** vermeintlich objektiv berechnet, ganz ohne subjektive Einschätzungen und damit einhergehenden etwaigen Verzerrungen
+
+-   Bekanntesten dieser Verfahren sind ***LDA*** **(Latent Dirichlet Allocation)** sowie die darauf aufbauenden ***CTM*** **(Correlated Topic Models)** und ***STM*** **(Structural Topic Models)**
+
+# *Text as data* in R {#r-example background-image="img/slide_bg-example.png"}
+
+Weiteführende Textanalyse mit `quanteda` und "structural topic modeling" mit `stm`
+
+```{r recode-subsample-backend}
+#| echo: false
+
+review_subsample <- review_works_correct %>% 
+  # Eingrenzung: Sprache und Typ
+  filter(language == "en") %>% 
+  filter(type == "article") %>%
+  # Datentranformation
+  unnest(topics, names_sep = "_") %>%
+  filter(topics_name == "field") %>% 
+  filter(topics_i == "1") %>% 
+  # Eingrenzung: Forschungsfeldes
+  filter(
+   topics_display_name == "Social Sciences"|
+   topics_display_name == "Psychology"
+    )
+```
+
+## Wenn Missing Values zum Problem werden
+
+#### Exkurs zu Überprüfung der Daten auf fehlende Werte
+
+```{r figure-missing-analysis}
+visdat::vis_miss(review_subsample, warn_large_data = FALSE)
+```
+
+## Bereinigung der Subsample {auto-animate="true"}
+
+#### Entfernung von fehlenden Werten
+
+::: {style="font-size: smaller"}
+```{r recode-subsample-1}
+#| output-location: column
+
+# Create subsample
+review_subsample <- review_works_correct %>% 
+  # Eingrenzung: Sprache und Typ
+  filter(language == "en") %>% 
+  filter(type == "article") %>%
+  # Datentranformation
+  unnest(topics, names_sep = "_") %>%
+  filter(topics_name == "field") %>% 
+  filter(topics_i == "1") %>% 
+  # Eingrenzung: Forschungsfeldes
+  filter(
+   topics_display_name == "Social Sciences"|
+   topics_display_name == "Psychology"
+    )
+
+# Overview
+review_subsample %>% glimpse  
+```
+:::
+
+## Bereinigung der Subsample {auto-animate="true"}
+
+#### Entfernung von fehlenden Werten
+
+::: {style="font-size: smaller"}
+```{r recode-subsample-2}
+#| output-location: column
+#| code-line-numbers: "15-16"
+
+# Create subsample
+review_subsample <- review_works_correct %>% 
+  # Eingrenzung: Sprache und Typ
+  filter(language == "en") %>% 
+  filter(type == "article") %>%
+  # Datentranformation
+  unnest(topics, names_sep = "_") %>%
+  filter(topics_name == "field") %>% 
+  filter(topics_i == "1") %>% 
+  # Eingrenzung: Forschungsfeldes
+  filter(
+   topics_display_name == "Social Sciences"|
+   topics_display_name == "Psychology"
+    ) %>% 
+  # Eingrenzung: Keine Einträge ohne Abstract
+  filter(!is.na(ab))
+
+# Overview
+review_subsample %>% glimpse  
+```
+:::
+
+## From text to numbers
+
+#### Document-Term-Matrix \[DTM\] im Fokus
+
+![](https://www.tidytextmining.com/images/tmwr_0501.png){fig-align="center"}
+
+::: {style="text-align: center"}
+@silge2017
+:::
+
+## Kurzer Rückblick auf die [Document-Term Matrix](https://en.wikipedia.org/wiki/Document-term_matrix) \[DTM\]
+
+#### Häufig verwendete Datenstruktur für (klassische) Textanalyse
+
+::: columns
+::: {.column width="50%"}
+Eine Matrix, bei der:
+
+-   **jede Zeile steht für ein Dokument** (z.B. ein Abstract),
+
+-   **jede Spalte einen Begriff** darstellt, und
+
+-   **jeder Wert** (in der Regel) die **Häufigkeit des Begriffs** **in einem Dokument** enthält.
+:::
+
+::: {.column width="50%"}
+![](https://www.oreilly.com/api/v2/epubs/9781491953235/files/assets/feml_0405.png){fig-align="center"}
+
+::: {style="text-align: center"}
+[@zheng2018]
+:::
+:::
+:::
+
+## Schritt für Schritt zur DTM {auto-animate="true"}
+
+#### Textverarbeitung entlang der tidytext Pipeline: [Tokenize]{.underline}
+
+::: {style="font-size: smaller"}
+```{r create-dtm-tidytext-1}
+#| output-location: column
+
+# Create tidy data
+subsample_tidy <- review_subsample %>% 
+    tidytext::unnest_tokens("text", ab) %>% 
+    filter(!text %in% tidytext::stop_words$word)
+
+# Preview
+subsample_tidy %>% 
+  select(id, text) %>% 
+  print(n = 15)
+```
+:::
+
+## Schritt für Schritt zur DTM {auto-animate="true"}
+
+#### Textverarbeitung entlang der tidytext Pipeline: Tokenize ▶️ [Summarize]{.underline}
+
+::: {style="font-size: smaller"}
+```{r create-dtm-tidytext-2}
+#| output-location: column
+#| code-line-numbers: "6-12"
+
+# Create tidy data
+subsample_tidy <- review_subsample %>% 
+    tidytext::unnest_tokens("text", ab) %>% 
+    filter(!text %in% tidytext::stop_words$word)
+
+# Create summarized data
+subsample_summarized <- subsample_tidy %>% 
+  count(id, text) 
+
+# Preview 
+subsample_summarized %>% 
+  print(n = 15)
+```
+:::
+
+## Schritt für Schritt zur DTM {auto-animate="true"}
+
+#### Textverarbeitung entlang der tidytext Pipeline: Tokenize ▶️ Summarize ▶️ [DTM]{.underline}
+
+::: {style="font-size: smaller"}
+```{r create-dtm-tidytext-3}
+#| output-location: column
+#| code-line-numbers: "10-15"
+
+# Create tidy data
+subsample_tidy <- review_subsample %>% 
+    tidytext::unnest_tokens("text", ab) %>% 
+    filter(!text %in% tidytext::stop_words$word)
+
+# Create summarized data
+subsample_summarized <- subsample_tidy %>% 
+  count(id, text) 
+
+# Create DTM
+subsample_dtm <- subsample_summarized %>% 
+  cast_dtm(id, text, n)
+
+# Preview
+subsample_dtm
+```
+:::
+
+## Einfach mit *tidytext*, präzise mit *quanteda*
+
+#### Vergleich von Texttransformation mit verschiedenen Paketen
+
+::: {style="font-size: smaller"}
+::: columns
+::: {.column width="50%"}
+```{r create-dtm-tidyverse-comparison}
+#| eval: false
+
+# Create tidy data
+subsample_tidy <- review_subsample %>% 
+    tidytext::unnest_tokens("text", ab) %>% 
+    filter(!text %in% tidytext::stop_words$word)
+
+# Create summarized data
+subsample_summarized <- subsample_tidy %>% 
+  count(id, text) 
+
+# Create DTM
+subsample_dtm <- subsample_summarized %>% 
+  cast_dtm(id, text, n)
+
+# Preview
+subsample_dtm
+```
+:::
+
+::: {.column width="50%"}
+```{r create-dfm-quanteda-comparison}
+#| output: false
+
+# Create corpus
+quanteda_corpus <- review_subsample %>% 
+  quanteda::corpus(
+    docid_field = "id", 
+    text_field = "ab"
+  )
+
+# Tokenize
+quanteda_token <- quanteda_corpus %>% 
+  quanteda::tokens(
+    remove_punct = TRUE,
+    remove_symbols = TRUE, 
+    remove_numbers = TRUE, 
+    remove_url = TRUE, 
+    split_tags = FALSE # keep hashtags and mentions
+  ) %>% 
+  quanteda::tokens_tolower() %>% 
+  quanteda::tokens_remove(
+    pattern = stopwords("en")
+    )
+
+# Convert to Document-Feature-Matrix (DFM)
+quanteda_dfm <- quanteda_token %>% 
+  quanteda::dfm()
+```
+:::
+:::
+:::
+
+## Netzwerk der Top-Begriffe {auto-animate="true"}
+
+#### Vergleich zwischen [tidytext]{.underline} & quanteda
+
+::: {style="font-size: smaller"}
+```{r figure-hashtags-cooccurence-tidytext}
+#| output-location: column
+#| fig-height: 9
+#| fig-width: 9
+
+# Extract most common hashtags
+top_features_tidy <- subsample_tidy %>% 
+  count(text, sort = TRUE) %>%
+  slice_head(n = 20) %>% 
+  pull(text)
+
+# Visualize
+subsample_tidy %>% 
+  count(id, text, sort = TRUE) %>% 
+  filter(!is.na(text)) %>% 
+  cast_dfm(id, text, n) %>% 
+  quanteda::fcm() %>% 
+  quanteda::fcm_select(
+    pattern = top_features_tidy,
+    case_insensitive = FALSE
+  ) %>%  
+  quanteda.textplots::textplot_network(
+    edge_color = "#04316A"
+  )
+```
+:::
+
+## Netzwerk der Top-Begriffe {auto-animate="true"}
+
+#### Vergleich zwischen tidytext & [quanteda]{.underline}
+
+<!-- TODO Exclude this slide? -->
+
+::: {style="font-size: smaller"}
+```{r figure-features-cooccurence-quanteda}
+#| output-location: column
+#| fig-height: 9
+#| fig-width: 9
+
+# Extract most common features 
+top_features_quanteda <- quanteda_dfm %>% 
+  topfeatures(20) %>% 
+  names()
+
+# Construct feature-occurrence matrix of features
+quanteda_dfm %>% 
+  fcm() %>% 
+  fcm_select(pattern = top_features_quanteda) %>% 
+  textplot_network(
+    edge_color = "#C50F3C"
+  ) 
+```
+:::
+
+## Netzwerk der Top-Begriffe {auto-animate="true"}
+
+#### Vergleich zwischen tidytext & quanteda
+
+::: columns
+::: {.column width="50%"}
+```{r figure-hashtag-comparison-tidytext}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+#| fig-height: 9
+#| fig-width: 9
+
+subsample_tidy %>% 
+  count(id, text, sort = TRUE) %>% 
+  filter(!is.na(text)) %>% 
+  cast_dfm(id, text, n) %>% 
+  quanteda::fcm() %>% 
+  quanteda::fcm_select(
+    pattern = top_features_tidy,
+    case_insensitive = FALSE
+  ) %>%  
+  quanteda.textplots::textplot_network(
+    edge_color = "#04316A"
+  )
+```
+:::
+
+::: {.column width="50%"}
+```{r figure-hashtag-comparison-quanteda}
+#| code-fold: true 
+#| code-summary: "Expand for full code"
+#| fig-height: 9
+#| fig-width: 9
+
+quanteda_dfm %>% 
+  fcm() %>% 
+  fcm_select(pattern = top_features_quanteda) %>% 
+  textplot_network(
+    edge_color = "#C50F3C"
+  ) 
+```
+:::
+:::
+
+## Neuer Input in die Pipeline
+
+#### Unsupervised learning example: *Topic modeling*
+
+![](https://www.tidytextmining.com/images/tmwr_0601.png){fig-align="center"}
+
+::: {style="text-align: center"}
+@silge2017
+:::
+
+## Building a shared vocabulary ... again
+
+#### Grundbegriffe und Definitionen im Kontext des Topic Modelings
+
+-   **`K`**: Anzahl der Themen, die für ein bestimmtes Themenmodell berechnen werden.
+-   **`Word-Topic-Matrix`**: Matrix, die die bedingte Wahrscheinlichkeit (**beta**) beschreibt, mit der ein Wort in einem bestimmten Thema vorkommt.
+-   **`Document-Topic-Matrix`**: Matrix, die die bedingte Wahrscheinlichkeit (**gamma**) beschreibt, mit der ein Thema in einem bestimmten Dokument vorkommt.
+
+## Beyond LDA
+
+#### Different topic modeling approaches
+
+-   *Latent Dirichlet Allocation \[`LDA`\]* [@blei2003] ist ein probabilistisches generatives Modell, das davon ausgeht, dass *jedes Dokument*in einem Korpuseine*Mischung von Themen ist* und *jedes Wort im Dokument einem der Themen des Dokuments zuzuordnen*ist.
+-   **Structural Topic Modeling \[`STM`\]** [@roberts2016; @roberts2019] erweitert LDA durch die Einbeziehung von Kovariaten auf Dokumentenebene und ermöglicht die Modellierung des Einflusses externer Faktoren auf die Themenprävalenz.
+-   *Word embeddings* (`Word2Vec` [@mikolov2013] , `Glove` [@pennington2014]) stellen Wörter als kontinuierliche Vektoren in einem hochdimensionalen Raum dar und erfassen semantische Beziehungen zwischen Wörtern basierend auf ihrem Kontext in den Daten.
+-   *Topic Modeling* mit *Neural Networks* (`BERTopic`[@devlin2019], `Doc2Vec`[@le2014]) nutzt Deep Learning-Architekturen, um automatisch latente Themen aus Textdaten zu lernen
+
+## Preparation is everything
+
+#### Empfohlene Vorverarbeitungsschritte für das Topic Modeling basierend auf @maier2018
+
+::: columns
+::: {.column width="50%"}
+1.  ⚠️ Deduplication;
+2.  ✅ tokenization;
+3.  ✅ transforming all characters to lowercase;
+4.  ✅ removing punctuation and special characters;
+5.  ✅ Removing stop-words;
+6.  ⚠️ term unification (lemmatizing or stemming);
+7.  🏗️ relative pruning (attributed to [Zipf’s law](https://en.wikipedia.org/wiki/Zipf%27s_law));
+:::
+
+::: {.column width="50%"}
+```{r create-stm-data}
+#| eval: false
+
+# Pruning
+quanteda_dfm_trim <- quanteda_dfm %>% 
+  dfm_trim( 
+    min_docfreq = 10/nrow(review_subsample),
+    max_docfreq = 0.99, 
+    docfreq_type = "prop")
+
+# Convert for stm topic modeling
+quanteda_stm <- quanteda_dfm_trim %>% 
+   convert(to = "stm")
+```
+:::
+:::
+
+::: notes
+Zipf’s law states that the frequency that a word appears is inversely proportional to its rank.
+:::
+
+## Ein erstes Modell
+
+#### Schätzung und Sichtung eines Structural Topic Models mit 20 Themen
+
+::: columns
+::: {.column width="50%"}
+```{r model-stm-exploration-estimation}
+#| eval: false
+
+stm_mdl <- stm::stm(
+  documents = quanteda_stm$documents,
+  vocab = quanteda_stm$vocab, 
+  K = 20, 
+  seed = 42,
+  max.em.its = 10,
+  init.type = "Spectral",
+  verbose = TRUE)
+```
+:::
+
+::: {.column width="50%"}
+```{r model-stm-exploration-preview}
+stm_mdl
+```
+:::
+:::
+
+## Ein erster Überblick
+
+#### Verteilung und Beschreibung der Themen
+
+```{r stm-topic-overview-graph}
+stm_mdl %>% plot(type = "summary")
+```
+
+## Selber Überblick, anderes Format
+
+#### Verteilung und Beschreibung der Themen
+
+```{r stm-topic-overview-table}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+top_gamma <- stm_mdl %>%
+  tidy(matrix = "gamma") %>% 
+  dplyr::group_by(topic) %>%
+  dplyr::summarise(gamma = mean(gamma), .groups = "drop") %>%
+  dplyr::arrange(desc(gamma))
+
+top_beta <- stm_mdl %>%
+  tidytext::tidy(.) %>% 
+  dplyr::group_by(topic) %>%
+  dplyr::arrange(-beta) %>%
+  dplyr::top_n(10, wt = beta) %>% 
+  dplyr::select(topic, term) %>%
+  dplyr::summarise(terms_beta = toString(term), .groups = "drop")
+
+top_topics_terms <- top_beta %>% 
+  dplyr::left_join(top_gamma, by = "topic") %>%
+  dplyr::mutate(
+          topic = reorder(topic, gamma)
+      )
+
+# Preview
+top_topics_terms %>%
+  mutate(across(gamma, ~round(.,3))) %>% 
+  dplyr::arrange(-gamma) %>% 
+  gt() %>% 
+  cols_label(
+    topic = "Topic", 
+    terms_beta = "Top Terms (based on beta)",
+    gamma = "Gamma"
+  ) %>% 
+  gtExtras::gt_theme_538()
+```
+
+## Verbindung der Themen untereinander
+
+#### Korrelation der Themen
+
+```{r stm-topic-correlation}
+stm_corr <- stm::topicCorr(stm_mdl)
+plot(stm_corr)
+```
+
+## Prominente Wörter einzelner Themen
+
+#### Überblick über Top-Begriffe verschiedener Themen
+
+```{r stm-topic-prominent-words}
+# Fokus auf Themas 16 (höchtes Gamma)
+stm::labelTopics(stm_mdl, topic=16)
+
+# Fokus auf Thema 10 (isoliertes Thema)
+stm::labelTopics(stm_mdl, topic=10)
+```
+
+# 📋 Hands on working with R {#group-activity background-image="img/slide_bg-group_activity.png"}
+
+Verschiedene R-Übungsaufgaben zum Inhalt der heutigen Sitzung
+
+## 🧪 And now ... you: Textanalyse mit R
+
+#### Next Steps: Wiederholung der Inhalte 
+
+-   Laden Sie die auf StudOn bereitgestellten Dateien für die Sitzungen herunter
+-   Laden Sie die .zip-Datei in Ihren RStudio Workspace
+-   Navigieren Sie zu dem Ordner, in dem die Datei `ps_24_binder.Rproj` liegt. Öffnen Sie diese Datei mit einem Doppelklick. Nur dadurch ist gewährleistet, dass alle Dependencies korrekt funktionieren.
+-   Öffnen Sie die Datei `exercise-09.qmd` im Ordner `exercises` und lesen Sie sich gründlich die Anweisungen durch.
+-   ***Tipp: Sie finden alle in den Folien verwendeten Code-Bausteine in der Datei showcase.qmd (für den "rohen" Code) oder showcase.html (mit gerenderten Ausgaben).***
+
+# Time for questions {background-image="img/slide_bg-question.png"}
+
+# Thank you! {background-image="img/slide_bg-end_session.png"}
+
+## References
+
+::: {#refs}
+:::
