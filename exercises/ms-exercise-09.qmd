@@ -1,0 +1,189 @@
+---
+title: "Unsupervised Machine Learning I"
+subtitle: "Session 09 - Exercise"
+date: last-modified
+date-format: "DD.MM.YYYY"
+format:
+    html: 
+        code-fold: true
+        code-summary: "Lösung anzeigen"
+---
+
+::: {.callout-tip icon="false"}
+[![Quarto Document](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto_document.svg)](https://github.com/faucommsci/ps_24/blob/main/exercises/ms-exercise-08_solution.qmd) Link to source file
+:::
+
+::: callout-note
+## Ziel der Anwendung: Textanalyse in R kennenlernen
+
+-   Typische Schritte der Textanalyse mit `quanteda` kennenlernen, von der Tokenisierung bis zur Visualisierung.
+:::
+
+## Background
+
+::: callout-tip
+## Todays's data basis: [OpenAlex](https://openalex.org/)
+
+-   Via API bzw. openalexR [@aria2024] gesammelte "works" der Datenbank [OpenAlex](https://openalex.org/) mit Bezug zu Literaturriews in den Sozialwissenschaften zwischen 2013 und 2023
+
+-   Detaillierte Informationen und Ergebnisse zur Suchquery finden Sie [hier](https://openalex.org/works?page=1&filter=display_name.search%3A%28literature%20OR%20systematic%29%20AND%20review,primary_topic.domain.id%3Adomains%2F2,publication_year%3A2014%20-%202024&group_by=publication_year,open_access.is_oa,primary_topic.field.id).
+:::
+
+## Preparation
+
+::: callout-important
+## Wichtige Information
+
+-   Bitte stellen Sie sicher, dass Sie das jeweilige R-Studio Projekt zur Übung geöffnet haben. Nur so funktionieren alle Dependencies korrekt.
+-   Um den einwandfreien Ablauf der Übung zu gewährleisten, wird für die Aufgaben auf eine eigenständige Datenerhebung verzichtet und ein Übungsdatensatz zu verfügung gestelt.
+:::
+
+### Packages
+
+```{r load-packages}
+#| code-fold: false
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    here, qs, # file management
+    magrittr, janitor, # data wrangling
+    easystats, sjmisc, # data analysis
+    gt, gtExtras, # table visualization
+    ggpubr, ggwordcloud, # visualization
+    # text analysis    
+    tidytext, widyr, # based on tidytext
+    quanteda, # based on quanteda
+    quanteda.textmodels, quanteda.textplots, quanteda.textstats, 
+    openalexR, 
+    tidyverse # load last to avoid masking issues
+  )
+```
+
+### Import und Vorverarbeitung der Daten
+
+```{r data-import}
+#| code-fold: false
+
+# Import from local
+review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
+
+# Create correct data
+review_works_correct <- review_works %>% 
+    mutate(
+        # Create additional factor variables
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        )
+
+# Create subsample
+review_subsample <- review_works_correct %>%
+    # Eingrenzung: Sprache und Typ
+    filter(language == "en") %>% 
+    filter(type == "article") %>%
+    # Eingrenzung: Keine Einträge ohne Abstract
+    filter(!is.na(ab)) %>% 
+    # Datentranformation
+    unnest(topics, names_sep = "_") %>%
+    filter(topics_name == "field" ) %>% 
+    filter(topics_i == "1") %>% 
+    # Eingrenzung: Forschungsfeldes
+    filter(
+    topics_display_name == "Social Sciences"|
+    topics_display_name == "Psychology"
+    ) %>% 
+    # Eingrenzung: Keine Einträge ohne Abstract
+    filter(!is.na(ab))   
+```
+
+### Erstellung Korpus & DFM
+
+```{r recode-data-to-dfm}
+# Create corpus
+quanteda_corpus <- review_subsample %>% 
+  quanteda::corpus(
+    docid_field = "id", 
+    text_field = "ab"
+  )
+
+# Tokenize
+quanteda_token <- quanteda_corpus %>% 
+  quanteda::tokens(
+    remove_punct = TRUE,
+    remove_symbols = TRUE, 
+    remove_numbers = TRUE, 
+    remove_url = TRUE, 
+    split_tags = FALSE # keep hashtags and mentions
+  ) %>% 
+  quanteda::tokens_tolower() %>% 
+  quanteda::tokens_remove(
+    pattern = stopwords("en")
+    )
+
+# Convert to Document-Feature-Matrix (DFM)
+quanteda_dfm <- quanteda_token %>% 
+  quanteda::dfm()
+```
+
+## 🛠️ Praktische Anwendung
+
+::: callout-important
+## Achtung, bitte lesen!
+
+-   Bevor Sie mit der Arbeit an den folgenden 📋 **Exercises** beginnen, stellen Sie bitte sicher, dass Sie alle Chunks des Abschnitts [Preparation] gerendert haben. Das können Sie tun, indem Sie den "*Run all chunks above*"-Knopf ![](/img/rstudio-button-render_all_chunks_above.png)des nächsten Chunks benutzen.
+-   Bei Fragen zum Code lohnt sich ein Blick in den **Showcase** (.qmd oder .html). Beim Showcase handelt es sich um eine kompakte Darstellung des in der Präsentation verwenden R-Codes. Sie können das Showcase also nutzen, um sich die Code-Bausteine anzusehen, die für die R-Outputs auf den Slides benutzt wurden.
+:::
+
+### 📋 Exercise 1: Cleaned DFM
+
+::: callout-caution
+## Ziel der Aufgabe
+
+<!-- FIXME Ziele der Übung ergänzen -->
+:::
+
+1.  Erstelen Sie einen neuen Datensatz `quanteda_dfm_cleaned`
+    -   basierend auf dem Datensatz `quanteda_dfm`
+        1.  Verwenden Sie `quanteda::dfm_remove(pattern = c("systematic", "literature", "review")`, um die Suchquery zu entfernen.
+        2.  Speichern Sie diese Umwandlung, indem Sie einen neuen Datensatz mit dem Namen `quanteda_dfm_cleaned` erstellen.
+2.  Überprüfen Sie die Transformation indem Sie `quanteda_dfm_cleaned` in die Konsole eingeben.
+3.  ✍️ Notieren Sie, wie viele Dokumente & Features in `quanteda_dfm_cleaned` enthalten sind.
+
+```{r exercise-1-solution}
+
+# `quanteda_dfm_cleaned` erstellen
+
+# Überprüfung
+
+# Notiz:
+# `quanteda_dfm_cleaned` enthält 36680 Dokumente und 135074 Features.
+
+```
+
+### 📋 Exercise 2: Neues Netzwerk der Top-Begriffe
+
+::: callout-caution
+## Ziel der Aufgabe
+
+-   Erstellung eines neuen Datensatzes `review_subsample_new`, der sich auf *englischsprachig* *Bücher bzw. Buchrartikel* beschränkt.
+:::
+
+1.  Neues Dataset `top_features_quanteda` erstellen
+    -   Basierend auf dem Dataset `quanteda_dfm_cleaned`,
+    -   Verwenden Sie `quanteda::topfeatures(20)`, um die 20 häufigsten Begriffe zu extrahieren.
+    -   Verwenden Sie `names()`, um nur die Namen (nicht die Werte) zu speichern.
+    -   Speichern Sie diese Transformation, indem Sie einen neuen Datensatz mit dem Namen `top_features_quanteda` erstellen.
+2.  Visualisierung des Netzwerks an Top-Begriffen
+    -   Basierend auf dem Dataset quanteda_dfm_cleaned,
+    -   Transformieren Sie die Daten mit `quanteda::fcm()` in eine Feature-Co-Occurrence-Matrix \[FCM\].
+    -   Auswahl relevanter Hashtags mit `quanteda::fcm_select(pattern = top_hashtags_quanteda, case_insensitive = FALSE)`.
+    -   Visualisierung mit `quanteda.textplots::textplot_network()`.
+3.  Ergebnisse interpretieren und vergleichen
+    -   Analysieren Sie die Beziehungen zwischen den Top-Begriffen.
+    -   Vergleichen Sie die Ergebnisse mit den Auswertungen der Folien. Welche Unterschiede gibt es?
+
+```{r exercise-2-solution}
+# Create top features
+
+# Visualisierung des Netzwerks an Top-Begriffen
+
+```
