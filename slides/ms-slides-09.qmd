@@ -182,10 +182,13 @@ Document-Term-Matrices & Unsupervised Text Analysis (Topic Modeling)
 
 #### Vier Grundsätze der quantitativen Textanalyse [@grimmer2013]
 
-1.  **All** quantitative **models** of language are **wrong** — but **some** are **useful**.
-2.  Quantitative methods for text **amplify resources and augment humans**.
-3.  There is **no globally best method** for automated text analysis.
-4.  **Validate, Validate, Validate!**
+1️⃣ **All** quantitative **models** of language are **wrong** — but **some** are **useful**.
+
+2️⃣ Quantitative methods for text **amplify resources and augment humans**.
+
+3️⃣ There is **no globally best method** for automated text analysis.
+
+4️⃣ **Validate, Validate, Validate!**
 
 ## Verteilung von Wörtern auf Themen auf Dokumente
 
@@ -203,7 +206,7 @@ Each words is drawn from one of those topics
 
 ## In a nutshell
 
-#### Topic Modeling kurz erklärt
+#### Grundlagen des Topic Modeling kurz zusammengefasst
 
 -   Verfahren des ***unüberwachten maschinellen Lernens***, das sich daher insbesondere zur **Exploration und Deskription großer Textmengen** eignet
 
@@ -213,7 +216,7 @@ Each words is drawn from one of those topics
 
 # *Text as data* in R {#r-example background-image="img/slide_bg-example.png"}
 
-Weiteführende Textanalyse mit `quanteda` und "structural topic modeling" mit `stm`
+Weiteführende Textanalyse mit `quanteda` und `stm`
 
 ```{r recode-subsample-backend}
 #| echo: false
@@ -243,7 +246,7 @@ visdat::vis_miss(review_subsample, warn_large_data = FALSE)
 
 ## Bereinigung der Subsample {auto-animate="true"}
 
-#### Entfernung von fehlenden Werten
+#### Ausschluss von Referenzen mit fehlendem Abstract
 
 ::: {style="font-size: smaller"}
 ```{r recode-subsample-1}
@@ -271,7 +274,7 @@ review_subsample %>% glimpse
 
 ## Bereinigung der Subsample {auto-animate="true"}
 
-#### Entfernung von fehlenden Werten
+#### Ausschluss von Referenzen mit fehlendem Abstract
 
 ::: {style="font-size: smaller"}
 ```{r recode-subsample-2}
@@ -300,7 +303,7 @@ review_subsample %>% glimpse
 ```
 :::
 
-## From text to numbers
+## Aus Text werden Zahlen
 
 #### Document-Term-Matrix \[DTM\] im Fokus
 
@@ -589,16 +592,18 @@ quanteda_dfm %>%
 
 ## Beyond LDA
 
-#### Different topic modeling approaches
+#### Verschiedene Ansätze der Themenmodellierung
 
+::: {style="font-size: smaller"}
 -   *Latent Dirichlet Allocation \[`LDA`\]* [@blei2003] ist ein probabilistisches generatives Modell, das davon ausgeht, dass *jedes Dokument*in einem Korpuseine*Mischung von Themen ist* und *jedes Wort im Dokument einem der Themen des Dokuments zuzuordnen*ist.
 -   **Structural Topic Modeling \[`STM`\]** [@roberts2016; @roberts2019] erweitert LDA durch die Einbeziehung von Kovariaten auf Dokumentenebene und ermöglicht die Modellierung des Einflusses externer Faktoren auf die Themenprävalenz.
 -   *Word embeddings* (`Word2Vec` [@mikolov2013] , `Glove` [@pennington2014]) stellen Wörter als kontinuierliche Vektoren in einem hochdimensionalen Raum dar und erfassen semantische Beziehungen zwischen Wörtern basierend auf ihrem Kontext in den Daten.
 -   *Topic Modeling* mit *Neural Networks* (`BERTopic`[@devlin2019], `Doc2Vec`[@le2014]) nutzt Deep Learning-Architekturen, um automatisch latente Themen aus Textdaten zu lernen
+:::
 
 ## Preparation is everything
 
-#### Empfohlene Vorverarbeitungsschritte für das Topic Modeling basierend auf @maier2018
+#### Empfohlene Vorverarbeitungsschritte für das Topic Modeling nach @maier2018
 
 ::: columns
 ::: {.column width="50%"}
@@ -701,6 +706,8 @@ top_topics_terms %>%
   mutate(across(gamma, ~round(.,3))) %>% 
   dplyr::arrange(-gamma) %>% 
   gt() %>% 
+  gt::tab_options(
+    table.font.size = "14px") %>% 
   cols_label(
     topic = "Topic", 
     terms_beta = "Top Terms (based on beta)",
@@ -736,7 +743,7 @@ Verschiedene R-Übungsaufgaben zum Inhalt der heutigen Sitzung
 
 ## 🧪 And now ... you: Textanalyse mit R
 
-#### Next Steps: Wiederholung der Inhalte 
+#### Next Steps: Wiederholung der Inhalte
 
 -   Laden Sie die auf StudOn bereitgestellten Dateien für die Sitzungen herunter
 -   Laden Sie die .zip-Datei in Ihren RStudio Workspace
