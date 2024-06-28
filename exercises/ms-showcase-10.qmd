@@ -1,0 +1,182 @@
+---
+title: "Unsupervised Machine Learning I"
+subtitle: "Session 09 - Showcase"
+date: last-modified
+date-format: "DD.MM.YYYY"
+---
+
+::: {.callout-tip icon="false"}
+[![Quarto Slide](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto-slide.svg)](https://github.com/faucommsci/ps_24/blob/main/slides/ms-slides-09.qmd) Link to slides
+:::
+
+## Preparation
+
+```{r load-packages}
+#| code-fold: false
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    here, qs, # file management
+    magrittr, janitor, # data wrangling
+    easystats, sjmisc, # data analysis
+    gt, gtExtras, # table visualization
+    ggpubr, ggwordcloud, # visualization
+    # text analysis    
+    tidytext, widyr, # based on tidytext
+    quanteda, # based on quanteda
+    quanteda.textmodels, quanteda.textplots, quanteda.textstats, 
+    stm, # structural topic modeling
+    openalexR, pushoverr, tictoc, 
+    tidyverse # load last to avoid masking issues
+  )
+
+pacman::p_load_gh("chrdrn/halpeR")
+```
+
+```{r import-data}
+#| echo: false
+#| eval: true
+
+review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
+
+# Create correct data
+review_subsample <- review_works %>% 
+    # Create ID based on rows
+    rownames_to_column(var = "rowID") %>% 
+    # Create additional factor variables
+    mutate(
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        ) %>%
+    # Eingrenzung: Sprache und Typ
+    filter(language == "en") %>% 
+    filter(type == "article") %>%
+    # Datentranformation
+    unnest(topics, names_sep = "_") %>%
+    filter(topics_name == "field") %>% 
+    filter(topics_i == "1") %>% 
+    # Eingrenzung: Forschungsfeldes
+    filter(
+    topics_display_name == "Social Sciences"|
+    topics_display_name == "Psychology"
+    ) %>% 
+    mutate(
+        field = as.factor(topics_display_name)
+    ) %>% 
+    # Eingrenzung: Keine Einträge ohne Abstract
+    filter(!is.na(ab))
+```
+
+```{r create-dfm-quanteda}
+#| output: false
+#| echo: false
+#| eval: true
+
+# Create corpus
+quanteda_corpus <- review_subsample %>% 
+  quanteda::corpus(
+    docid_field = "id", 
+    text_field = "ab"
+  )
+
+# Tokenize
+quanteda_token <- quanteda_corpus %>% 
+  quanteda::tokens(
+    remove_punct = TRUE,
+    remove_symbols = TRUE, 
+    remove_numbers = TRUE, 
+    remove_url = TRUE, 
+    split_tags = FALSE # keep hashtags and mentions
+  ) %>% 
+  quanteda::tokens_tolower() %>% 
+  quanteda::tokens_remove(
+    pattern = stopwords("en")
+    )
+
+# Convert to Document-Feature-Matrix (DFM)
+quanteda_dfm <- quanteda_token %>% 
+  quanteda::dfm()
+
+# Pruning
+quanteda_dfm_trim <- quanteda_dfm %>% 
+  dfm_trim( 
+    min_docfreq = 10/nrow(review_subsample),
+    max_docfreq = 0.99, 
+    docfreq_type = "prop")
+
+# Convert for stm topic modeling
+quanteda_stm <- quanteda_dfm_trim %>% 
+   convert(to = "stm")
+```
+## Codechunks aus der Sitzung
+
+### Erstellung und Bearbeitung der Subsample
+
+```{r create-stm-k0}
+#| echo: true
+#| eval: false
+
+stm_mdl_k0 <- stm::stm(
+    documents = quanteda_stm$documents,
+    vocab = quanteda_stm$vocab, 
+    prevalence =~ publication_year_fct + field, 
+    K = 0, 
+    seed = 42,
+    max.em.its = 1000,
+    data = quanteda_stm$meta,
+    init.type = "Spectral",
+    verbose = TRUE)
+```
+
+```{r}
+#| echo: false
+#| eval: false
+
+qs::qsave(stm_mdl_k0, file = here("data/session-10/stm_mdl_k0.qs"))
+```
+
+```{r}
+stm_mdl_k0 
+```
+
+
+## Extended topic search
+```{r}
+# Define parameters
+future::plan(future::multisession()) # use multiple sessions
+topic_range <- seq(from = 10, to = 100, by = 10) 
+
+# Initiate notifications & time tracking
+tic("STM extended search")
+
+# Estimate models
+stm_search  <- tibble(k = topic_range) %>%
+    mutate(
+        mdl = furrr::future_map(
+            k, 
+            ~stm::stm(
+                documents = quanteda_stm$documents,
+                vocab = quanteda_stm$vocab, 
+                prevalence =~ publication_year_fct + field,
+                K = ., 
+                seed = 42,
+                max.em.its = 1000,
+                data = quanteda_stm$meta,
+                init.type = "Spectral",
+                verbose = FALSE),
+            .options = furrr::furrr_options(seed = 42)
+            )
+    )
+
+# Sent status update and finish time tracking
+toc(log = TRUE)
+
+```
+
+
+```{r}
+#| echo: false
+#| eval: false
+
+qs::qsave(stm_search, file = here("data/session-10/stm_search.qs"))
+```
