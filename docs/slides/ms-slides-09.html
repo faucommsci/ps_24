@@ -10,10 +10,10 @@
 <link href="../site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/quarto-contrib/qrcodejs-v1.0.0/qrcode.js"></script><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.4.555">
+  <meta name="generator" content="quarto-1.5.52">
 
   <meta name="author" content="Christoph Adrian">
-  <title>Kommunikationswissenschaftliches Projektseminar - Unsupervised Machine Learning (I)</title>
+  <title>Kommunikationswissenschaftliches Projektseminar – Unsupervised Machine Learning (I)</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -44,7 +44,7 @@
     }
     @media print {
     pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
     }
     pre.numberSource code
       { counter-reset: source-line 0; }
@@ -411,7 +411,7 @@
   </style>
   <link href="../site_libs/countdown-0.4.0/countdown.css" rel="stylesheet">
   <script src="../site_libs/countdown-0.4.0/countdown.js"></script>
-<meta property="og:title" content="Kommunikationswissenschaftliches Projektseminar - Unsupervised Machine Learning (I)">
+<meta property="og:title" content="Unsupervised Machine Learning (I) – Kommunikationswissenschaftliches Projektseminar">
 <meta property="og:description" content="Session 09">
 <meta property="og:site_name" content="Kommunikationswissenschaftliches Projektseminar">
 </head>
@@ -1055,11 +1055,10 @@
 </div><div class="column" style="width:40%;">
 <p><br> </p><div id="qr1" class="qrcode"></div>
 <script type="text/javascript">
-var qrcode = new QRCode("qr1", {"text":"https://www.menti.com/als6ys2e2y69","colorLight":"#ffffff","height":"350","width":"350","colorDark":"#C50F3C"});
+var qrcode = new QRCode("qr1", {"colorDark":"#C50F3C","width":"350","text":"https://www.menti.com/als6ys2e2y69","colorLight":"#ffffff","height":"350"});
 </script>
     <p></p>
-</div>
-</div>
+</div></div>
 <div class="cell">
 <div class="cell-output-display">
 <div class="countdown" id="timer_37c5b0a9" data-warn-when="30" data-update-every="1" tabindex="0" style="right:0;bottom:0;">
@@ -1247,8 +1246,7 @@ $ topics_display_name         &lt;chr&gt; "Psychology", "Social Sciences", "Psyc
 $ publication_year_fct        &lt;fct&gt; 2015, 2017, 2014, 2016, 2020, 2014, 2017, …
 $ type_fct                    &lt;fct&gt; article, article, article, article, articl…</code></pre>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="bereinigung-der-subsample-1" class="slide level2" data-auto-animate="true">
@@ -1326,8 +1324,7 @@ $ topics_display_name         &lt;chr&gt; "Psychology", "Social Sciences", "Psyc
 $ publication_year_fct        &lt;fct&gt; 2015, 2017, 2014, 2016, 2020, 2014, 2017, …
 $ type_fct                    &lt;fct&gt; article, article, article, article, articl…</code></pre>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="aus-text-werden-zahlen" class="slide level2">
@@ -1358,8 +1355,7 @@ $ type_fct                    &lt;fct&gt; article, article, article, article, ar
 <div style="text-align: center">
 <p><span class="citation" data-cites="zheng2018">(<a href="#/references" role="doc-biblioref" onclick="">Zheng &amp; Casari, 2018</a>)</span></p>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="schritt-für-schritt-zur-dtm" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Schritt für Schritt zur DTM</h2>
@@ -1398,8 +1394,7 @@ $ type_fct                    &lt;fct&gt; article, article, article, article, ar
 15 https://openalex.org/W4293003987 5             
 # ℹ 4,872,409 more rows</code></pre>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="schritt-für-schritt-zur-dtm-1" class="slide level2" data-auto-animate="true">
@@ -1442,8 +1437,7 @@ $ type_fct                    &lt;fct&gt; article, article, article, article, ar
 15 https://openalex.org/W1000529773 government     1
 # ℹ 3,280,649 more rows</code></pre>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="schritt-für-schritt-zur-dtm-2" class="slide level2" data-auto-animate="true">
@@ -1475,8 +1469,7 @@ Sparsity           : 100%
 Maximal term length: 188
 Weighting          : term frequency (tf)</code></pre>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="einfach-mit-tidytext-präzise-mit-quanteda" class="slide level2">
@@ -1529,8 +1522,7 @@ Weighting          : term frequency (tf)</code></pre>
 <span id="cb13-23"><a></a>quanteda_dfm <span class="ot">&lt;-</span> quanteda_token <span class="sc">%&gt;%</span> </span>
 <span id="cb13-24"><a></a>  quanteda<span class="sc">::</span><span class="fu">dfm</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="netzwerk-der-top-begriffe" class="slide level2" data-auto-animate="true">
@@ -1566,8 +1558,7 @@ Weighting          : term frequency (tf)</code></pre>
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="netzwerk-der-top-begriffe-1" class="slide level2" data-auto-animate="true">
@@ -1597,8 +1588,7 @@ Weighting          : term frequency (tf)</code></pre>
 </figure>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 <section id="netzwerk-der-top-begriffe-2" class="slide level2" data-auto-animate="true">
@@ -1649,8 +1639,7 @@ Weighting          : term frequency (tf)</code></pre>
 </div>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="neuer-input-in-die-pipeline" class="slide level2">
 <h2>Neuer Input in die Pipeline</h2>
@@ -1708,8 +1697,7 @@ Weighting          : term frequency (tf)</code></pre>
 <span id="cb18-9"><a></a>quanteda_stm <span class="ot">&lt;-</span> quanteda_dfm_trim <span class="sc">%&gt;%</span> </span>
 <span id="cb18-10"><a></a>   <span class="fu">convert</span>(<span class="at">to =</span> <span class="st">"stm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-</div>
+</div></div>
 <aside class="notes">
 <p>Zipf’s law states that the frequency that a word appears is inversely proportional to its rank.</p>
 <style type="text/css">
@@ -1746,8 +1734,7 @@ Weighting          : term frequency (tf)</code></pre>
 <pre><code>A topic model with 20 topics, 36650 documents and a 14322 word dictionary.</code></pre>
 </div>
 </div>
-</div>
-</div>
+</div></div>
 </section>
 <section id="ein-erster-überblick" class="slide level2">
 <h2>Ein erster Überblick</h2>
@@ -2752,18 +2739,7 @@ Zheng, A., &amp; Casari, A. (2018). <em>Feature engineering for machine learning
         }
         return false;
       }
-      const clipboard = new window.ClipboardJS('.code-copy-button', {
-        text: function(trigger) {
-          const codeEl = trigger.previousElementSibling.cloneNode(true);
-          for (const childEl of codeEl.children) {
-            if (isCodeAnnotation(childEl)) {
-              childEl.remove();
-            }
-          }
-          return codeEl.innerText;
-        }
-      });
-      clipboard.on('success', function(e) {
+      const onCopySuccess = function(e) {
         // button target
         const button = e.trigger;
         // don't keep focus
@@ -2795,7 +2771,29 @@ Zheng, A., &amp; Casari, A. (2018). <em>Feature engineering for machine learning
         }, 1000);
         // clear code selection
         e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
       });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        // For code content inside modals, clipBoardJS needs to be initialized with a container option
+        // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
         var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
         var mailtoRegex = new RegExp(/^mailto:/);
           var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -2803,7 +2801,7 @@ Zheng, A., &amp; Casari, A. (2018). <em>Feature engineering for machine learning
             return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
         }
         // Inspect non-navigation links and adorn them if external
-     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
         for (var i=0; i<links.length; i++) {
           const link = links[i];
           if (!isInternal(link.href)) {
