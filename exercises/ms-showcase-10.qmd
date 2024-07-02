@@ -1,6 +1,6 @@
 ---
-title: "Unsupervised Machine Learning I"
-subtitle: "Session 09 - Showcase"
+title: "Unsupervised Machine Learning II"
+subtitle: "Session 10 - Showcase"
 date: last-modified
 date-format: "DD.MM.YYYY"
 ---
@@ -29,20 +29,16 @@ pacman::p_load(
     openalexR, pushoverr, tictoc, 
     tidyverse # load last to avoid masking issues
   )
-
-pacman::p_load_gh("chrdrn/halpeR")
 ```
 
 ```{r import-data}
-#| echo: false
-#| eval: true
+#| echo: true
+#| eval: false
 
 review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
 
 # Create correct data
 review_subsample <- review_works %>% 
-    # Create ID based on rows
-    rownames_to_column(var = "rowID") %>% 
     # Create additional factor variables
     mutate(
         publication_year_fct = as.factor(publication_year), 
@@ -67,10 +63,20 @@ review_subsample <- review_works %>%
     filter(!is.na(ab))
 ```
 
+```{r export-local-review-subsample}
+#| echo: false
+#| eval: false
+
+qs::qsave(
+  review_subsample, 
+  file = here("data/session-10/review_subsample.qs")
+  )
+```
+
 ```{r create-dfm-quanteda}
 #| output: false
-#| echo: false
-#| eval: true
+#| echo: true
+#| eval: false
 
 # Create corpus
 quanteda_corpus <- review_subsample %>% 
@@ -108,19 +114,42 @@ quanteda_dfm_trim <- quanteda_dfm %>%
 quanteda_stm <- quanteda_dfm_trim %>% 
    convert(to = "stm")
 ```
+
+```{r export-local-quanteda-stm}
+#| echo: false
+#| eval: false
+
+qs::qsave(
+  quanteda_stm, 
+  file = here("data/session-10/quanteda_stm.qs")
+  )
+```
+
+```{r import-data-backend}
+#| echo: false
+#| eval: true
+
+review_subsample <- qs::qread(here("data/session-10/review_subsample.qs"))
+quanteda_stm <- qs::qread(here("data/session-10/quanteda_stm.qs"))
+stm_mdl_k0 <- qs::qread(here("data/session-10/stm_mdl_k0.qs"))
+stm_mdl_k20 <- qs::qread(here("data/session-10/stm_mdl_k20.qs"))
+stm_search <- qs::qread(here("data/session-10/stm_search.qs"))
+```
+
 ## Codechunks aus der Sitzung
 
-### Erstellung und Bearbeitung der Subsample
+### (Re-)Estimation of k = 20 with metadata
 
-```{r create-stm-k0}
+```{r create-stm-k20}
 #| echo: true
 #| eval: false
 
-stm_mdl_k0 <- stm::stm(
+# Estimate model
+stm_mdl_k20 <- stm::stm(
     documents = quanteda_stm$documents,
     vocab = quanteda_stm$vocab, 
     prevalence =~ publication_year_fct + field, 
-    K = 0, 
+    K = 20, 
     seed = 42,
     max.em.its = 1000,
     data = quanteda_stm$meta,
@@ -128,20 +157,270 @@ stm_mdl_k0 <- stm::stm(
     verbose = TRUE)
 ```
 
-```{r}
+```{r table-stm-k20}
+# Overview
+stm_mdl_k20
+```
+
+```{r export-local-stm-k20}
 #| echo: false
 #| eval: false
 
-qs::qsave(stm_mdl_k0, file = here("data/session-10/stm_mdl_k0.qs"))
+qs::qsave(
+  stm_mdl_k20, 
+  file = here("data/session-10/stm_mdl_k20.qs")
+  )
 ```
 
-```{r}
-stm_mdl_k0 
+### Erweiterte Auswertungen
+
+#### Beta-Matrix
+
+```{r table-k20-beta}
+# Create tidy beta matrix
+td_beta <- tidy(stm_mdl_k20)
+
+# Output 
+td_beta
+```
+
+```{r table-k20-beta-top-terms}
+# Create top terms
+top_terms <- td_beta %>%
+  arrange(beta) %>%
+  group_by(topic) %>%
+  top_n(7, beta) %>%
+  arrange(-beta) %>%
+  select(topic, term) %>%
+  summarise(terms = list(term)) %>%
+  mutate(terms = map(terms, paste, collapse = ", ")) %>% 
+  unnest(cols = c(terms))
+
+# Output
+top_terms
+```
+
+```{r fig-k20-beta-top-terms}
+td_beta %>%
+    group_by(topic) %>%
+    slice_max(beta, n = 10) %>%
+    ungroup() %>%
+    ggplot(aes(beta, term)) +
+    geom_col() +
+    facet_wrap(~ topic, scales = "free")
+```
+
+#### Gamma-Matrix
+
+```{r table-k20-gamma}
+# Create tidy gamma matrix
+td_gamma <- tidy(
+  stm_mdl_k20, 
+  matrix = "gamma", 
+  document_names = names(quanteda_stm$documents)
+  )
+
+# Output 
+td_gamma
+```
+
+#### Häufigkeit und Top Begriffe der Themen
+
+```{r create-data-k20-prevalence}
+prevalence <- td_gamma %>%
+  group_by(topic) %>%
+  summarise(gamma = mean(gamma)) %>%
+  arrange(desc(gamma)) %>%
+  left_join(top_terms, by = "topic") %>%
+  mutate(topic = paste0("Topic ",sprintf("%02d", topic)),
+         topic = reorder(topic, gamma))
+```
+
+##### Table
+
+```{r table-k20-prevalence}
+prevalence %>% 
+  gt() %>% 
+  fmt_number(
+    columns = c(gamma), 
+    decimals = 2) %>% 
+  gtExtras::gt_theme_538()
+```
+
+##### Visualization
+
+```{r fig-k20-prevalence}
+prevalence %>%
+  ggplot(aes(topic, gamma, label = terms, fill = topic)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(hjust = 0, nudge_y = 0.0005, size = 3) +
+  coord_flip() +
+  scale_y_continuous(
+    expand = c(0,0),
+    limits = c(0, 0.18)) +
+  theme_pubr() +
+  theme(
+    plot.title = element_text(size = 16),
+    plot.subtitle = element_text(size = 13)) +
+  labs(
+    x = NULL, y = expression(gamma),
+    title = "Topic Prevalence in the OpenAlex Corpus",
+    subtitle = "With the top seven words that contribute to each topic")
+```
+
+#### Effect metadata
+
+```{r create-k20-estimation-metadata}
+effects <- estimateEffect(
+  1:20 ~ publication_year_fct + field, 
+  stm_mdl_k20, 
+  meta = quanteda_stm$meta)
+```
+
+```{r export-local-effects}
+#| echo: false
+#| eval: false
+
+qs::qsave(
+  effects, 
+  file = here("data/session-10/effects.qs")
+  )
+```
+
+```{r table-k20-estimation-metadata}
+# Comparison
+# Effects of covariates on Topic 6
+effects %>% summary(topics = 6)
+
+# Effects of covariates on Topic 16
+effects %>% summary(topics = 16)
+```
+
+```{r table-k20-effects-tidy}
+effects %>%
+  tidy() %>% 
+  filter(
+    term != "(Intercept)",
+    term == "fieldSocial Sciences") %>% 
+    select(-term) %>% 
+  gt() %>% 
+    fmt_number(
+      columns = -c(topic),
+      decimals = 3
+    ) %>% 
+  # Color social science topics "blue"
+  data_color(
+    columns = topic,
+    rows = estimate > 0,
+    method = "numeric",
+    palette = c("#04316A"),
+    alpha = 0.4
+  ) %>% 
+  # Color psychology topics "yellow"
+  data_color(
+    columns = topic,
+    rows = estimate < 0,
+    method = "numeric",
+    palette = c("#D3A518"),
+    alpha = 0.4
+  ) %>% 
+  # # Color effect size for estimation
+  # data_color(
+  #   columns = estimate,
+  #   method = "numeric",
+  #   palette = "viridis"
+  # ) %>% 
+  # # Color insignificant p-values
+  # data_color(
+  #   columns = p.value,
+  #   rows = p.value > 0.05,
+  #   method = "numeric",
+  #   palette = c("#C50F3C", "#C50F3C")
+  # ) %>% 
+  gtExtras::gt_theme_538()    
+```
+
+### Zusammenführung der Daten
+
+#### Merge mit Stammdaten
+
+```{r create-data-gamma-export}
+gamma_export <- stm_mdl_k20 %>% 
+  tidytext::tidy(
+    matrix = "gamma", 
+    document_names = names(quanteda_stm$documents)) %>%
+  dplyr::group_by(document) %>% 
+  dplyr::slice_max(gamma) %>% 
+  dplyr::mutate(main_topic = ifelse(gamma > 0.5, topic, NA)) %>% 
+      rename(
+        top_topic = topic,
+        top_gamma = gamma) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::left_join(review_subsample, by = c("document" = "id")) %>% 
+  dplyr::rename(id = document) %>% 
+  dplyr::mutate(
+    stm_topic = as.factor(paste("Topic", sprintf("%02d", top_topic)))
+  )
+```
+
+#### Anzahl der Abstracts nach Thema
+
+```{r fig-k20-stm-topic-abstracts}
+gamma_export %>% 
+  ggplot(aes(x = fct_rev(fct_infreq(stm_topic)))) +
+  geom_bar() +
+  coord_flip() +
+  theme_pubr()
+```
+
+#### Anzahl der Abstracts nach Thema und Feld
+
+```{r table-k20-stm-topic-abstracst-field}
+gamma_export %>% 
+  gtsummary::tbl_cross(
+    row = stm_topic, 
+    col = field,
+    percent = "row",
+    )
+```
+
+#### Fokus: Thema 16
+
+```{r table-k20-stm-topic-16-top-abstracts}
+gamma_export %>% 
+  filter(stm_topic == "Topic 16") %>%
+  arrange(-top_gamma) %>%
+  select(title, so, top_gamma, type, ab) %>%
+  slice_head(n = 3) %>% 
+  gt() %>% 
+  fmt_number(
+    columns = c(top_gamma), 
+    decimals = 2) %>% 
+  gtExtras::gt_theme_538()
+```
+
+#### Fokus: Thema 6
+
+```{r table-k20-stm-topic-6-top-abstracts}
+gamma_export %>% 
+  filter(stm_topic == "Topic 06") %>%
+  arrange(-top_gamma) %>%
+  select(title, so, top_gamma, type, ab) %>%
+  slice_head(n = 3) %>% 
+  gt() %>% 
+  fmt_number(
+    columns = c(top_gamma), 
+    decimals = 2) %>% 
+  gtExtras::gt_theme_538()
 ```
 
 
-## Extended topic search
-```{r}
+### Die Suche nach dem optimalen k
+
+```{r create-stm-search}
+#| echo: true
+#| eval: false
+
 # Define parameters
 future::plan(future::multisession()) # use multiple sessions
 topic_range <- seq(from = 10, to = 100, by = 10) 
@@ -173,10 +452,89 @@ toc(log = TRUE)
 
 ```
 
+### Erstellung des "Heldouts"
+
+```{r model-stm-search-heldout}
+#| echo: true
+#| eval: false
+
+heldout <- make.heldout(
+  documents = quanteda_stm$documents,
+  vocab = quanteda_stm$vocab,
+  seed = 42)
+```
+
+### Evaluation der Modelle
+
+```{r model-stm-search-metrics}
+#| echo: true
+#| eval: false
+
+stm_search$results <- stm_search %>%
+  mutate(
+    exclusivity = map(mdl, exclusivity),
+    semantic_coherence = map(mdl, semanticCoherence, quanteda_stm$documents),
+    eval_heldout = map(mdl, eval.heldout, heldout$missing),
+    residual = map(mdl, checkResiduals, quanteda_stm$documents),
+    bound =  map_dbl(mdl, function(x) max(x$convergence$bound)),
+    lfact = map_dbl(mdl, function(x) lfactorial(x$settings$dim$K)),
+    lbound = bound + lfact,
+    iterations = map_dbl(mdl, function(x) length(x$convergence$bound)))
+
+```
 
 ```{r}
 #| echo: false
 #| eval: false
 
 qs::qsave(stm_search, file = here("data/session-10/stm_search.qs"))
+```
+
+#### Vergleich verschiedener Statistiken
+
+```{r fig-output-comparison-metrics}
+#| warning: false
+
+stm_search$results %>% 
+  # Create data for graph
+  transmute(
+    k, 
+    `Lower bound` = lbound,
+    Residuals = map_dbl(residual, "dispersion"),
+    `Semantic coherence` = map_dbl(semantic_coherence, mean),
+    `Held-out likelihood` = map_dbl(eval_heldout, "expected.heldout")
+    ) %>%   
+  gather(Metric, Value, -k) %>%
+  # Create graph
+  ggplot(aes(k, Value, color = Metric)) +
+    geom_line(linewidth = 1.5, alpha = 0.7, show.legend = FALSE) +
+    geom_point(size = 3) +
+    # Add marker
+    geom_vline(aes(xintercept = 20), color = "#C77CFF", alpha = .5) +
+    geom_vline(aes(xintercept = 40), color = "#00BFC4", alpha = .5) +
+    geom_vline(aes(xintercept = 60), color = "#C77CFF", alpha = .5) +
+    geom_vline(aes(xintercept = 70), color = "#00BFC4", alpha = .5) +  
+    scale_x_continuous(breaks = seq(from = 10, to = 100, by = 10)) +
+    facet_wrap(~Metric, scales = "free_y") +
+    labs(x = "K (number of topics)",
+        y = NULL,
+        title = "Model diagnostics by number of topics"
+        ) +
+    theme_pubr()
+```
+
+```{r fig-comparison-exclusivity-coherence}
+stm_search$results %>% 
+  select(k, exclusivity, semantic_coherence) %>% 
+  filter(k %in% c(20, 40, 70)) %>%
+  unnest(cols = c(exclusivity, semantic_coherence)) %>%
+  mutate(k = as.factor(k)) %>%
+  ggplot(aes(semantic_coherence, exclusivity, color = k)) +
+  geom_point(size = 2, alpha = 0.7) +
+  labs(x = "Semantic coherence",
+       y = "Exclusivity",
+       title = "Comparing exclusivity and semantic coherence",
+       subtitle = "Models with fewer topics have higher semantic coherence for more topics, but lower exclusivity"
+       ) +
+  theme_minimal() 
 ```
