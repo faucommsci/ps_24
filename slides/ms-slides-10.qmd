@@ -1,0 +1,730 @@
+---
+title: "Unsupervised Machine Learning (II)"
+subtitle: "Session 09"
+date: 04 07 2024
+date-format: "DD.MM.YYYY"
+bibliography: references_slides.bib
+editor_options: 
+  chunk_output_type: console
+execute: 
+  eval: true
+---
+
+```{r setup-slide-session}
+#| echo: false
+ 
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    here, qs, # file management
+    magrittr, janitor, # data wrangling
+    easystats, sjmisc, # data analysis
+    gt, gtExtras, # table visualization
+    ggpubr, ggwordcloud, # visualization
+    # text analysis    
+    tidytext, widyr, # based on tidytext
+    quanteda, # based on quanteda
+    quanteda.textmodels, quanteda.textplots, quanteda.textstats, 
+    stm, # structural topic modeling
+    openalexR, pushoverr, tictoc, 
+    tidyverse # load last to avoid masking issues
+  )
+
+pacman::p_load_gh("chrdrn/halpeR")
+
+# Load schedule
+source(here("slides/schedule.R"))
+```
+
+## Seminarplan {.smaller}
+
+```{r table-schedule}
+#| echo: false 
+schedule %>% 
+    gt::gt() %>% 
+    gt::fmt_markdown() %>% 
+    gt::tab_options(
+        table.width = gt::pct(80), 
+        table.font.size = "14px") %>% 
+    gtExtras::gt_theme_nytimes() %>% 
+    # customise column header labels
+    gt::cols_label(
+        session = "Sitzung", 
+        date = "Datum",
+        topic = "Thema (synchron)",
+        exercise = "Übung (asynchron)",
+        presenter = "Dozent:in"
+    ) %>% 
+    gt::cols_width(
+        session ~ pct(10),
+        date ~ pct(10),
+        topic ~ pct(50),
+        exercise ~ pct(20),
+        presenter ~ pct(10)
+    ) %>%
+    # highlight current session
+    gtExtras::gt_highlight_rows(
+        rows = 14,
+        fill = "#C50F3C", alpha = 0.15,
+        bold_target_only = TRUE,
+        target_col = session:topic
+    ) %>%
+    # fade out past sessions
+    gt::tab_style(
+        style = gt::cell_text(
+            style = "italic", 
+            color = "grey"),
+        location = gt::cells_body(
+            columns = everything(), 
+            rows = c(1:9, 11:13)
+        )
+    )
+```
+
+```{r import-data-backend}
+#| echo: false
+#| eval: true
+
+review_subsample <- qs::qread(here("data/session-10/review_subsample.qs"))
+quanteda_stm <- qs::qread(here("data/session-10/quanteda_stm.qs"))
+stm_mdl_k0 <- qs::qread(here("data/session-10/stm_mdl_k0.qs"))
+stm_mdl_k20 <- qs::qread(here("data/session-10/stm_mdl_k20.qs"))
+stm_search <- qs::qread(here("data/session-10/stm_search.qs"))
+effects <- qs::qread(here("data/session-10/effects.qs"))
+```
+
+# Agenda {background-image="img/slide_bg-agenda.png"}
+
+1.  [Topic Modeling in R](#r-example)
+2.  [📋 Hands on working with R](#exercises)
+
+# Topic Modeling in R {#r-example background-image="img/slide_bg-example.png"}
+
+Schritt für Schritt, von der Schätzung bis zur Validierung
+
+## Was bisher geschaht ...
+
+#### Kurze Wiederholung der wichtigsten Inhalte
+
+Sie sollten in der Lage sein, die folgenden Fragen zu beantworten:
+
+1.  *Was verstehen wir unter **Topic Modeling?***
+2.  ***Wofür** wird Topic Modeling eingesetzt?*
+3.  ***Welche Schritte** sind notwendig, um **Topic Modeling in R** umzusetzen?*
+
+Heutige Fokus liegt auf Detailfragen:
+
+1.  *Wie kann ich mein **Themenmodell validieren**?*
+2.  *Wie finde ich die **optimale Anzahl von Themen**?*
+
+## Die (bisherige) Transformation der Daten
+
+#### Von der Subsample bis zum (neuen) Modell: Daten
+
+:::::: {style="font-size: smaller"}
+::::: columns
+::: {.column width="50%"}
+```{r recode-subsample-1-data}
+#| echo: true
+#| eval: false 
+
+# Create subsample
+review_subsample <- review_works %>% 
+    # Create additional factor variables
+    mutate(
+        publication_year_fct = as.factor(publication_year), 
+        type_fct = as.factor(type)
+        ) %>%
+    # Eingrenzung: Sprache und Typ
+    filter(language == "en") %>% 
+    filter(type == "article") %>%
+    # Datentranformation
+    unnest(topics, names_sep = "_") %>%
+    filter(topics_name == "field") %>% 
+    filter(topics_i == "1") %>% 
+    # Eingrenzung: Forschungsfeldes
+    filter(
+    topics_display_name == "Social Sciences"|
+    topics_display_name == "Psychology"
+    ) %>% 
+    mutate(
+        field = as.factor(topics_display_name)
+    ) %>% 
+    # Eingrenzung: Keine Einträge ohne Abstract
+    filter(!is.na(ab))
+```
+:::
+
+::: {.column width="50%"}
+```{r recode-subsample-1-output}
+# Overview
+review_subsample %>% glimpse  
+```
+:::
+:::::
+::::::
+
+## Die (bisherige) Transformation der Daten
+
+#### Von der Subsample bis zum (neuen) Modell: Document-Term-Matrix
+
+:::::: {style="font-size: smaller"}
+::::: columns
+::: {.column width="50%"}
+```{r recode-subsample-2-data}
+#| echo: true
+#| eval: false
+
+# Create corpus
+quanteda_corpus <- review_subsample %>% 
+  quanteda::corpus(
+    docid_field = "id", 
+    text_field = "ab"
+  )
+
+# Tokenize
+quanteda_token <- quanteda_corpus %>% 
+  quanteda::tokens(
+    remove_punct = TRUE,
+    remove_symbols = TRUE, 
+    remove_numbers = TRUE, 
+    remove_url = TRUE, 
+    split_tags = FALSE # keep hashtags and mentions
+  ) %>% 
+  quanteda::tokens_tolower() %>% 
+  quanteda::tokens_remove(
+    pattern = stopwords("en")
+    )
+
+# Convert to Document-Feature-Matrix (DFM)
+quanteda_dfm <- quanteda_token %>% 
+  quanteda::dfm()
+
+# Pruning
+quanteda_dfm_trim <- quanteda_dfm %>% 
+  dfm_trim( 
+    min_docfreq = 10/nrow(review_subsample),
+    max_docfreq = 0.99, 
+    docfreq_type = "prop")
+
+# Convert for stm topic modeling
+quanteda_stm <- quanteda_dfm_trim %>% 
+   convert(to = "stm")
+```
+:::
+
+::: {.column width="50%"}
+```{r recode-subsample-2-output}
+# Overview
+quanteda_stm %>% summary  
+```
+:::
+:::::
+::::::
+
+## Die (bisherige) Transformation der Daten
+
+#### Von der Subsample bis zum (neuen) Modell: STM
+
+:::::: {style="font-size: smaller"}
+::::: columns
+::: {.column width="50%"}
+```{r recode-subsample-3-data}
+#| echo: true
+#| eval: false
+#| code-line-numbers: "5,9"
+
+# Estimate model
+stm_mdl_k20 <- stm::stm(
+    documents = quanteda_stm$documents,
+    vocab = quanteda_stm$vocab, 
+    prevalence =~ publication_year_fct + field, 
+    K = 20, 
+    seed = 42,
+    max.em.its = 1000,
+    data = quanteda_stm$meta,
+    init.type = "Spectral",
+    verbose = TRUE)
+
+
+```
+:::
+
+::: {.column width="50%"}
+```{r recode-subsample-3-output}
+# Overview
+stm_mdl_k20
+```
+:::
+:::::
+::::::
+
+## Breaking down the model
+
+#### Erweiterte Modellauswertung: Beta-Matrix
+
+```{r table-k20-beta}
+# Create tidy beta matrix
+td_beta <- tidytext::tidy(stm_mdl_k20)
+
+# Output 
+td_beta
+```
+
+## Top Begriffe nach Thema
+
+#### Erweiterte Modellauswertung: Beta-Matrix
+
+::: {style="font-size: smaller"}
+```{r table-k20-beta-top-terms}
+# Create top terms
+top_terms <- td_beta %>%
+  arrange(beta) %>%
+  group_by(topic) %>%
+  top_n(7, beta) %>%
+  arrange(-beta) %>%
+  select(topic, term) %>%
+  summarise(terms = list(term)) %>%
+  mutate(terms = map(terms, paste, collapse = ", ")) %>% 
+  unnest(cols = c(terms))
+
+# Output
+top_terms %>% 
+  head(15)
+```
+:::
+
+## Break down the modell (a little more)
+
+#### Erweiterte Modellauswertung: Gamma-Matrix
+
+```{r table-k20-gamma}
+# Create tidy beta matrix
+td_gamma <- tidy(
+  stm_mdl_k20, 
+  matrix = "gamma", 
+  document_names = names(quanteda_stm$documents)
+  )
+
+# Output 
+td_gamma
+```
+
+## Häufigkeit und Top Begriffe der Themen {.scrollable}
+
+#### Erweiterte Modellauswertung: Gamma-Matrix
+
+```{r table-k20-prevalence}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+# Create data
+prevalence <- td_gamma %>%
+  group_by(topic) %>%
+  summarise(gamma = mean(gamma)) %>%
+  arrange(desc(gamma)) %>%
+  left_join(top_terms, by = "topic") %>%
+  mutate(topic = paste0("Topic ",sprintf("%02d", topic)),
+         topic = reorder(topic, gamma))
+
+# Create output
+prevalence %>% 
+  gt() %>% 
+  gt::tab_options(
+      table.width = gt::pct(80), 
+      table.font.size = "10px", 
+      data_row.padding = gt::px(1)
+  ) %>% 
+  fmt_number(
+    columns = c(gamma), 
+    decimals = 2) %>% 
+  gtExtras::gt_theme_538()
+```
+
+## Visualisierung des STM-Modells
+
+#### Kombination von Beta- und Gamma-Matrix
+
+```{r figure-k20-prevalence}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+prevalence %>%
+  ggplot(aes(topic, gamma, label = terms, fill = topic)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(hjust = 0, nudge_y = 0.0005, size = 3) +
+  coord_flip() +
+  scale_y_continuous(
+    expand = c(0,0),
+    limits = c(0, 0.2)) +
+  theme_pubr() +
+  theme(
+    plot.title = element_text(size = 16),
+    plot.subtitle = element_text(size = 13)) +
+  labs(
+    x = NULL, y = expression(gamma),
+    title = "Topic Prevalence in the OpenAlex Corpus",
+    subtitle = "With the top seven words that contribute to each topic")
+```
+
+## Einfluss von Publikationsjahr und Forschungsfeld
+
+#### Berücksichtigung der Meta-Daten (Kovariaten)
+
+::::::: {style="font-size: smaller"}
+```{r}
+#| echo: true
+#| eval: false
+
+# Create estimation
+effects <- estimateEffect(
+  1:20 ~ publication_year_fct + field, 
+  stm_mdl_k20, 
+  meta = quanteda_stm$meta)
+```
+
+:::::: {style="font-size: small"}
+::::: columns
+::: {.column width="50%"}
+```{r table-k20-estimation-metadata-k16}
+# Effects of covariates on Topic 16
+effects %>% summary(topics = 16)
+```
+:::
+
+::: {.column width="50%"}
+```{r table-k20-estimation-metadata-k6}
+# Effects of covariates on Topic 6
+effects %>% summary(topics = 6) 
+```
+:::
+:::::
+::::::
+:::::::
+
+## Forschungsfeld im Fokus {.scrollable}
+
+#### Einfluss des Forschungsfeldes auf Themenaufkommen
+
+```{r table-k20-effects-tidy}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+effects %>%
+  tidy() %>% 
+  filter(
+    term != "(Intercept)",
+    term == "fieldSocial Sciences") %>% 
+    select(-term) %>% 
+  gt() %>% 
+    fmt_number(
+      columns = -c(topic),
+      decimals = 3
+    ) %>% 
+  # Color social science topics "blue"
+  data_color(
+    columns = topic,
+    rows = estimate > 0,
+    method = "numeric",
+    palette = c("#04316A"),
+    alpha = 0.4
+  ) %>% 
+  # Color psychology topics "yellow"
+  data_color(
+    columns = topic,
+    rows = estimate < 0,
+    method = "numeric",
+    palette = c("#D3A518"),
+    alpha = 0.4
+  ) %>% 
+  # Color effect size for estimation
+  data_color(
+    columns = estimate,
+    method = "numeric",
+    palette = "viridis"
+  ) %>% 
+  # Color insignificant p-values
+  data_color(
+    rows = p.value > 0.05,
+    method = "numeric",
+    palette = c("#C50F3C")
+  ) %>%
+  gtExtras::gt_theme_538() 
+```
+
+## Zusammenführung der Daten
+
+#### Match Topic Modeling Ergebnisse mit OpenAlex-Daten
+
+::: {style="font-size: smaller"}
+```{r create-data-gamma-export}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+gamma_export <- stm_mdl_k20 %>% 
+  tidytext::tidy(
+    matrix = "gamma", 
+    document_names = names(quanteda_stm$documents)) %>%
+  dplyr::group_by(document) %>% 
+  dplyr::slice_max(gamma) %>% 
+  dplyr::mutate(main_topic = ifelse(gamma > 0.5, topic, NA)) %>% 
+      rename(
+        top_topic = topic,
+        top_gamma = gamma) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::left_join(review_subsample, by = c("document" = "id")) %>% 
+  dplyr::rename(id = document) %>% 
+  dplyr::mutate(
+    stm_topic = as.factor(paste("Topic", sprintf("%02d", top_topic)))
+  )
+
+# Output
+gamma_export %>% glimpse()
+```
+:::
+
+## Themenhäufig ≠ Abstracthäufigkeit
+
+#### Überblick über Anzahl der Abstracts nach Thema
+
+```{r figure-k20-stm-topic-abstracts}
+gamma_export %>% 
+  ggplot(aes(x = fct_rev(fct_infreq(stm_topic)))) +
+  geom_bar() +
+  coord_flip() +
+  theme_pubr()
+```
+
+## Verschiedene Schwerpunkte in verschiedenen Feldern {.scrollable}
+
+#### Überblick über die Anzahl der Abstracts nach Thema und Feld
+
+```{r table-k20-stm-topic-abstracst-field}
+gamma_export %>% 
+  gtsummary::tbl_cross(
+    row = stm_topic, 
+    col = field,
+    percent = "row",
+    )
+```
+
+## A closer look {.scrollable}
+
+#### Fokus auf die Top-Abstracts von Thema 16
+
+```{r table-k20-stm-topic-16-top-abstracts}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+gamma_export %>% 
+  filter(stm_topic == "Topic 16") %>%
+  arrange(-top_gamma) %>%
+  select(title, so, top_gamma, type, ab) %>%
+  slice_head(n = 3) %>% 
+  gt() %>% 
+  fmt_number(
+    columns = vars(top_gamma), 
+    decimals = 2) %>%
+  gtExtras::gt_theme_538()
+```
+
+## Validieren, Validieren, Validieren {.scrollable}
+
+#### Fokus auf die Top-Abstracts von Thema 6
+
+```{r table-k20-stm-topic-6-top-abstracts}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+gamma_export %>% 
+  filter(stm_topic == "Topic 06") %>%
+  arrange(-top_gamma) %>%
+  select(title, so, top_gamma, type, ab) %>%
+  slice_head(n = 3) %>% 
+  gt() %>% 
+  fmt_number(
+    columns = vars(top_gamma), 
+    decimals = 2) %>%
+  gtExtras::gt_theme_538()
+```
+
+## Die Suche nach dem optimalen k
+
+#### Die wichtigste Frage bei der Modellauswahl
+
+-   Die Wahl von K (ob das Modell 5, 15 oder 100 Themen identifizieren soll), hat einen erheblichen Einfluss auf die Ergebnisse:
+    -   je kleiner K, desto feinkörniger und in der Regel exklusiver die Themen;
+    -   je größer K, desto deutlicher identifizieren die Themen einzelne Ereignisse oder Themen.
+-   Das Paket stm [@roberts2019] verfügt über zwei eingebaute Lösungen, um das optimale K zu finden
+    -   `searchK()`-Funktion
+    -   Einstellung von `K = 0` bei der Schätzung des Modells
+-   **Empfehlung für stm: (Manuelles) Training und Auswertung!**
+
+## Training und Evaluation der Modelle
+
+#### Die bessere Version von `searchK()`: Manuelle Exploration
+
+:::::: {style="font-size: smaller"}
+::::: columns
+::: {.column width="50%"}
+```{r create-stm-search}
+#| echo: true
+#| eval: false
+
+# Define parameters
+future::plan(future::multisession()) # use multiple sessions
+topic_range <- seq(from = 10, to = 100, by = 10) 
+
+# Estimate models
+stm_search  <- tibble(k = topic_range) %>%
+  mutate(
+    mdl = furrr::future_map(
+      k, 
+      ~stm::stm(
+        documents = quanteda_stm$documents,
+        vocab = quanteda_stm$vocab, 
+        prevalence =~ publication_year_fct + field,
+        K = ., 
+        seed = 42,
+        max.em.its = 1000,
+        data = quanteda_stm$meta,
+        init.type = "Spectral",
+        verbose = FALSE),
+      .options = furrr::furrr_options(seed = 42)
+      )
+    )
+```
+:::
+
+::: {.column width="50%"}
+```{r table-stm-search-mdl}
+# Overview
+stm_search$mdl
+```
+:::
+:::::
+::::::
+
+## Trainings- und Validierungsdatensatz
+
+#### Vergleich der verschiedenen Modelle anhand verschiedener Metriken
+
+```{r model-stm-search-heldout}
+#| echo: true
+#| eval: false
+
+heldout <- make.heldout(
+  documents = quanteda_stm$documents,
+  vocab = quanteda_stm$vocab,
+  seed = 42)
+```
+
+```{r model-stm-search-metrics}
+#| echo: true
+#| eval: false
+
+stm_search$results <- stm_search %>%
+  mutate(
+    exclusivity = map(mdl, exclusivity),
+    semantic_coherence = map(mdl, semanticCoherence, quanteda_stm$documents),
+    eval_heldout = map(mdl, eval.heldout, heldout$missing),
+    residual = map(mdl, checkResiduals, quanteda_stm$documents),
+    bound =  map_dbl(mdl, function(x) max(x$convergence$bound)),
+    lfact = map_dbl(mdl, function(x) lfactorial(x$settings$dim$K)),
+    lbound = bound + lfact,
+    iterations = map_dbl(mdl, function(x) length(x$convergence$bound)))
+
+```
+
+## Kurzer Crashkurs
+
+#### Überblick über die verschiedenen Evaluationskritierien
+
+1.  `Held-Out Likelihood` misst, wie gut ein Modell ungesehene Daten vorhersagt (ABER: kein allgemeingültiger Schwellenwert, nur Vergleich identischer Daten). **Höhere Werte** weisen auf eine **bessere Vorhersageleistung** hin.
+
+2.  `Lower bound` ist eine Annäherung an die Log-Likelihood des Modells. Ein **höherer Wert** deutet auf eine **bessere Anpassung** an die Daten hin.
+
+3.  `Residuen` geben die Differenz zwischen den beobachteten und den vorhergesagten Werten an. **Kleinere Residuen** deuten auf eine **bessere Modellanpassung** hin. Im Idealfall sollten die Residuen so klein wie möglich sein.
+
+4.  `Semantische Kohärenz` misst, wie semantisch verwandt die wichtigsten Wörter eines Themas sind, wobei **höhere Werte auf kohärentere Themen** hinweisen.
+
+## The best of the not so optimal models
+
+#### Überblick über die verschiedenen Evaluationskritierien
+
+```{r fig-output-comparison-metrics}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+stm_search$results %>% 
+  # Create data for graph
+  transmute(
+    k, 
+    `Lower bound` = lbound,
+    Residuals = map_dbl(residual, "dispersion"),
+    `Semantic coherence` = map_dbl(semantic_coherence, mean),
+    `Held-out likelihood` = map_dbl(eval_heldout, "expected.heldout")
+    ) %>%   
+  gather(Metric, Value, -k) %>%
+  # Create graph
+  ggplot(aes(k, Value, color = Metric)) +
+    geom_line(linewidth = 1.5, alpha = 0.7, show.legend = FALSE) +
+    geom_point(size = 3) +
+    # Add marker
+    geom_vline(aes(xintercept = 20), color = "#C77CFF", alpha = .5) +
+    geom_vline(aes(xintercept = 40), color = "#00BFC4", alpha = .5) +
+    geom_vline(aes(xintercept = 60), color = "#C77CFF", alpha = .5) +
+    geom_vline(aes(xintercept = 70), color = "#00BFC4", alpha = .5) +  
+    scale_x_continuous(breaks = seq(from = 10, to = 100, by = 10)) +
+    facet_wrap(~Metric, scales = "free_y") +
+    labs(x = "K (number of topics)",
+        y = NULL,
+        title = "Model diagnostics by number of topics"
+        ) +
+    theme_pubr()
+```
+
+## Kohärenz nur mit Exklusivität
+
+#### Vergleich verschiedener potentieller "optimaler" Modelle
+
+```{r fig-comparison-exclusivity-coherence}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+stm_search$results %>% 
+  select(k, exclusivity, semantic_coherence) %>% 
+  filter(k %in% c(20, 40, 70)) %>%
+  unnest(cols = c(exclusivity, semantic_coherence)) %>%
+  mutate(k = as.factor(k)) %>%
+  ggplot(aes(semantic_coherence, exclusivity, color = k)) +
+  geom_point(size = 2, alpha = 0.7) +
+  labs(x = "Semantic coherence",
+       y = "Exclusivity",
+       title = "Comparing exclusivity and semantic coherence",
+       subtitle = "Models with fewer topics have higher semantic coherence for more topics, but lower exclusivity"
+       ) +
+  theme_minimal() 
+```
+
+# 📋 Hands on working with R {#group-activity background-image="img/slide_bg-group_activity.png"}
+
+Verschiedene R-Übungsaufgaben zum Inhalt der heutigen Sitzung
+
+## 🧪 And now ... you: Textanalyse mit R
+
+#### Next Steps: Wiederholung der Inhalte
+
+-   Laden Sie die auf StudOn bereitgestellten Dateien für die Sitzungen herunter
+-   Laden Sie die .zip-Datei in Ihren RStudio Workspace
+-   Navigieren Sie zu dem Ordner, in dem die Datei `ps_24_binder.Rproj` liegt. Öffnen Sie diese Datei mit einem Doppelklick. Nur dadurch ist gewährleistet, dass alle Dependencies korrekt funktionieren.
+-   Öffnen Sie die Datei `exercise-10.qmd` im Ordner `exercises` und lesen Sie sich gründlich die Anweisungen durch.
+-   ***Tipp: Sie finden alle in den Folien verwendeten Code-Bausteine in der Datei showcase.qmd (für den "rohen" Code) oder showcase.html (mit gerenderten Ausgaben).***
+
+# Time for questions {background-image="img/slide_bg-question.png"}
+
+# Thank you! {background-image="img/slide_bg-end_session.png"}
+
+## References
+
+::: {#refs}
+:::
