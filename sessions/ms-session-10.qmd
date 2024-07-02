@@ -1,0 +1,62 @@
+---
+title: "Unsupervised Machine Learning II "
+subtitle: "Methodenseminar: Session 10"
+date: 04 07 2024
+bibliography: references_sessions.bib
+csl: ../apa-cv.csl 
+suppress-bibliography: true
+link-citations: false
+citations-hover: false
+---
+
+## Participate
+
+🖥️ [Slides](/slides/ms-slides-10.html)
+
+📋 [Showcase](/exercises/ms-showcase-10.html)
+
+## Practice
+
+✍️ [Exercise](/exercises/ms-exercise-10.html)
+
+## Suggested readings
+
+### Topic Modeling
+
+-   [@chang2009]
+
+-   [@chen2023]
+
+-   [@egger2022]
+
+-   [@friemel2017]
+
+-   [@hase2023]
+
+-   [@himelboim2017]
+
+-   [@maier2018]
+
+### Topic modeling in R
+
+-   @atteveldt2021
+
+-   @silge
+
+-   @silge2017
+
+-   @welbers2017
+
+## Useful resources
+
+-   Tutorials des CCS-Amsterdam zu "quanteda-based" Textanalyse:
+    -   📖 [Text analysis](https://github.com/ccs-amsterdam/r-course-material/blob/master/tutorials/R_text_3_quanteda.md) (including [🎥 video tutorial](https://www.youtube.com/watch?v=7z7U7ORFWQM&list=PL-i7GM-A1wBZYRYTpem7hNVHK3hSV_1It&index=3))
+    -   📖 [Lexical sentiment analysis](https://github.com/ccs-amsterdam/r-course-material/blob/master/tutorials/sentiment_analysis.md) (including [🎥 video tutorial](https://www.youtube.com/watch?v=U0l5GB0i3uU&list=PL-i7GM-A1wBZYRYTpem7hNVHK3hSV_1It&index=5))
+    -   📖 [LDA Topic Modeling](https://github.com/ccs-amsterdam/r-course-material/blob/master/tutorials/r_text_lda.md) (including [🎥 video tutorial](https://www.youtube.com/playlist?list=PLjXODJ_lGN_WtxhPsQ_t0aHtFAcsIh1-8))
+    -   📖 [Structural Topic Modeling](https://github.com/ccs-amsterdam/r-course-material/blob/master/tutorials/r_text_stm.md) (including [🎥 video tutorial](https://www.youtube.com/watch?v=37yvQdQw5j8&list=PLjXODJ_lGN_U02yQyZG5YpBgseVpiS9s2&index=2))
+
+<br>
+
+::: {style="font-size: 0.875em;"}
+Back to [course schedule](/ms-schedule.html "Course schedule") ⏎
+:::
