@@ -135,12 +135,6 @@ quanteda_dfm <- quanteda_token %>%
 
 ### 📋 Exercise 1: Cleaned DFM
 
-::: callout-caution
-## Ziel der Aufgabe
-
-<!-- FIXME Ziele der Übung ergänzen -->
-:::
-
 1.  Erstelen Sie einen neuen Datensatz `quanteda_dfm_cleaned`
     -   basierend auf dem Datensatz `quanteda_dfm`
         1.  Verwenden Sie `quanteda::dfm_remove(pattern = c("systematic", "literature", "review")`, um die Suchquery zu entfernen.
@@ -164,12 +158,6 @@ quanteda_dfm_cleaned
 
 ### 📋 Exercise 2: Neues Netzwerk der Top-Begriffe
 
-::: callout-caution
-## Ziel der Aufgabe
-
--   Erstellung eines neuen Datensatzes `review_subsample_new`, der sich auf *englischsprachig* *Bücher bzw. Buchrartikel* beschränkt.
-:::
-
 1.  Neues Dataset `top_features_quanteda` erstellen
     -   Basierend auf dem Dataset `quanteda_dfm_cleaned`,
     -   Verwenden Sie `quanteda::topfeatures(20)`, um die 20 häufigsten Begriffe zu extrahieren.
@@ -178,7 +166,7 @@ quanteda_dfm_cleaned
 2.  Visualisierung des Netzwerks an Top-Begriffen
     -   Basierend auf dem Dataset quanteda_dfm_cleaned,
     -   Transformieren Sie die Daten mit `quanteda::fcm()` in eine Feature-Co-Occurrence-Matrix \[FCM\].
-    -   Auswahl relevanter Hashtags mit `quanteda::fcm_select(pattern = top_hashtags_quanteda, case_insensitive = FALSE)`.
+    -   Auswahl relevanter Hashtags mit `quanteda::fcm_select(pattern = top_features_quanteda, case_insensitive = FALSE)`.
     -   Visualisierung mit `quanteda.textplots::textplot_network()`.
 3.  Ergebnisse interpretieren und vergleichen
     -   Analysieren Sie die Beziehungen zwischen den Top-Begriffen.

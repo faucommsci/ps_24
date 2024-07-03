@@ -1,6 +1,6 @@
 ---
 title: "Unsupervised Machine Learning (II)"
-subtitle: "Session 09"
+subtitle: "Session 10"
 date: 04 07 2024
 date-format: "DD.MM.YYYY"
 bibliography: references_slides.bib
@@ -86,7 +86,6 @@ schedule %>%
 
 review_subsample <- qs::qread(here("data/session-10/review_subsample.qs"))
 quanteda_stm <- qs::qread(here("data/session-10/quanteda_stm.qs"))
-stm_mdl_k0 <- qs::qread(here("data/session-10/stm_mdl_k0.qs"))
 stm_mdl_k20 <- qs::qread(here("data/session-10/stm_mdl_k20.qs"))
 stm_search <- qs::qread(here("data/session-10/stm_search.qs"))
 effects <- qs::qread(here("data/session-10/effects.qs"))
@@ -105,7 +104,7 @@ Schritt für Schritt, von der Schätzung bis zur Validierung
 
 #### Kurze Wiederholung der wichtigsten Inhalte
 
-Sie sollten in der Lage sein, die folgenden Fragen zu beantworten:
+Ihr solltet in der Lage sein, die folgenden Fragen zu beantworten:
 
 1.  *Was verstehen wir unter **Topic Modeling?***
 2.  ***Wofür** wird Topic Modeling eingesetzt?*

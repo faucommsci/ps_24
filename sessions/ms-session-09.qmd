@@ -1,6 +1,6 @@
 ---
-title: "Text processing in R "
-subtitle: "Methodenseminar: Session 08"
+title: "Unsupervised Machine Learning I "
+subtitle: "Methodenseminar: Session 09"
 date: 27 06 2024
 bibliography: references_sessions.bib
 csl: ../apa-cv.csl 

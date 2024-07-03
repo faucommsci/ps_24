@@ -6,7 +6,7 @@ date-format: "DD.MM.YYYY"
 ---
 
 ::: {.callout-tip icon="false"}
-[![Quarto Slide](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto-slide.svg)](https://github.com/faucommsci/ps_24/blob/main/slides/ms-slides-09.qmd) Link to slides
+[![Quarto Slide](https://raw.githubusercontent.com/faucommsci/teaching_materials/main/images/badges/badge-quarto-slide.svg)](https://github.com/faucommsci/ps_24/blob/main/slides/ms-slides-10.qmd) Link to slides
 :::
 
 ## Preparation
@@ -131,7 +131,6 @@ qs::qsave(
 
 review_subsample <- qs::qread(here("data/session-10/review_subsample.qs"))
 quanteda_stm <- qs::qread(here("data/session-10/quanteda_stm.qs"))
-stm_mdl_k0 <- qs::qread(here("data/session-10/stm_mdl_k0.qs"))
 stm_mdl_k20 <- qs::qread(here("data/session-10/stm_mdl_k20.qs"))
 stm_search <- qs::qread(here("data/session-10/stm_search.qs"))
 ```

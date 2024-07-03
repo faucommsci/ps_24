@@ -63,7 +63,6 @@ pacman::p_load(
 ### Import und Vorverarbeitung der Daten
 
 ```{r import-data}
-#| echo: true
 #| eval: false
 
 review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
@@ -96,7 +95,6 @@ review_subsample <- review_works %>%
 
 ```{r create-dfm-quanteda}
 #| output: false
-#| echo: true
 #| eval: false
 
 # Create corpus
@@ -136,13 +134,38 @@ quanteda_stm <- quanteda_dfm_trim %>%
    convert(to = "stm")
 ```
 
+```{r create-stm-search}
+#| eval: false
+
+# Define parameters
+future::plan(future::multisession()) # use multiple sessions
+topic_range <- seq(from = 10, to = 100, by = 10) 
+
+# Estimate models
+stm_search  <- tibble(k = topic_range) %>%
+  mutate(
+    mdl = furrr::future_map(
+      k, 
+      ~stm::stm(
+        documents = quanteda_stm$documents,
+        vocab = quanteda_stm$vocab, 
+        prevalence =~ publication_year_fct + field,
+        K = ., 
+        seed = 42,
+        max.em.its = 1000,
+        data = quanteda_stm$meta,
+        init.type = "Spectral",
+        verbose = FALSE),
+      .options = furrr::furrr_options(seed = 42)
+      )
+    )
+```
+
 ```{r import-data-backend}
 #| echo: false
 
 review_subsample <- qs::qread(here("data/session-10/review_subsample.qs"))
 quanteda_stm <- qs::qread(here("data/session-10/quanteda_stm.qs"))
-stm_mdl_k0 <- qs::qread(here("data/session-10/stm_mdl_k0.qs"))
-stm_mdl_k20 <- qs::qread(here("data/session-10/stm_mdl_k20.qs"))
 stm_search <- qs::qread(here("data/session-10/stm_search.qs"))
 ```
 
@@ -160,7 +183,7 @@ stm_search <- qs::qread(here("data/session-10/stm_search.qs"))
 #### 1.1. Auswahl des passenden Models
 
 1.  Erstelen Sie einen neuen Datensatz `stm_mdl_k40`
-    -   basierend auf dem Datensatz `stm_serach`
+    -   basierend auf dem Datensatz `stm_search`
         1.  Verwenden Sie `filter(k == 40)`, um das Modell mit 40 Themen zu auszuwählen.
         2.  Verwenden Sie `pull(mdl) %>% .[[1]]` um die Spalte und das Element zu extrahieren, die das Modell enthält.
         3.  Speichern Sie diese Umwandlung, indem Sie einen neuen Datensatz mit dem Namen `stm_mdl_k40` erstellen.

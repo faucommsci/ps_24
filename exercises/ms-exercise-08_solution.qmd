@@ -106,13 +106,13 @@ review_works_correct <- review_works %>%
 review_subsample_new <- review_works_correct %>% 
   # Eingrenzung: Sprache und Typ
   filter(language == "en") %>% 
-  filter(type == "preprint")
+  filter(type == "book" | type == "book-chapter")
 
 # Überprüfung
 review_subsample_new %>% glimpse
 
 # Notiz:
-# Subsample enthält 3547 Einträge
+# Subsample enthält 2994 Einträge
 
 ```
 
@@ -137,7 +137,7 @@ subsample_new_tidy <- review_subsample_new %>%
 subsample_new_tidy %>% print()
 
 # Notiz:
-# Der neue Datensatz enthält 498535 Token. 
+# Der neue Datensatz enthält 182776 Token. 
 ```
 
 ### 📋 Exercise 3: Auswertung der Token
