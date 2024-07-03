@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.52">
+<meta name="generator" content="quarto-1.5.53">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -287,7 +287,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">02.07.2024</p>
+      <p class="date">03.07.2024</p>
     </div>
   </div>
   
@@ -467,19 +467,6 @@ Achtung, bitte lesen!
 </div>
 <section id="exercise-1-cleaned-dfm" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-1-cleaned-dfm">📋 Exercise 1: Cleaned DFM</h3>
-<div class="callout callout-style-simple callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Ziel der Aufgabe
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<!-- FIXME Ziele der Übung ergänzen -->
-</div>
-</div>
 <ol type="1">
 <li>Erstelen Sie einen neuen Datensatz <code>quanteda_dfm_cleaned</code>
 <ul>
@@ -531,21 +518,6 @@ docs                               index who-5 among widely used
 </section>
 <section id="exercise-2-neues-netzwerk-der-top-begriffe" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-2-neues-netzwerk-der-top-begriffe">📋 Exercise 2: Neues Netzwerk der Top-Begriffe</h3>
-<div class="callout callout-style-simple callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Ziel der Aufgabe
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul>
-<li>Erstellung eines neuen Datensatzes <code>review_subsample_new</code>, der sich auf <em>englischsprachig</em> <em>Bücher bzw. Buchrartikel</em> beschränkt.</li>
-</ul>
-</div>
-</div>
 <ol type="1">
 <li>Neues Dataset <code>top_features_quanteda</code> erstellen
 <ul>
@@ -558,7 +530,7 @@ Ziel der Aufgabe
 <ul>
 <li>Basierend auf dem Dataset quanteda_dfm_cleaned,</li>
 <li>Transformieren Sie die Daten mit <code>quanteda::fcm()</code> in eine Feature-Co-Occurrence-Matrix [FCM].</li>
-<li>Auswahl relevanter Hashtags mit <code>quanteda::fcm_select(pattern = top_hashtags_quanteda, case_insensitive = FALSE)</code>.</li>
+<li>Auswahl relevanter Hashtags mit <code>quanteda::fcm_select(pattern = top_features_quanteda, case_insensitive = FALSE)</code>.</li>
 <li>Visualisierung mit <code>quanteda.textplots::textplot_network()</code>.</li>
 </ul></li>
 <li>Ergebnisse interpretieren und vergleichen

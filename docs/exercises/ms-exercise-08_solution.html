@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.52">
+<meta name="generator" content="quarto-1.5.53">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -293,7 +293,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">02.07.2024</p>
+      <p class="date">03.07.2024</p>
     </div>
   </div>
   
@@ -458,60 +458,60 @@ Ziel der Aufgabe
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>review_subsample_new <span class="ot">&lt;-</span> review_works_correct <span class="sc">%&gt;%</span> </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Eingrenzung: Sprache und Typ</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(language <span class="sc">==</span> <span class="st">"en"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">"preprint"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">"book"</span> <span class="sc">|</span> type <span class="sc">==</span> <span class="st">"book-chapter"</span>)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Überprüfung</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>review_subsample_new <span class="sc">%&gt;%</span> glimpse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 3,547
+<pre><code>Rows: 2,994
 Columns: 41
-$ id                          &lt;chr&gt; "https://openalex.org/W4236476849", "https…
-$ title                       &lt;chr&gt; "The PRISMA 2020 statement: an updated gui…
-$ display_name                &lt;chr&gt; "The PRISMA 2020 statement: an updated gui…
-$ author                      &lt;list&gt; [&lt;data.frame[26 x 12]&gt;], [&lt;data.frame[3 x…
-$ ab                          &lt;chr&gt; "Background: The Preferred Reporting Items…
-$ publication_date            &lt;chr&gt; "2020-09-14", "2019-07-01", "2017-04-01", …
-$ relevance_score             &lt;dbl&gt; 584.98030, 253.79811, 214.51546, 199.14885…
-$ so                          &lt;chr&gt; NA, "Technological forecasting &amp; social ch…
-$ so_id                       &lt;chr&gt; NA, "https://openalex.org/S39307421", "htt…
-$ host_organization           &lt;chr&gt; NA, "Elsevier BV", "Elsevier BV", "Faculty…
-$ issn_l                      &lt;chr&gt; NA, "0040-1625", "0959-6526", "2046-1402",…
-$ url                         &lt;chr&gt; "https://doi.org/10.31222/osf.io/v7gm2", "…
-$ pdf_url                     &lt;chr&gt; "https://osf.io/v7gm2/download", NA, NA, "…
-$ license                     &lt;chr&gt; NA, NA, NA, "cc-by", NA, NA, "cc-by", NA, …
-$ version                     &lt;chr&gt; "submittedVersion", NA, NA, "publishedVers…
-$ first_page                  &lt;chr&gt; NA, "251", "1278", "588", "281", "113113",…
-$ last_page                   &lt;chr&gt; NA, "269", "1302", "588", "312", "113113",…
-$ volume                      &lt;chr&gt; NA, "144", "149", "6", "32", "125", "6", N…
-$ issue                       &lt;chr&gt; NA, NA, NA, NA, "3-4", NA, NA, NA, NA, NA,…
-$ is_oa                       &lt;lgl&gt; TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, TR…
-$ is_oa_anywhere              &lt;lgl&gt; TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, TR…
-$ oa_status                   &lt;chr&gt; "green", "closed", "closed", "gold", "clos…
-$ oa_url                      &lt;chr&gt; "https://osf.io/v7gm2/download", NA, NA, "…
-$ any_repository_has_fulltext &lt;lgl&gt; TRUE, FALSE, FALSE, TRUE, FALSE, FALSE, TR…
+$ id                          &lt;chr&gt; "https://openalex.org/W2899962821", "https…
+$ title                       &lt;chr&gt; "Introduction to systematic reviews", "Cha…
+$ display_name                &lt;chr&gt; "Introduction to systematic reviews", "Cha…
+$ author                      &lt;list&gt; [&lt;data.frame[2 x 12]&gt;], NA, [&lt;data.frame[…
+$ ab                          &lt;chr&gt; "A systematic review is a vital part of th…
+$ publication_date            &lt;chr&gt; "2018-10-01", "2020-01-01", "2019-01-01", …
+$ relevance_score             &lt;dbl&gt; 300.1405, 255.6323, 248.6059, 231.0026, 22…
+$ so                          &lt;chr&gt; "Manchester University Press eBooks", "JBI…
+$ so_id                       &lt;chr&gt; "https://openalex.org/S4306463591", "https…
+$ host_organization           &lt;chr&gt; "Winchester University Press", NA, NA, NA,…
+$ issn_l                      &lt;chr&gt; NA, NA, NA, NA, "0302-9743", NA, NA, NA, N…
+$ url                         &lt;chr&gt; "https://doi.org/10.7765/9781526136527.000…
+$ pdf_url                     &lt;chr&gt; "https://www.manchesteropenhive.com/downlo…
+$ license                     &lt;chr&gt; "cc-by-nc-nd", NA, NA, NA, NA, NA, NA, "cc…
+$ version                     &lt;chr&gt; "publishedVersion", "publishedVersion", "p…
+$ first_page                  &lt;chr&gt; NA, NA, NA, NA, "214", "48", NA, "3", "85"…
+$ last_page                   &lt;chr&gt; NA, NA, NA, NA, "227", "78", NA, "22", "94…
+$ volume                      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ issue                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ is_oa                       &lt;lgl&gt; TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRU…
+$ is_oa_anywhere              &lt;lgl&gt; TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, TRU…
+$ oa_status                   &lt;chr&gt; "hybrid", "bronze", "bronze", "closed", "c…
+$ oa_url                      &lt;chr&gt; "https://www.manchesteropenhive.com/downlo…
+$ any_repository_has_fulltext &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …
 $ language                    &lt;chr&gt; "en", "en", "en", "en", "en", "en", "en", …
-$ grants                      &lt;list&gt; NA, NA, &lt;"https://openalex.org/F432032109…
-$ cited_by_count              &lt;int&gt; 3320, 222, 153, 190, 105, 140, 132, 57, 95…
-$ counts_by_year              &lt;list&gt; [&lt;data.frame[5 x 2]&gt;], [&lt;data.frame[7 x 2…
-$ publication_year            &lt;int&gt; 2020, 2019, 2017, 2017, 2019, 2019, 2017, …
+$ grants                      &lt;list&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ cited_by_count              &lt;int&gt; 423, 496, 421, 547, 274, 64, 247, 189, 136…
+$ counts_by_year              &lt;list&gt; [&lt;data.frame[8 x 2]&gt;], [&lt;data.frame[6 x 2…
+$ publication_year            &lt;int&gt; 2018, 2020, 2019, 2013, 2014, 2015, 2020, …
 $ cited_by_api_url            &lt;chr&gt; "https://api.openalex.org/works?filter=cit…
-$ ids                         &lt;list&gt; &lt;"https://openalex.org/W4236476849", "htt…
-$ doi                         &lt;chr&gt; "https://doi.org/10.31222/osf.io/v7gm2", "…
-$ type                        &lt;chr&gt; "preprint", "preprint", "preprint", "prepr…
-$ referenced_works            &lt;list&gt; &lt;"https://openalex.org/W2022190222", "htt…
-$ related_works               &lt;list&gt; &lt;"https://openalex.org/W2921208823", "htt…
+$ ids                         &lt;list&gt; &lt;"https://openalex.org/W2899962821", "htt…
+$ doi                         &lt;chr&gt; "https://doi.org/10.7765/9781526136527.000…
+$ type                        &lt;chr&gt; "book-chapter", "book-chapter", "book-chap…
+$ referenced_works            &lt;list&gt; NA, NA, NA, &lt;"https://openalex.org/W11488…
+$ related_works               &lt;list&gt; &lt;"https://openalex.org/W4385987771", "htt…
 $ is_paratext                 &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …
 $ is_retracted                &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, …
-$ concepts                    &lt;list&gt; [&lt;data.frame[20 x 5]&gt;], [&lt;data.frame[20 x…
-$ topics                      &lt;list&gt; [&lt;tbl_df[4 x 5]&gt;], [&lt;tbl_df[12 x 5]&gt;], [&lt;…
-$ publication_year_fct        &lt;fct&gt; 2020, 2019, 2017, 2017, 2019, 2019, 2017, …
-$ type_fct                    &lt;fct&gt; preprint, preprint, preprint, preprint, pr…</code></pre>
+$ concepts                    &lt;list&gt; [&lt;data.frame[16 x 5]&gt;], [&lt;data.frame[7 x …
+$ topics                      &lt;list&gt; [&lt;tbl_df[4 x 5]&gt;], [&lt;tbl_df[4 x 5]&gt;], [&lt;t…
+$ publication_year_fct        &lt;fct&gt; 2018, 2020, 2019, 2013, 2014, 2015, 2020, …
+$ type_fct                    &lt;fct&gt; book-chapter, book-chapter, book-chapter, …</code></pre>
 </div>
 <details class="code-fold">
 <summary>Lösung anzeigen</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Notiz:</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Subsample enthält 3547 Einträge</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Subsample enthält 2994 Einträge</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -542,20 +542,20 @@ $ type_fct                    &lt;fct&gt; preprint, preprint, preprint, preprint
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>subsample_new_tidy <span class="sc">%&gt;%</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 498,535 × 41
+<pre><code># A tibble: 182,776 × 41
    id     title display_name author publication_date relevance_score so    so_id
    &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;        &lt;list&gt; &lt;chr&gt;                      &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;
- 1 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
- 2 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
- 3 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
- 4 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
- 5 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
- 6 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
- 7 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
- 8 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
- 9 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
-10 https… The … The PRISMA … &lt;df&gt;   2020-09-14                  585. &lt;NA&gt;  &lt;NA&gt; 
-# ℹ 498,525 more rows
+ 1 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+ 2 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+ 3 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+ 4 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+ 5 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+ 6 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+ 7 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+ 8 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+ 9 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+10 https… Intr… Introductio… &lt;df&gt;   2018-10-01                  300. Manc… http…
+# ℹ 182,766 more rows
 # ℹ 33 more variables: host_organization &lt;chr&gt;, issn_l &lt;chr&gt;, url &lt;chr&gt;,
 #   pdf_url &lt;chr&gt;, license &lt;chr&gt;, version &lt;chr&gt;, first_page &lt;chr&gt;,
 #   last_page &lt;chr&gt;, volume &lt;chr&gt;, issue &lt;chr&gt;, is_oa &lt;lgl&gt;,
@@ -566,7 +566,7 @@ $ type_fct                    &lt;fct&gt; preprint, preprint, preprint, preprint
 <details class="code-fold">
 <summary>Lösung anzeigen</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Notiz:</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Der neue Datensatz enthält 498535 Token. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Der neue Datensatz enthält 182776 Token. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -613,60 +613,60 @@ $ type_fct                    &lt;fct&gt; preprint, preprint, preprint, preprint
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 22,001 × 2
-   text              n
-   &lt;chr&gt;         &lt;int&gt;
- 1 studies        7115
- 2 review         5857
- 3 title          5223
- 4 sec            5133
- 5 health         4591
- 6 systematic     4197
- 7 research       3597
- 8 results        2981
- 9 study          2949
-10 literature     2881
-11 data           2764
-12 analysis       2600
-13 interventions  2532
-14 included       2491
-15 methods        2469
-16 evidence       2229
-17 meta           2122
-18 quality        2069
-19 based          2017
-20 mental         1998
-21 reviews        1812
-22 social         1752
-23 articles       1734
-24 risk           1653
-25 search         1540
-26 outcomes       1515
-27 conducted      1498
-28 lt             1481
-29 background     1434
-30 19             1426
-31 identified     1420
-32 factors        1307
-33 effects        1300
-34 covid          1279
-35 findings       1254
-36 care           1248
-37 95             1247
-38 gt             1245
-39 published      1241
-40 related        1234
-41 abstract       1214
-42 databases      1211
-43 reported       1191
-44 2              1138
-45 conclusions    1133
-46 effect         1116
-47 ci             1111
-48 intervention   1110
-49 criteria       1077
-50 support        1065
-# ℹ 21,951 more rows</code></pre>
+<pre><code># A tibble: 14,959 × 2
+   text            n
+   &lt;chr&gt;       &lt;int&gt;
+ 1 research     2761
+ 2 literature   2539
+ 3 review       2466
+ 4 studies      1478
+ 5 systematic   1231
+ 6 study        1206
+ 7 &lt;NA&gt;          936
+ 8 social        903
+ 9 analysis      881
+10 chapter       851
+11 data          824
+12 management    788
+13 based         786
+14 paper         695
+15 articles      686
+16 learning      666
+17 development   627
+18 future        622
+19 results       596
+20 information   581
+21 knowledge     572
+22 reviews       545
+23 education     518
+24 factors       516
+25 process       498
+26 related       491
+27 business      483
+28 health        454
+29 technology    452
+30 findings      449
+31 digital       437
+32 methods       424
+33 main          421
+34 design        417
+35 provide       410
+36 field         400
+37 quality       396
+38 context       384
+39 identify      382
+40 current       380
+41 performance   369
+42 published     367
+43 approach      356
+44 identified    356
+45 impact        347
+46 relevant      344
+47 systems       334
+48 role          331
+49 model         328
+50 conducted     327
+# ℹ 14,909 more rows</code></pre>
 </div>
 <details class="code-fold">
 <summary>Lösung anzeigen</summary>
@@ -675,9 +675,9 @@ $ type_fct                    &lt;fct&gt; preprint, preprint, preprint, preprint
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  datawizard<span class="sc">::</span><span class="fu">describe_distribution</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Variable |  Mean |     SD | IQR |           Range | Skewness | Kurtosis |     n | n_Missing
--------------------------------------------------------------------------------------------
-n        | 22.66 | 136.91 |   7 | [1.00, 7115.00] |    24.15 |   858.87 | 22001 |         0</code></pre>
+<pre><code>Variable |  Mean |    SD | IQR |           Range | Skewness | Kurtosis |     n | n_Missing
+------------------------------------------------------------------------------------------
+n        | 12.22 | 57.24 |   5 | [1.00, 2761.00] |    24.32 |   925.44 | 14959 |         0</code></pre>
 </div>
 <details class="code-fold">
 <summary>Lösung anzeigen</summary>
@@ -730,60 +730,60 @@ n        | 22.66 | 136.91 |   7 | [1.00, 7115.00] |    24.15 |   858.87 | 22001 
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>subsample_new_word_pairs <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 12,662,794 × 3
+<pre><code># A tibble: 7,286,586 × 3
    item1      item2          n
    &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;
- 1 review     systematic  2068
- 2 systematic review      2068
- 3 studies    review      1909
- 4 review     studies     1909
- 5 studies    systematic  1668
- 6 results    review      1668
- 7 review     results     1668
- 8 systematic studies     1668
- 9 studies    results     1502
-10 results    studies     1502
-11 research   review      1483
-12 review     research    1483
-13 results    systematic  1478
-14 systematic results     1478
-15 literature review      1471
-16 review     literature  1471
-17 methods    review      1453
-18 review     methods     1453
-19 methods    results     1387
-20 results    methods     1387
-21 study      review      1336
-22 review     study       1336
-23 methods    systematic  1320
-24 systematic methods     1320
-25 studies    methods     1306
-26 methods    studies     1306
-27 included   review      1236
-28 review     included    1236
-29 review     background  1227
-30 background review      1227
-31 methods    background  1224
-32 background methods     1224
-33 research   systematic  1216
-34 systematic research    1216
-35 results    background  1204
-36 background results     1204
-37 included   studies     1198
-38 studies    included    1198
-39 study      studies     1197
-40 studies    study       1197
-41 study      systematic  1195
-42 systematic study       1195
-43 research   studies     1178
-44 studies    research    1178
-45 health     review      1153
-46 review     health      1153
-47 analysis   review      1152
-48 review     analysis    1152
-49 studies    background  1148
-50 background studies     1148
-# ℹ 12,662,744 more rows</code></pre>
+ 1 literature review      1160
+ 2 review     literature  1160
+ 3 research   review       947
+ 4 review     research     947
+ 5 literature research     915
+ 6 research   literature   915
+ 7 review     systematic   795
+ 8 systematic review       795
+ 9 literature systematic   642
+10 systematic literature   642
+11 studies    review       588
+12 review     studies      588
+13 research   systematic   561
+14 systematic research     561
+15 study      literature   555
+16 literature study        555
+17 study      review       549
+18 review     study        549
+19 literature studies      510
+20 studies    literature   510
+21 studies    research     508
+22 research   studies      508
+23 study      research     505
+24 research   study        505
+25 based      review       420
+26 review     based        420
+27 future     research     417
+28 research   future       417
+29 analysis   review       408
+30 review     analysis     408
+31 literature chapter      404
+32 chapter    literature   404
+33 paper      review       394
+34 review     paper        394
+35 future     review       391
+36 review     future       391
+37 results    review       385
+38 review     results      385
+39 literature paper        382
+40 paper      literature   382
+41 future     literature   381
+42 literature future       381
+43 literature analysis     379
+44 analysis   literature   379
+45 based      literature   379
+46 literature based        379
+47 chapter    review       377
+48 review     chapter      377
+49 studies    systematic   371
+50 systematic studies      371
+# ℹ 7,286,536 more rows</code></pre>
 </div>
 </div>
 </section>
@@ -813,60 +813,60 @@ n        | 22.66 | 136.91 |   7 | [1.00, 7115.00] |    24.15 |   858.87 | 22001 
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>subsample_new_corr <span class="sc">%&gt;%</span> <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 131,406 × 3
-   item1        item2        correlation
-   &lt;chr&gt;        &lt;chr&gt;              &lt;dbl&gt;
- 1 sec          title              0.935
- 2 title        sec                0.935
- 3 ci           95                 0.881
- 4 95           ci                 0.881
- 5 19           covid              0.844
- 6 covid        19                 0.844
- 7 items        preferred          0.835
- 8 preferred    items              0.835
- 9 pandemic     covid              0.812
-10 covid        pandemic           0.812
-11 vaccination  vaccine            0.796
-12 vaccine      vaccination        0.796
-13 trials       controlled         0.763
-14 controlled   trials             0.763
-15 web          science            0.755
-16 science      web                0.755
-17 sec          objective          0.715
-18 objective    sec                0.715
-19 srs          sr                 0.710
-20 sr           srs                0.710
-21 randomized   controlled         0.708
-22 controlled   randomized         0.708
-23 pandemic     19                 0.695
-24 19           pandemic           0.695
-25 objective    title              0.669
-26 title        objective          0.669
-27 gt           lt                 0.662
-28 lt           gt                 0.662
-29 trials       randomized         0.658
-30 randomized   trials             0.658
-31 depression   anxiety            0.650
-32 anxiety      depression         0.650
-33 bold         ns4                0.636
-34 ns4          bold               0.636
-35 methods      background         0.613
-36 background   methods            0.613
-37 inclusion    criteria           0.607
-38 criteria     inclusion          0.607
-39 reporting    preferred          0.599
-40 preferred    reporting          0.599
-41 items        reporting          0.599
-42 reporting    items              0.599
-43 peer         reviewed           0.592
-44 reviewed     peer               0.592
-45 1            2                  0.585
-46 2            1                  0.585
-47 sec          conclusions        0.577
-48 conclusions  sec                0.577
-49 registration prospero           0.574
-50 prospero     registration       0.574
-# ℹ 131,356 more rows</code></pre>
+<pre><code># A tibble: 8,372 × 3
+   item1          item2          correlation
+   &lt;chr&gt;          &lt;chr&gt;                &lt;dbl&gt;
+ 1 chain          supply               0.886
+ 2 supply         chain                0.886
+ 3 literature     review               0.614
+ 4 review         literature           0.614
+ 5 review         systematic           0.561
+ 6 systematic     review               0.561
+ 7 sustainability sustainable          0.467
+ 8 sustainable    sustainability       0.467
+ 9 research       review               0.462
+10 review         research             0.462
+11 literature     research             0.446
+12 research       literature           0.446
+13 future         research             0.373
+14 research       future               0.373
+15 media          social               0.368
+16 social         media                0.368
+17 literature     systematic           0.354
+18 systematic     literature           0.354
+19 learning       education            0.330
+20 education      learning             0.330
+21 studies        review               0.330
+22 review         studies              0.330
+23 research       systematic           0.319
+24 systematic     research             0.319
+25 study          research             0.309
+26 research       study                0.309
+27 study          literature           0.307
+28 literature     study                0.307
+29 studies        research             0.306
+30 research       studies              0.306
+31 articles       published            0.297
+32 published      articles             0.297
+33 articles       systematic           0.280
+34 systematic     articles             0.280
+35 models         model                0.280
+36 model          models               0.280
+37 study          review               0.279
+38 review         study                0.279
+39 results        review               0.278
+40 review         results              0.278
+41 results        systematic           0.272
+42 systematic     results              0.272
+43 based          review               0.269
+44 review         based                0.269
+45 articles       review               0.268
+46 review         articles             0.268
+47 studies        systematic           0.266
+48 systematic     studies              0.266
+49 theory         theoretical          0.266
+50 theoretical    theory               0.266
+# ℹ 8,322 more rows</code></pre>
 </div>
 </div>
 </section>
