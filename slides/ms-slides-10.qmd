@@ -100,7 +100,7 @@ effects <- qs::qread(here("data/session-10/effects.qs"))
 
 Schritt für Schritt, von der Schätzung bis zur Validierung
 
-## Was bisher geschaht ...
+## Was bisher geschah ...
 
 #### Kurze Wiederholung der wichtigsten Inhalte
 
@@ -187,7 +187,6 @@ quanteda_token <- quanteda_corpus %>%
     remove_symbols = TRUE, 
     remove_numbers = TRUE, 
     remove_url = TRUE, 
-    split_tags = FALSE # keep hashtags and mentions
   ) %>% 
   quanteda::tokens_tolower() %>% 
   quanteda::tokens_remove(
@@ -466,14 +465,11 @@ gamma_export <- stm_mdl_k20 %>%
   dplyr::group_by(document) %>% 
   dplyr::slice_max(gamma) %>% 
   dplyr::mutate(main_topic = ifelse(gamma > 0.5, topic, NA)) %>% 
-      rename(
-        top_topic = topic,
-        top_gamma = gamma) %>% 
   dplyr::ungroup() %>% 
   dplyr::left_join(review_subsample, by = c("document" = "id")) %>% 
   dplyr::rename(id = document) %>% 
   dplyr::mutate(
-    stm_topic = as.factor(paste("Topic", sprintf("%02d", top_topic)))
+    stm_topic = as.factor(paste("Topic", sprintf("%02d", topic)))
   )
 
 # Output
@@ -508,20 +504,19 @@ gamma_export %>%
 
 ## A closer look {.scrollable}
 
-#### Fokus auf die Top-Abstracts von Thema 16
-
+#### Fokus auf die Top-Abstracts von Thema 16 
 ```{r table-k20-stm-topic-16-top-abstracts}
 #| code-fold: true
 #| code-summary: "Expand for full code"
 
 gamma_export %>% 
   filter(stm_topic == "Topic 16") %>%
-  arrange(-top_gamma) %>%
-  select(title, so, top_gamma, type, ab) %>%
+  arrange(-gamma) %>%
+  select(title, so, gamma, type, ab) %>%
   slice_head(n = 3) %>% 
   gt() %>% 
   fmt_number(
-    columns = vars(top_gamma), 
+    columns = vars(gamma), 
     decimals = 2) %>%
   gtExtras::gt_theme_538()
 ```
@@ -536,12 +531,12 @@ gamma_export %>%
 
 gamma_export %>% 
   filter(stm_topic == "Topic 06") %>%
-  arrange(-top_gamma) %>%
-  select(title, so, top_gamma, type, ab) %>%
+  arrange(-gamma) %>%
+  select(title, so, gamma, type, ab) %>%
   slice_head(n = 3) %>% 
   gt() %>% 
   fmt_number(
-    columns = vars(top_gamma), 
+    columns = vars(gamma), 
     decimals = 2) %>%
   gtExtras::gt_theme_538()
 ```
