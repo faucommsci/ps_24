@@ -1,0 +1,803 @@
+---
+title: "Wiederholung & Ausblick"
+subtitle: "Session 11"
+date: 11 07 2024
+date-format: "DD.MM.YYYY"
+bibliography: references_slides.bib
+editor_options: 
+  chunk_output_type: console
+execute: 
+  eval: true
+---
+
+```{r setup-slide-session}
+#| echo: false
+ 
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    here, qs, # file management
+    magrittr, janitor, # data wrangling
+    easystats, sjmisc, # data analysis
+    gt, gtExtras, # table visualization
+    ggpubr, ggwordcloud, # visualization
+    # text analysis    
+    tidytext, widyr, # based on tidytext
+    quanteda, # based on quanteda
+    quanteda.textmodels, quanteda.textplots, quanteda.textstats, 
+    stm, # structural topic modeling
+    openalexR, pushoverr, tictoc, 
+    rollama, bibliometrix,
+    tidyverse # load last to avoid masking issues
+  )
+
+pacman::p_load_gh("chrdrn/halpeR")
+
+# Load schedule
+source(here("slides/schedule.R"))
+```
+
+## Seminarplan {.smaller}
+
+```{r table-schedule}
+#| echo: false 
+schedule %>% 
+    gt::gt() %>% 
+    gt::fmt_markdown() %>% 
+    gt::tab_options(
+        table.width = gt::pct(80), 
+        table.font.size = "14px") %>% 
+    gtExtras::gt_theme_nytimes() %>% 
+    # customise column header labels
+    gt::cols_label(
+        session = "Sitzung", 
+        date = "Datum",
+        topic = "Thema (synchron)",
+        exercise = "Übung (asynchron)",
+        presenter = "Dozent:in"
+    ) %>% 
+    gt::cols_width(
+        session ~ pct(10),
+        date ~ pct(10),
+        topic ~ pct(50),
+        exercise ~ pct(20),
+        presenter ~ pct(10)
+    ) %>%
+    # highlight current session
+    gtExtras::gt_highlight_rows(
+        rows = 15,
+        fill = "#C50F3C", alpha = 0.15,
+        bold_target_only = TRUE,
+        target_col = session:topic
+    ) %>%
+    # fade out past sessions
+    gt::tab_style(
+        style = gt::cell_text(
+            style = "italic", 
+            color = "grey"),
+        location = gt::cells_body(
+            columns = everything(), 
+            rows = c(1:9, 11:14)
+        )
+    )
+```
+
+```{r import-data-backend}
+#| echo: false
+#| eval: true
+
+review_subsample <- qs::qread(here("data/session-10/review_subsample.qs"))
+quanteda_stm <- qs::qread(here("data/session-10/quanteda_stm.qs"))
+stm_mdl_k20 <- qs::qread(here("data/session-10/stm_mdl_k20.qs"))
+stm_search <- qs::qread(here("data/session-10/stm_search.qs"))
+effects_k40 <- qs::qread(here("data/session-11/effects_k40.qs"))
+topiclabels_llama3 <- qs::qread(here("data/session-11/topiclabels_llama3.qs"))
+topiclabels_mistral <- qs::qread(here("data/session-11/topiclabels_mistral.qs"))
+bibliometrix_data <- qs::qread(here("data/session-11/bibliometrix_data.qs"))
+bibliometrix_df <- qs::qread(here("data/session-11/bibliometrix_df.qs"))
+country_collab_matrix <- qs::qread(here("data/session-11/bibliometrix-country_collab_matrix.qs"))
+keyword_matrix <- qs::qread(here("data/session-11/bibliometrix-keyword_matrix.qs"))
+```
+
+# Agenda {background-image="img/slide_bg-agenda.png"}
+
+1.  [📋 Besprechung der Übungsaufgaben](#group-activity)
+2.  [Ausblick](#r-example)
+
+# 📋 Besprechung Übungsaufgaben {#group-activity background-image="img/slide_bg-group_activity.png"}
+
+Topic Modeling in R: Umsetzung und Validierung
+
+## Auswahl des passenden Models
+
+#### 📋 Exercise 1.1: Visualisierung der Themenprävalenz
+
+```{r exercise-1-1}
+#| output-location: column
+
+# Pull tpm with 40 topics
+stm_mdl_k40 <- stm_search %>% 
+  filter(k == 40) %>% 
+  pull(mdl) %>% 
+  .[[1]]
+
+# Check
+stm_mdl_k40
+```
+
+## Identifikation der Top-Terms für jedes Thema
+
+#### 📋 Exercise 1.2: Visualisierung der Themenprävalenz
+
+```{r exercise-1-2}
+#| output-location: column
+
+# Create tidy beta matrix
+td_beta <- tidy(
+  stm_mdl_k40, 
+  method = "frex")
+
+# Create top terms
+top_terms <- td_beta %>%
+  arrange(beta) %>%
+  group_by(topic) %>%
+  top_n(7, beta) %>%
+  arrange(-beta) %>%
+  select(topic, term) %>%
+  summarise(terms = list(term)) %>%
+  mutate(terms = map(
+    terms,
+    paste,
+    collapse = ", ")) %>% 
+  unnest(cols = c(terms))
+
+# Output
+top_terms
+```
+
+## Erstellung der Prävalenz-Tabelle für die Themen {.scrollable}
+
+#### 📋 Exercise 1.3: Visualisierung der Themenprävalenz
+
+```{r exercise-1-3}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+# Create tidy gamma matrix
+td_gamma <- tidy(
+  stm_mdl_k40, 
+  matrix = "gamma", 
+  document_names = names(quanteda_stm$documents)
+  )
+
+# Create prevalence
+prevalence <- td_gamma %>%
+  group_by(topic) %>%
+  summarise(gamma = mean(gamma)) %>%
+  arrange(desc(gamma)) %>%
+  left_join(top_terms, by = "topic") %>%
+  mutate(topic = paste0("Topic ",sprintf("%02d", topic)),
+         topic = reorder(topic, gamma))
+
+# Output
+prevalence %>% 
+  gt() %>% 
+  fmt_number(
+    columns = vars(gamma), 
+    decimals = 2) %>% 
+  gtExtras::gt_theme_538()
+```
+
+## Schätzung der Meta-Effekte
+
+#### 📋 Exercise 2.1: Einfluss der Metadaten
+
+```{r exercise-2-1-1}
+#| eval: false
+
+# Create data
+effects_k40 <- estimateEffect(
+    1:40 ~ publication_year_fct + field,
+    stm_mdl_k40,
+    meta = quanteda_stm$meta)
+```
+
+```{r exercise-2-1-2}
+# Filter effect data
+effects_tidy <- effects_k40 %>% 
+    tidy() %>% 
+    filter(
+        term != "(Intercept)",
+        term == "fieldSocial Sciences") %>% 
+        select(-term)
+
+# Check transformation
+effects_tidy %>% head()
+```
+
+## Untersuchung der Effekte {.scrollable}
+
+#### 📋 Exercise 2.2: Einfluss der Metadaten
+
+```{r exercise-2-2}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+# Explore effects (table outpu)
+effects_tidy %>% 
+    arrange(-estimate) %>% 
+    slice_head(n = 10) %>%
+    gt() %>% 
+    tab_header(
+      title = "Top 10 Social Science Topics"
+    ) %>% 
+    fmt_number(
+      columns = -c(topic),
+      decimals = 3
+    ) %>% 
+    data_color(
+       columns = estimate,
+    method = "numeric",
+    palette = "viridis"
+    ) %>% 
+    gtExtras::gt_theme_538()
+```
+
+## Benennung des Themas k = 20
+
+#### 📋 Exercise 3.1: Einzelthema im Fokus
+
+```{r exercise-3-1}
+# Create topic label
+stm_mdl_k40 %>% labelTopics(topic = 20)
+```
+
+<br>
+
+##### ✍️ Wie würdet Ihr das Thema benennen und warum?
+
+## Zusammenführung mit OpenAlex-Daten {visibility="hidden"}
+
+#### 📋 Exercise 3: Einzelthema im Fokus
+
+```{r exercise-3-2}
+# Create gamma export
+gamma_export <- stm_mdl_k40 %>% 
+  tidytext::tidy(
+    matrix = "gamma", 
+    document_names = names(quanteda_stm$documents)) %>%
+  dplyr::group_by(document) %>% 
+  dplyr::slice_max(gamma) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::left_join(review_subsample, by = c("document" = "id")) %>% 
+  dplyr::rename(id = document) %>% 
+  dplyr::mutate(
+    stm_topic = as.factor(paste("Topic", sprintf("%02d", topic)))
+  )
+
+# Check
+glimpse(gamma_export)
+```
+
+## Verteilungsparameter von Thema 20
+
+#### 📋 Exercise 3.3: Einzelthema im Fokus
+
+```{r exercise-3-3}
+# Create distribution parameters
+gamma_export %>% 
+  filter(topic == 20) %>%
+  select(gamma, relevance_score, cited_by_count) %>% 
+  datawizard::describe_distribution()
+```
+
+<br>
+
+##### Fragen:
+
+-   Anzahl der Abstracts von Thema 20?
+-   Durchschnittlicher Relevace Score?
+-   Durchschnittliche Zitationen?
+-   Anzahl der Zitationen des am meisten zitierten Dokuments?
+
+## Top-Dokumente des Themas {.scrollable}
+
+#### 📋 Exercise 3.4: Einzelthema im Fokus
+
+```{r exercise-3-4}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+# Identify top documents for topic 20
+top_docs_k20 <- gamma_export %>% 
+  filter(stm_topic == "Topic 20") %>%
+  arrange(-gamma) %>%
+  select(title, so, gamma, type, ab) %>%
+  slice_head(n = 5) 
+
+# Creae output
+top_docs_k20 %>% 
+  gt() %>% 
+  fmt_number(
+    columns = c(gamma), 
+    decimals = 2) %>% 
+  gtExtras::gt_theme_538()
+```
+
+# Ausblick {#r-example background-image="img/slide_bg-example.png"}
+
+Large Language Models (LLMs) & bibliometrix in R
+
+## Get up and running with LLMs
+
+#### Run LLMs locally with [Ollama](https://ollama.com/)
+
+::::: columns
+::: {.column width="25%"}
+![](https://ollama.com/public/ollama.png)
+:::
+
+::: {.column width="75%"}
+-   open-source project that serves as a powerful and user-friendly platform for running LLMs on your local machine.
+-   bridge between the complexities of LLM technology and the desire for an accessible and customizable AI experience.
+-   provides access to a diverse and continuously expanding library of pre-trained LLM models (e.g.[Llama 3,](https://ollama.com/library/llama3) [Phi 3](https://ollama.com/library/phi3), [Mistral](https://ollama.com/library/mistral), [Gemma 2](https://ollama.com/library/gemma2))
+:::
+:::::
+
+## R-Wrapper for Ollama API
+
+#### Run local LLMs in R with rollama [@gruber2024]
+
+::::: columns
+::: {.column width="25%"}
+![](https://raw.githubusercontent.com/JBGruber/rollama/main/man/figures/logo.png)
+:::
+
+::: {.column width="75%"}
+-   the goal of [rollama](https://jbgruber.github.io/rollama/) is to wrap the Ollama API, which allows you to run different LLMs locally and create an experience similar to ChatGPT/OpenAI’s API.
+:::
+:::::
+
+## Chat with a LLM via R
+
+#### Demonstration on how to use a local LLM with rollama in R
+
+:::::: {style="font-size: smaller"}
+::::: columns
+::: {.column width="50%"}
+```{r ollama-demo-1-llama3}
+demo_1_llama3 <- rollama::query(
+    "Why is the sky blue?",
+    model = "llama3"
+)
+
+glue::glue(demo_1_llama3$message$content)
+```
+:::
+
+::: {.column width="50%"}
+```{r ollama-demo-1-mistral}
+demo_1_mistral <- rollama::query(
+    "Why is the sky blue?",
+    model = "mistral"
+)
+
+glue::glue(demo_1_mistral$message$content)
+```
+:::
+:::::
+::::::
+
+## Choose your model wisely!
+
+#### Compare outputs of different versions of Llama model
+
+:::::: {style="font-size: smaller"}
+::::: columns
+::: {.column width="50%"}
+```{r ollama-demo-2-llama2}
+demo_2_llama2 <- rollama::query(
+    "What is the longest five letter word in english?",
+    model = "llama2"
+)
+
+glue::glue(demo_2_llama2$message$content)
+```
+:::
+
+::: {.column width="50%"}
+```{r ollama-demo-2-llama3}
+demo_2_llama3 <- rollama::query(
+     "What is the longest five letter word in english?",
+    model = "llama3"
+)
+
+glue::glue(demo_2_llama3$message$content)
+```
+:::
+:::::
+::::::
+
+## Choose your model wisely!
+
+#### Models differ in their suffistication and performance
+
+:::::: {style="font-size: smaller"}
+::::: columns
+::: {.column width="50%"}
+```{r ollama-demo-3-llama3}
+demo_3_llama3 <- rollama::query(
+    "Is 9677 a prime number?",
+    model = "llama3"
+)
+
+glue::glue(demo_3_llama3$message$content)
+```
+:::
+
+::: {.column width="50%"}
+```{r ollama-demo-3-mistral}
+demo_3_mistral <- rollama::query(
+    "Is 9677 a prime number?",
+    model = "mistral"
+)
+
+glue::glue(demo_3_mistral$message$content)
+```
+:::
+:::::
+::::::
+
+## Validate, validate, validate! {visibility="hidden"}
+
+#### Use LLMs in R via Konsole
+
+```{r ollama-demo-mistral}
+#| eval: false 
+
+rollama::query(
+    "Is 9677 a prime number?",
+    model = "mistral"
+)
+
+rollama::query(
+    "What is 9677 divided by 7?",
+    model = "mistral"
+)
+
+rollama::query(
+    "How sure are you, expressed as a percentage, that 9677 is not a prime number?",
+    model = "mistral"
+)
+```
+
+## Eigene Funktion zur Themennamensgebung
+
+#### Einsatz von LLM im Kontext von Topic Modeling
+
+::: {style="font-size: smaller"}
+```{r function-create-ollama-labels}
+#| label: function-create-ollama-labels
+#| echo: true
+#| eval: true
+
+create_ollama_labels <- function(
+  data, topic = "topic", terms = "terms", docs, 
+  ollama_model = "llama3", 
+  output_seed = 42, output_temperature = 0.8, output_top_k = 40, output_top_p = 0.9) {
+  
+  # Initialize a list to store labels for each document column
+  labels <- setNames(vector("list", length(docs)), docs)
+  
+  # Loop over each row in the data
+  for (i in seq_along(data[[topic]])) {
+    
+    # Loop over each document column
+    for (doc in docs) {
+      # Define parameters
+      docs_text <- data[[doc]][[i]]
+      terms_text <- data[[terms]][[i]]
+
+      # Create query
+      q <- tibble::tribble(
+        ~role, ~content,
+        "user", 
+        paste("text: I have a topic that contains the following documents: \n",
+        docs_text,
+        "\n The topic is described by the following keywords:",
+        terms_text,
+        "\n Based on the above information, can you please give one short label (no longer than 5 words) for the topic?")
+      )
+      
+      # Generate output
+      output <- query(
+        q,
+        model = ollama_model,
+        model_params = list(
+            seed = output_seed, 
+            temperature = output_temperature,
+            top_k = output_top_k, 
+            top_p = output_top_p 
+      ))
+      
+      # Initialize the label list for the current doc if it does not exist
+      if (is.null(labels[[doc]])) {
+        labels[[doc]] <- vector("character", nrow(data))
+      }
+      
+      # Store answer
+      labels[[doc]][i] <- pluck(output, "message", "content")
+    }
+  }
+  
+  # Combine the labels with the original data
+  for (doc in docs) {
+    data[[paste0("label_", doc)]] <- labels[[doc]]
+  }
+  
+  return(data)
+}
+```
+:::
+
+## Erstellung der Themennamen
+
+#### Anwendung der Funktion auf die Daten
+
+```{r ollama-topic-label-preparation}
+#| echo: false
+
+# Preparation
+docs_top_10 <- gamma_export %>% 
+    group_by(topic) %>% 
+    arrange(topic, -gamma) %>% 
+    slice(1:10) %>% 
+    summarise(
+        docs_n = n(),
+        docs_all = paste(ab, collapse = "\n\n")
+    ) 
+
+# Top Terms
+top_terms <- stm_mdl_k40 %>%
+    tidy(matrix = "frex") %>% 
+    group_by(topic) %>% 
+    slice_head(n = 10) %>% 
+    summarise(
+        terms = paste(term, collapse = ", ")
+    ) 
+
+# Combine
+tpm_label_base <- docs_top_10 %>%
+    # Join top terms
+    left_join(top_terms, by = join_by("topic"))
+```
+
+```{r ollama-topic-labels-data}
+#| eval: false
+topiclabels_llama3 <- create_ollama_labels(
+    data = tpm_label_base,
+    ollama_model = "llama3",
+    docs = c("docs_all")) 
+
+topiclabels_mistral <- create_ollama_labels(
+    data = tpm_label_base,
+    ollama_model = "mistral",
+    docs = c("docs_all"))
+```
+
+```{r ollama-topic-labels-data-export}
+#| echo: false
+#| eval: false
+
+qs::qsave(topiclabels_llama3, file = here("data/session-11/topiclabels_llama3.qs"))
+qs::qsave(topiclabels_mistral, file = here("data/session-11/topiclabels_mistral.qs"))
+```
+
+```{r ollama-topic-labels-join}
+topiclabels <- topiclabels_llama3 %>% 
+    left_join(topiclabels_mistral %>% select(topic, label_docs_all), by = join_by("topic")) %>% 
+    janitor::clean_names() %>% 
+    select(topic, starts_with("label_docs_all_")) %>% 
+    rename(
+        label_llama3 = label_docs_all_x, 
+        label_mistral = label_docs_all_y
+    ) 
+```
+
+## Validieren, validieren, validieren! {.scrollable}
+
+#### Überprüfung und Vergleich der mit LLMs generierten Themennamen
+
+```{r ollama-topic-labels-output}
+topiclabels %>% 
+    gt() %>% 
+    gtExtras::gt_theme_538()
+```
+
+## Tools for bibliometrics & scientometrics
+
+#### [`bibliometrix`](https://www.bibliometrix.org/home/): R package for scinece mapping workflow [@aria2017]
+
+::::: columns
+::: {.column width="50%"}
+![](https://www.bibliometrix.org/home/images/2023/01/13/screen-shot-01-13-23-at-03.33-pm.png)
+:::
+
+::: {.column width="50%"}
+-   [bibliometrix](https://www.bibliometrix.org/) is an open-source tool for quantitative research in scientometrics and bibliometrics that includes all the main bibliometric methods of analysis.
+-   With [biblioshiny](https://www.bibliometrix.org/home/index.php/layout/biblioshiny), a shiny web app, bibliometrix has become very easy to use even for those who have no coding skills.
+:::
+:::::
+
+## Tools for bibliometrics & scientometrics
+
+#### bibliometrix: R package for scinece mapping workflow [@aria2017]
+
+![](https://www.bibliometrix.org/home/images/2023/01/31/database.png)
+
+## OpenAlex & openalexR 🤝 bibliometrix
+
+#### Pipeline für die Integration von OpenAlex-Daten in bibliometrix
+
+```{r create-bibliometrix-data}
+#| eval: false
+
+bibliometrix_data <- review_subsample %>% oa2bibliometrix()
+bibliometrix_df <- biblioAnalysis(bibliometrix_data, sep = ";")
+```
+
+```{r bibliometrix-data-export}
+#| echo: false
+#| eval: false
+
+qs::qsave(bibliometrix_data, file = here("data/session-11/bibliometrix_data.qs"))
+qs::qsave(bibliometrix_df, file = here("data/session-11/bibliometrix_df.qs"))
+```
+
+:::::: {style="font-size: smaller"}
+::::: columns
+::: {.column width="50%"}
+```{r create-bibliometrix-data-output}
+bibliometrix_data %>% glimpse
+```
+:::
+
+::: {.column width="50%"}
+```{r create-bibliometrix-df-output}
+bibliometrix_df %>% glimpse
+```
+:::
+:::::
+::::::
+
+## Zusammenfassung mit *summary()*
+
+#### Brief introduction to bibliometrix
+
+```{r bibliometrix-summary}
+bibliometrix_df %>% 
+  summary(k = 10, pause = FALSE)
+```
+
+## Top-Authors’ Productivity over the Time
+
+#### Brief introduction to bibliometrix
+
+```{r bibliometrix-author-productivity}
+top_authors = bibliometrix_data %>% 
+  authorProdOverTime(k = 10, graph = TRUE)
+```
+
+
+## Country Scientific Collaboration
+
+#### Brief introduction to bibliometrix
+
+```{r bibliometrix-country-collaboration-data}
+#| eval: false
+
+# Create a country collaboration network
+bibliometrix_author_meta <- bibliometrix_data %>% 
+  metaTagExtraction(Field = "AU_CO", sep = ";")
+
+country_collab_matrix <- bibliometrix_author_meta %>% 
+  biblioNetwork(
+    analysis = "collaboration",
+    network = "countries", sep = ";")
+
+# Plot the network
+networkPlot(
+  country_collab_matrix, 
+  n = dim(collab_matrix)[1],
+  Title = "Country Collaboration",
+  type = "circle",
+  size = TRUE,
+  remove.multiple = FALSE,
+  labelsize=0.7,
+  cluster = "none") 
+```
+
+
+```{r bibliometrix-country-collaboration-data-export}
+#| echo: false
+#| eval: false
+qs::qsave(country_collab_matrix, file = here("data/session-11/bibliometrix-country_collab_matrix.qs"))
+```
+
+## Country Scientific Collaboration
+
+#### Brief introduction to bibliometrix
+
+```{r bibliometrix-country-collaboration-output}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+net = networkPlot(
+  country_collab_matrix, 
+  n = 20,
+  Title = "Country Collaboration",
+  type = "circle",
+  size = TRUE,
+  remove.multiple = FALSE,
+  labelsize=0.7,cluster = "none") 
+```
+
+
+## Keyword co-occurrences
+
+#### Brief introduction to bibliometrix
+
+```{r bibliometrix-keyword-co-occurrences-data}
+#| eval: false
+
+keyword_matrix <- bibliometrix_data %>% 
+  biblioNetwork(
+    analysis = "co-occurrences",
+    network = "keywords",
+    sep = ";")
+
+# Plot the network
+net=keyword_matrix(
+  NetMatrix,
+  normalize="association",
+  weighted=T, n = 30,
+  Title = "Keyword Co-occurrences",
+  type = "fruchterman",
+  size=T,
+  edgesize = 5,
+  labelsize=0.7)
+```
+
+```{r bibliometrix-keyword-co-occurrences-data-export}
+#| echo: false
+#| eval: false
+qs::qsave(keyword_matrix, file = here("data/session-11/bibliometrix-keyword_matrix.qs"))
+```
+
+## Keyword co-occurrences
+
+#### Brief introduction to bibliometrix
+
+```{r bibliometrix-keyword-co-occurrences-output}
+#| code-fold: true
+#| code-summary: "Expand for full code"
+
+net=networkPlot(
+  keyword_matrix,
+  normalize="association",
+  weighted=T, n = 30,
+  Title = "Keyword Co-occurrences",
+  type = "fruchterman",
+  size=T,
+  edgesize = 5,
+  labelsize=0.7)
+```
+
+
+# Time for questions {background-image="img/slide_bg-question.png"}
+
+# Thank you! {background-image="img/slide_bg-end_session.png"}
+
+## References
+
+::: {#refs}
+:::
