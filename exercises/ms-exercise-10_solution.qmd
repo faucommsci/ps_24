@@ -67,6 +67,7 @@ pacman::p_load(
 ```{r import-data}
 #| echo: true
 #| eval: false
+#| code-fold: false
 
 review_works <- qs::qread(here("data/session-07/openalex-review_works-2013_2023.qs"))
 
@@ -97,9 +98,10 @@ review_subsample <- review_works %>%
 ```
 
 ```{r create-dfm-quanteda}
-#| output: false
 #| echo: true
 #| eval: false
+#| code-fold: false
+#| output: false
 
 # Create corpus
 quanteda_corpus <- review_subsample %>% 
@@ -398,19 +400,19 @@ glimpse(gamma_export)
     -   Wie viele Zitationen haben die Dokumente im Durchschnitt?
     -   Wie viel Zitate hat das hochzitierteste Dokument?
 
-    ```{r exercise-3-3}
-    # Create distribution parameters
-    gamma_export %>% 
-      filter(topic == 20) %>%
-      select(gamma, relevance_score, cited_by_count) %>% 
-      datawizard::describe_distribution()
+```{r exercise-3-3}
+# Create distribution parameters
+gamma_export %>% 
+  filter(topic == 20) %>%
+  select(gamma, relevance_score, cited_by_count) %>% 
+  datawizard::describe_distribution()
 
-    #### Notes
-    # Anzahl der Abstrats von Thema 20
-    # Durchschnittlicher Relevace Score: 
-    # Durchschnittliche Zitationen:
-    # Anzahl der Zitationen des am meisten zitierten Dokuments:
-    ```
+#### Notes
+# Anzahl der Abstrats von Thema 20
+# Durchschnittlicher Relevace Score: 
+# Durchschnittliche Zitationen:
+# Anzahl der Zitationen des am meisten zitierten Dokuments:
+```
 
 #### 3.4. Top-Dokumente des Themas
 

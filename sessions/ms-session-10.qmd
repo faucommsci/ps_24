@@ -17,7 +17,7 @@ citations-hover: false
 
 ## Practice
 
-✍️ [Exercise](/exercises/ms-exercise-10.html)
+✍️ [Exercise](/exercises/ms-exercise-10_solution.html)
 
 ## Suggested readings
 
