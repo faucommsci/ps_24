@@ -1,0 +1,46 @@
+---
+title: "Semesterplan"
+subtitle: "Projektseminar"
+date: 04/01/2024
+date-modified: last-modified
+date-format: "DD.MM.YYYY"
+---
+
+::: callout-note
+Diese Seite erhält eine Übersicht über die Sitzung bzw. Themen des Methodenseminars im Sommersemester 2024. Bitte beachten Sie, dass die Inhalte des Kurses ({{< bi file-earmark-slides >}} Folien, {{< bi pencil-square >}} Exercises, {{< bi file-earmark-code >}} Showcases und {{< bi book >}} Hintergrundinformationen) im Laufe des Semesters stetig aktualisiert werden, wobei alle Änderungen hier dokumentiert werden.
+:::
+
+| Sitzung | Datum | Thema | Unterlagen |
+|----------------|----------------|--------------------|---------------------|
+| 1 | 30.10.2024 | Kick-Off |  |
+| 2 | 06.11.2024 | Workflow & Analysestrategie I |  |
+| 3 | 13.11.2024 | Workflow & Analysestrategie II |  |
+| 4 | 20.11.2024 | Gruppenarbeit |  |
+| 5 | 27.11.2024 | All things R: *RefreshR & Vorstellung Datensatz* | [{{< bi file-earmark-slides >}}](/slides/ps-slides-05.html "Slides: Session 07"){aria-label="Slides Session 05"} |
+| 6 | 04.12.2024 | Update zum Workflow I |  |
+| 7 | 11.12.2024 | Gruppenarbeit |  |
+| 8 | 18.12.2024 | All things R |  |
+| 9 | 08.01.2025 | Update zum Workflow II |  |
+| 10 | 15.01.2025 | Gruppenarbeit |  |
+| 11 | 22.01.2025 | All things R |  |
+|  | 27.01.2025 | Sondertermin: Vorstellung Projektseminar |  |
+| 12 | 29.01.2025 | Abschlusspräsentation (inklusive Feedback) |  |
+| 13 | 05.02.2025 | Semesterabschluss: *Projektbericht & Evaluation* |  |
+
+: {tbl-colwidths="\[2,20,55,20\]"}
+
+```{r backup}
+#| echo: false
+knitr::knit_exit()
+```
+
+|   |   |   | Prepare | Slides | AE | Labs | HW | Exam | Project |
+|--------|--------|--------|:------:|:------:|:------:|:------:|:------:|:------:|:------:|
+| Week | Date | Topic | 📖 | 🖥️ | 📋 | [💻](https://sakai.duke.edu/samigo-app/servlet/Login?id=6fa7ebf3-01af-42a6-91ba-3e813d3901221641094171786) | ✍️ | ✅ | 📂 |
+
+Icons
+
+-   Preparation: {{< bi book >}}
+-   Slides: {{< bi file-earmark-slides >}}
+-   Group Activity: {{< iconify octicon comment-discussion-24 >}}
+-   Application exercises: {{< iconify simple-icons googlecolab >}}
