@@ -1,0 +1,340 @@
+---
+title: "Datensatzvorstellung & RefresheR"
+subtitle: "Session 05"
+date: 27 11 2024
+date-format: "DD.MM.YYYY"
+bibliography: references_slides.bib
+editor_options: 
+  chunk_output_type: console
+execute: 
+  eval: true
+---
+
+```{r setup-slide-session}
+#| echo: false
+ 
+# if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    here, qs, # file management
+    magrittr, janitor, # data wrangling
+    easystats, sjmisc, # data analysis
+    gt, gtExtras, # table visualization
+    ggpubr, ggwordcloud, # visualization
+    # text analysis    
+    tidytext, widyr, # based on tidytext
+    quanteda, # based on quanteda
+    quanteda.textmodels, quanteda.textplots, quanteda.textstats, 
+    stm, # structural topic modeling
+    openalexR, pushoverr, tictoc, 
+    rollama, bibliometrix,
+    formatR,
+    tidyverse # load last to avoid masking issues
+  )
+
+pacman::p_load_gh("chrdrn/halpeR")
+
+# Load schedule
+source(here("slides/schedule-ps_ws.R"))
+```
+
+## Seminarplan {.smaller}
+
+```{r table-schedule}
+#| echo: false 
+
+schedule %>% 
+    gt::gt() %>% 
+    gt::fmt_markdown() %>% 
+    gt::tab_options(
+        table.width = gt::pct(80), 
+        table.font.size = "14px") %>% 
+    gtExtras::gt_theme_538() %>% 
+    # customise column header labels
+    gt::cols_label(
+        session = "Sitzung", 
+        date = "Datum",
+        topic = "Thema (synchron)"
+    ) %>% 
+    gt::cols_width(
+        session ~ pct(15),
+        date ~ pct(15),
+        topic ~ pct(70)
+    ) %>% 
+    # highlight current session
+    gtExtras::gt_highlight_rows(
+        rows = 5,
+        fill = "#C50F3C", alpha = 0.15,
+        bold_target_only = TRUE,
+        target_col = session:topic
+    ) %>% 
+    # fade out past sessions
+    gt::tab_style(
+        style = gt::cell_text(
+            style = "italic", 
+            color = "grey"),
+        location = gt::cells_body(
+            columns = everything(), 
+            rows = c(1:4)
+        )
+    )
+```
+
+```{r import-data-backend}
+#| echo: false
+#| eval: true
+
+references <- qs::qread(here("local_data/references_full.qs"))
+```
+
+# Agenda {background-image="img/slide_bg-agenda.png"}
+
+1.  [Vorstellung der Datengrundlage](#dataset)
+2.  [Eure Fragen zu {{< iconify devicon rstudio >}}](#r-questions)
+3.  [Refresh{{< iconify devicon rstudio >}}: Bibliometrix](#r-example)
+
+# Vorstellung der Datengrundlage {#dataset background-image="img/slide_bg-example.png"}
+
+Überblick über die Datensätze und Ihre Erhebung
+
+## Wir starten mit dem Resultat
+
+#### Beschreibung des finalen Datensatzes
+
+-   Resultat der Erhebung (26.11.2024) sind drei Datensätze:
+
+    -   **`reference.qs`** ➜ vorgefilterter, finaler Datensatz mit `r glue::glue("{nrow(references$openalex$correct)}")` Einträgen
+
+    -   **`references_full.qs`** ➜ Datensatz (bzw. "Liste") mit verschiedenen Datensätzen (OpenAlex, Scopus & Kombination) in verschiedenen Verarbeitungstufen
+
+    -   **`references_import_bibliometrix.RDA`** ➜ Umstrukturierte Version von `references.qs` für den einfachen Import in Bibliometrix
+
+<!-- -->
+
+-   Alle Erhebungsschritte sind auf der Kurspage unter [Datenerhebung](data_mining/ps-01_02-data-mining_scopus.html) dokumentiert
+-   Im Folgenden kurze Darstellung von ausgewählten Details
+
+## Mining ➜ Überprüfen ➜ Kombinieren
+
+#### Überblick über den Erhebungsprozess
+
+1.  Initiale **OpenAlex-API Abfrage**
+
+    -   Verschiedene Qualitätskontrollen (Duplikate & Missings von zentralen Variablen, wie ID, Abstract & DOI)
+
+2.  **Scopus-API Abfrage**
+
+    -   Verschiedene Qualitätskontrollen (Duplikate & Missings von zentralen Variablen, wie ID, Abstract & DOI)
+
+3.  **Abgleich & Kombination** der Referenzen **beider API-Abfragen**
+
+    -   **Identifikation** von **Scopus-Quellen**, die in OpenAlex-Datensatz **fehlen**
+
+    -   **Ergänzung** (eines Teils) der fehlenden Scopus-Quellen durch **erneute OpenAlex-API Abfrage** (DOI als Grundlage)
+
+    -   **Substition** fehlender **OpenAlex-Abstracts** **aus Scopus-Daten**
+
+## First Step
+
+#### Initiale OpenAlex-API Abfrage
+
+```{r}
+#| eval: false
+
+references$openalex$api <- openalexR::oa_fetch(
+  entity = "works",
+  title_and_abstract.search = 
+  '("artificial intelligence" OR AI OR "chatbot" OR "AI-based chatbot" OR
+   "artificial intelligence-based chatbot" OR "chat agent" OR "voice bot" OR
+    "voice assistant" OR "voice-based assistant" OR
+    "conversational agent" OR "conversational assistant" OR "conversational AI" OR
+    "AI-based assistant" OR "artificial intelligence-based assistant" OR 
+    "virtual assistant" OR "intelligent assistant" OR "digital assistant" OR
+    "smart speaker" OR
+    chatgpt OR "google gemini" OR "google bard" OR "bing chat" OR
+    "microsoft copilot" OR "claude ai" OR "perplexity ai") 
+    AND
+    (anthropomorphism OR humanlike OR humanness OR humanized OR 
+     "user experience" OR UX OR usability OR trust* OR
+     "conversational experience" OR CUX OR "conversation design" OR
+     safety OR privacy)',
+  publication_year = "2016-2025",
+  primary_topic.field.id = c(
+    "fields/33", # Social Science
+    "fields/32" # Psychology
+  ),
+  language = "en",
+  type = c("article", "conference-paper", "preprint"),
+  verbose = TRUE
+)
+```
+
+## Fehlen Informationen für zentrale Variablen?
+
+#### Überprüfung der Datenqualität: Missing Values
+
+```{r}
+references$openalex$api %>% 
+ naniar::vis_miss(warn_large_data = FALSE)
+```
+
+## Gibt es doppelte Einträge?
+
+#### Überprüfung der Datenqualität: DOI
+
+```{r}
+
+references$openalex$api %>% 
+    # exclude ID duplicates
+    distinct(id, .keep_all = TRUE) %>% 
+    # exclude cases without DOI
+    filter(!is.na(doi)) %>% 
+    group_by(doi) %>% 
+    summarise(n = n()) %>% 
+    frq(n, sort.frq = "desc")
+```
+
+## Besonderheiten und Herausforderungen
+
+#### Besonderheiten der Scopus-API-Abfrage:
+
+-   **Custom functions** statt R-Paket ➜ Output weniger strukturiert
+-   **Strikteres Charakterlimit** für Scopus-API-Abfrage als bei OpenAlex ➜ Erhöhter Aufwand bei Qualitätskontrolle
+
+#### Herausforderungen bei der Kombination der Daten:
+
+-   Unterschiedliche **Struktur der Datensätze** (z.B. Variablennamen, Autorenangaben etc.)
+-   Unterschiedliche **Kategorisierung der Referenzen** (z.B. in Bezug auf Forschungsfeld oder Publikationstyp)
+-   **Fehlende Abstracts** in OpenAlex-Datensatz ➜ Substitution durch Scopus-Daten
+
+## Finalisierung der Daten
+
+#### Code zur Erstellung des finalen Datensatzes
+
+```{r openalex-data-correct}
+#| eval: false
+
+references$openalex$correct <- references$openalex$combined$raw_updated %>% 
+  filter(type %in% c("article", "conference-paper", "preprint")) %>% 
+  filter(language == "en") %>% 
+  mutate(
+  # Create additional factor variables
+    publication_year_fct = as.factor(publication_year), 
+    type_fct = as.factor(type), 
+  # Clean abstracts
+    ab = ab %>%
+      str_replace_all("\ufffe", "") %>%    # Remove invalid U+FFFE characters
+      str_replace_all("[^\x20-\x7E\n]", "") %>% # Optional: Remove other non-ASCII chars
+      iconv(from = "UTF-8", to = "UTF-8", sub = ""), # Ensure UTF-8 encoding
+  )
+```
+
+```{r export-data-bibliometrix-local}
+#| eval: false
+
+# Export data for bibliometrix
+references_bibliometrix <- oa2bibliometrix(references$openalex$correct)
+saveRDS(references_bibliometrix, file = here("local_data/references_import_bibliometrix.RDS"))
+```
+
+## Überblick finaler Datensatz
+
+#### Struktur des finalen Datensatzes
+
+```{r}
+#| echo: false
+refs <- references$openalex$correct
+```
+
+```{r}
+refs %>% glimpse
+```
+
+## Lern die Daten kennen!
+
+#### Überblick über die nächten Schritte
+
+-   Erneute **Filterung** der Daten bzw. Auswahl der **relevanten Referenzen** ➜ *Eigene Query-Abfrage auf Basis der Abstracts*
+-   **Überprüfung** der für die Analyse **zentralen Variablen** ➜ *Sind weitere Bereinigung notwendig?*
+-   **Explorative Datenanalyse** (EDA) zur **Erkundung** des Datensatzes ➜ *Identifiaktion von **Mustern** und **Auffälligkeiten***
+
+## Custom query mit R
+
+#### Auswahl der relevanten Referenzen
+
+```{r}
+# Define patterns for each part of the search string
+part1 <- paste(
+  "artificial intelligence|AI|chatbot|AI-based chatbot|artificial intelligence-based chatbot|chat agent",
+  "voice bot|voice assistant|voice-based assistant|conversational agent|conversational assistant",
+  "conversational AI|AI-based assistant|artificial intelligence-based assistant|virtual assistant",
+  "intelligent assistant|digital assistant|smart speaker|chatgpt|google gemini|google bard",
+  "bing chat|microsoft copilot|claude ai|perplexity ai", sep = "|"
+)
+part2 <- "misinformation"
+
+
+# Apply the patterns to the column `ab` in the tibble `works`
+misinfo <- refs %>%
+    mutate(
+        matches = str_detect(ab, regex(part1, ignore_case = TRUE)) &
+            str_detect(ab, regex(part2, ignore_case = TRUE)) 
+    ) %>%
+    filter(matches)
+```
+
+## Missing Abstracts?
+
+#### Überprüfung der zentralen Variablen
+
+```{r}
+misinfo %>% naniar::vis_miss(warn_large_data = FALSE)
+```
+
+## Viele Wege der Exploration
+
+#### Nützliche Funktionen zur Datenexploration
+
+-   Grundsätzlich viel Funktionen & Pakete zur Überprüfung der Daten in R verfügbar
+-   Empfehlungen:
+    -   `skimr::skim()` für schnellen & umfassenden Überblick der Daten in R
+    -   `easystats`-verse für vertiefende Analysen in R
+    -   `bibliometrix` für bibliometrische Analysen in R ➜ `biblioshiny()` für Analyse mit GUI
+
+# Eure Fragen zu {{< iconify devicon rstudio >}} {#r-questions background-image="img/slide_bg-participation.png"}
+
+Fragen zu R, Topic Modeling & Co.
+
+## Fragen zu {{< iconify devicon rstudio >}}-Code
+
+> *Wie identifiziert & entfernt man Paper-Duplikate mit R genau?*
+
+-   Abhängig von der Definition von "Duplikat" (z.B. ein Kriterium oder mehrere Kriterien)
+-   siehe Beispiel auf der Folie [Gibt es doppelte Einträge?]
+
+> *Wie führt man 2 Datensätze (z.B. den „normalen“ & den aus der forward- & backward-search) am einfachsten/unkompliziertesten zusammen?*
+
+-   Abhängig von Datengrundlage (z.B. importierte .csv vs. Erhebung via OpenAlex-API) & Datenstruktur (z.B. mit `bind_rows()`, `merge()`, `left_join()` etc)
+
+## Fragen zum Topic Modeling
+
+> *In Bezug auf das Thema Topic Modeling: Würdest du uns empfehlen, Structural Topic Modeling (STM) anzuwenden oder denkst du, dass eines der anderen Verfahren der Themenmodellierung besser zu unserer Forschungsfrage passen könnte*
+
+-   Schwierig zu beantworten, da STM auch "nur" ein Teil der Analyse sein kann
+
+> Wie sieht Topic Modelling mit Seed Words aus? 
+
+-   z.B. [`seededlda`](https://koheiw.github.io/seededlda/) Paket (siehe Beispiele)
+
+## Fragen zur praktischen Arbeit mit {{< iconify devicon rstudio >}}
+
+> Gibt es in R eine Möglichkeit, dass mehrere Personen parallel an demselben Skript arbeiten können? Wenn nein, wie könnte man die Änderungen am besten zusammenführen?
+
+-   Keine gleichzeitge Arbeit an einem Dokument wie bei Google Docs, aber
+    -   Verwendung des RStudio-Servers (nicht zeitgleich, aber zumindest im selben Dokument)
+
+    -   git (sehr kompliziert)
+-   Empfehlung: Aufteilung anhand verschiedener Bereiche (Daten, Analyse, Interpretation) ➜ Code"gerüst" schreiben, an "neue" Daten anpassen
+
+# `bibliometrix` im Fokus {#r-example background-image="img/slide_bg-example.png"}
+
+Refreshe{{< iconify devicon rstudio >}} zu bibliometrische Analysen
