@@ -54,6 +54,17 @@ website:
         contents: 
           - href: ms-schedule.qmd
             text: "Methodenseminar"
+          - href: ps_ws-schedule.qmd
+            text: "Projektseminar"
+
+      - section: "Datenerhebung"
+        contents:
+          - href: data_mining/ps-01_01-data-mining_openalex.qmd
+            text: "API Mining: OpenAlex"
+          - href: data_mining/ps-01_02-data-mining_scopus.qmd
+            text: "API Mining: Scopus"
+          - href: data_mining/ps-01_03-data-remining_openalex.qmd
+            text: ""
 
       - section: "Computing"
         contents:
