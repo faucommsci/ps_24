@@ -1,0 +1,307 @@
+---
+title: "Combine OpenAlex & Scopus"
+subtitle: "Projektseminar"
+date: last-modified
+date-format: "DD.MM.YYYY"
+---
+
+## Preparation
+
+```{r load-packages}
+# Load necessary packages
+pacman::p_load(
+  here, qs, 
+  magrittr, janitor,
+  naniar, visdat,
+  easystats, sjmisc,
+  ggpubr, 
+  gt, gtExtras, gtsummary,
+  openalexR, bibliometrix, 
+  tidyverse
+)
+```
+
+```{r data-import-backend}
+#| echo: false
+references <- qs::qread(here("local_data/references_full.qs"))
+```
+
+
+## Comparison with Scopus
+<!-- TODO Add information about (source) of scopus API mining -->
+
+```{r data-import-scopus}
+references <- qs::qread(here("local_data/references_openalex.qs"))
+references$scopus$raw <- qs::qread(here("local_data/references_scopus.qs"))$raw
+```
+
+### Identification of "missing" references
+```{r data-check-scopus-missings-openalex}
+# Identify the number of scopus references missing in the openalex data
+references$scopus$raw %>% 
+  filter(!is.na(doi)) %>% 
+  mutate(doi_full = paste0("https://doi.org/", doi)) %>% 
+  filter(!(doi_full %in% references$openalex$raw$doi)) %>% 
+  glimpse()
+```
+
+### Extract DOIs for missing references
+
+```{r missing-references-creation}
+#| eval: false
+
+missing_references <- list()
+
+# Format DOIs 
+missing_references$scopus_dois <- references$scopus$raw %>%
+  filter(!is.na(doi)) %>% 
+  mutate(doi = paste0("https://doi.org/", doi)) %>% 
+  filter(!(doi %in% references$openalex$raw$doi)) %>%
+  pull(doi)
+
+# Split DOIs into chunks of 25
+chunk_size <- 10
+missing_references$scopus_dois_chunks <- split(missing_references$scopus_dois, ceiling(seq_along(missing_references$scopus_dois) / chunk_size))
+```
+
+## Completion of OpenAlex data
+
+### Mining missing references via OpenAlex API
+
+```{r missing-references-mining}
+#| eval: false
+
+# Download missing references via API
+missing_references$data$chunks <- map(
+  missing_references$scopus_dois_chunks, function(chunk) {
+  Sys.sleep(2)  # Pause for 1 second
+  
+  tryCatch(
+    {
+      # Attempt the API call
+      openalexR::oa_fetch(
+        entity = "works",
+        doi = chunk,
+        verbose = TRUE
+      )
+    },
+    error = function(e) {
+      # Handle the error
+      message("Error with chunk: ", paste(chunk, collapse = ", "))
+      message("Error message: ", e$message)
+      NULL  # Return NULL for failed chunks
+    }
+  )
+})
+```
+
+```{r missing-references-combine-chunks}
+#| eval: false
+
+# Combine rows
+missing_references$data$combined <- bind_rows(missing_references$data$chunks) %>% 
+  mutate(mining_source = "openalex_rerun_doi")
+```
+
+```{r missing-references-save-to-local}
+#| eval: false
+qs::qsave(missing_references, file = here("local_data/missing_references.qs"))
+```
+
+### Quality control 
+
+```{r missing-references-import-backened}
+#| echo: false
+missing_references<- qs::qread(here("local_data/missing_references.qs"))
+```
+
+
+```{r missing-references-duplicate-id-qc}
+# Check for duplicates based on OpenAlex ID
+missing_references$data$combined %>% 
+  group_by(id) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+```
+
+```{r missing-references-duplicates-doi-qc}
+# Check for duplicates based on DOI
+missing_references$data$combined %>% 
+  distinct(id, .keep_all = TRUE) %>% # exclude ID duplicates
+  filter(!is.na(doi)) %>% # exclude cases without DOI
+  group_by(doi) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+``` 
+
+```{r missing-references-duplicates-doi-data}
+# Extract duplicated IDs
+duplicates$missing_references$combined$doi$string  <- missing_references$data$combined %>%  
+  distinct(id, .keep_all = TRUE) %>% 
+  filter(!is.na(doi)) %>%
+  group_by(doi) %>%
+  summarise(n = n()) %>%
+  filter(n > 1) %>% 
+  pull(doi)
+
+# Extract cases with duplicated IDs
+duplicates$missing_references$combined$doi$data <- missing_references$data$combined %>% 
+  filter(doi %in% duplicates$missing_references$combined$doi$string)
+
+# Extract cases to be deleted
+duplicates$missing_references$combined$doi$delete <- duplicates$missing_references$combined$doi$data %>%
+  mutate(id_number = as.numeric(sub(".*W", "", id))) %>% 
+  group_by(doi) %>% # Group by `doi`
+  slice_min(id_number, n = 1, with_ties = FALSE) %>% 
+  select(-id_number) 
+```
+
+```{r missing-references-recode}
+missing_references$data$raw <- missing_references$data$combined %>%
+  distinct(id, .keep_all = TRUE) %>%  # delete duplicates based on ID 
+  anti_join(duplicates$missing_references$combined$doi$delete, by = "id") 
+```
+
+## Merging OpenAlex data
+
+```{r openalex-data-merge}
+#| eval: false
+
+# Combine the missing references with the existing data
+references$openalex$combined$api <- references$openalex$raw %>%
+  mutate(mining_source = "openalex_initial") %>% 
+  bind_rows(., missing_references$data$raw)
+```
+
+### Quality control
+
+```{r openalex-data-merge-qc}
+references$openalex$combined$api %>% 
+  skimr::skim()
+```
+
+
+::: callout-note
+#### Quick overview
+-   The number of missing abstracts has risen. Therefore, the Scopus data will be checked for the possibility of filling in the missing abstracts.
+-   The difference in the number of cases and the number of unique IDs indicates that there are duplicates in the data. 
+:::
+
+```{r openalex-combined-duplicates-ids-check}
+# Check for duplicates based on OpenAlex ID
+references$openalex$combined$api %>% 
+  group_by(id) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+```
+
+```{r openalex-combined-duplicates-ids-export}
+# Extract duplicated IDs
+duplicates$openalex$combined$id$string <- references$openalex$combined$api %>% 
+  group_by(id) %>%
+  summarise(n = n()) %>%
+  filter(n > 1) %>% 
+  pull(id)
+
+# Extract cases with duplicated IDs
+duplicates$openalex$combined$id$data <- references$openalex$combined$api %>% 
+  filter(id %in% duplicates$openalex$combined$id$string ) %>% 
+  arrange(id)
+```
+
+```{r openalex-duplicates-ids-comparison}
+# Extract uneven (odd) rows
+df1 <- duplicates$openalex$combined$id$data[seq(1, nrow(duplicates$openalex$combined$id$data), by = 2), ]
+df2 <- duplicates$openalex$combined$id$data[seq(2, nrow(duplicates$openalex$combined$id$data), by = 2), ]
+
+# Compare the two data frames
+summary(arsenal::comparedf(df1, df2))
+```
+
+```{r openalex-combined-duplicates-doi-check}
+# Check for duplicates based on DOI
+references$openalex$combined$api %>% 
+  distinct(id, .keep_all = TRUE) %>% # exclude ID duplicates
+  filter(!is.na(doi)) %>% # exclude cases without DOI
+  group_by(doi) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+``` 
+
+<!-- Add short summary -->
+
+```{r openalex-data-merge-cleanup}
+references$openalex$combined$raw <- references$openalex$combined$api %>%
+  distinct(id, .keep_all = TRUE) 
+```
+
+### Missing abstracts
+
+```{r openalex-data-merge-missing-abstracts}
+#| eval: false
+
+# Identify cases with NA values in the variable ab
+na_abstracts <- references$openalex$combined$raw %>%
+  filter(is.na(ab)) 
+
+
+# Check if Scopus data provides an abstract for those references
+na_abstracts_with_scopus <- na_abstracts %>%
+  mutate(doi_short = str_remove(doi, "https://doi.org/")) %>% 
+  left_join(scopus$raw %>% 
+              select(doi, abstract),
+              by = join_by(doi_short == doi)) %>%
+  mutate(ab = ifelse(is.na(ab), abstract, ab)) %>%
+  select(-abstract)
+
+# Update the combined references with the new abstracts from Scopus
+references$openalex$combined$raw_updated <- references$openalex$combined$raw %>%
+  left_join(na_abstracts_with_scopus %>% select(id, ab), by = "id", suffix = c("", "_updated")) %>%
+  mutate(ab = ifelse(is.na(ab), ab_updated, ab)) %>%
+  select(-ab_updated)
+```
+
+## Create correct data
+
+```{r openalex-data-merge-updated-qc}
+# Overview
+references$openalex$combined$raw_updated %>% 
+  skimr::skim()
+```
+
+```{r}
+references$openalex$combined$raw_updated %>% 
+  frq(type, language)
+
+```
+
+```{r openalex-data-correct}
+references$openalex$correct <- references$openalex$combined$raw_updated %>% 
+  filter(type %in% c("article", "conference-paper", "preprint")) %>% 
+  filter(language == "en") %>% 
+  filter(publication_year >= 2016) %>%
+  mutate(
+  # Create additional factor variables
+    publication_year_fct = as.factor(publication_year), 
+    type_fct = as.factor(type), 
+  # Clean abstracts
+    ab = ab %>%
+      str_replace_all("\ufffe", "") %>%    # Remove invalid U+FFFE characters
+      str_replace_all("[^\x20-\x7E\n]", "") %>% # Optional: Remove other non-ASCII chars
+      iconv(from = "UTF-8", to = "UTF-8", sub = ""), # Ensure UTF-8 encoding
+  ) 
+```
+
+## Export data 
+
+```{r export-openalex-data-local}
+#| eval: false
+qs::qsave(references$openalex$correct, file = here("local_data/references.qs"))
+qs::qsave(references, file = here("local_data/references_full.qs"))
+```
+
+```{r export-data-bibliometrix-local}
+#| eval: false
+references_bibliometrix <- oa2bibliometrix(references$openalex$correct)
+saveRDS(references_bibliometrix, file = here("local_data/references_import_bibliometrix.RDS"))
+```

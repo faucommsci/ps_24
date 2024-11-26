@@ -1,0 +1,138 @@
+---
+title: "API mining: Scopus"
+subtitle: "Projektseminar"
+date: last-modified
+date-format: "DD.MM.YYYY"
+---
+
+
+## Preparation
+
+```{r load-packages}
+# Load necessary packages
+pacman::p_load(
+  here, qs, 
+  magrittr, janitor,
+  easystats, sjmisc,
+  ggpubr, 
+  openalexR, bibliometrix, 
+  tidyverse
+)
+
+# Load custom functions
+# See https://github.com/christopherBelter/scopusAPI) for details
+source(here("R/scopusAPI.R"))
+```
+
+```{r data-import-backend}
+#| echo: false
+scopus <- qs::qread(here("local_data/references_scopus.qs"))
+```
+
+## Mining Scopus API
+
+See [scopusAPI](https://github.com/christopherBelter/scopusAPI) for information about the custom functions.
+
+```{r scopus-api-credentials}
+# Load API credentials
+scopus_api_key <- Sys.getenv("Elsevier_API")
+```
+
+### Create search query
+
+```{r scopus-api-query}
+scopus_query <- 'TITLE-ABS-KEY ( ( "artificial intelligence" OR ai OR "chatbot" OR "AI-based chatbot" OR "artificial intelligence-based chatbot" OR "chat agent" OR "voice bot" OR "voice assistant" OR "voice-based assistant" OR "conversational agent" OR "conversational assistant" OR "conversational AI" OR "AI-based assistant" OR "artificial intelligence-based assistant" OR "virtual assistant" OR "intelligent assistant" OR "digital assistant" OR "smart speaker" OR chatgpt OR "google gemini" OR "google bard" OR "bing chat" OR "microsoft copilot" OR "claude ai" OR "perplexity ai" ) AND ( anthropomorphism OR humanlike OR humanness OR humanized OR "user experience" OR ux OR usability OR trust* OR "conversational experience" OR cux OR "conversation design" OR safety OR privacy ) ) AND (SUBJAREA(SOCI) OR SUBJAREA(PSYC)) AND LANGUAGE("English")'
+```
+
+### Search and fetch data
+
+```{r scopus-api-download}
+#| eval: false
+scopus_xml <- searchByString(
+  string = scopus_query,
+  outfile = here("local_data/scopus_API_export.xml"))
+```
+
+### Convert `.xml` to data frame
+
+```{r scopus-api-convert}
+#| eval: false
+scopus <- list(
+  xml = scopus_xml, 
+  api = extractXML(scopus_xml)
+  )
+```
+
+
+## Quality control
+
+```{r scopus-api-overview}
+scopus$api %>% 
+  skimr::skim()
+```
+
+::: callout-note
+#### Quick overview
+-   Nearly all references have an abstract (± 98 percent) and DOI (± 90 percent), which are the critical information for the analysis.
+:::
+
+### Check duplicates
+
+```{r scopus-duplicates-dois-check}
+# Check for duplicates based on DOI
+scopus$api %>% 
+  filter(!is.na(doi)) %>% # exclude cases without DOI
+  group_by(doi) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+```
+
+```{r openalex-data-duplicates-doi}
+duplicates <- list()
+
+# Extract duplicated IDs
+duplicates$api$doi$string <- scopus$api %>%  
+  filter(!is.na(doi)) %>%
+  group_by(doi) %>%
+  summarise(n = n()) %>%
+  filter(n > 1) %>% 
+  pull(doi)
+
+# Extract cases with duplicated IDs
+duplicates$api$doi$data <- scopus$api %>% 
+  filter(doi %in% duplicates$api$doi$string)
+```
+
+
+::: callout-note
+#### Summary
+-   The duplicates based on the DOI do not seem to follow a systematic pattern. Therefore, DOI duplicates are eliminated with `distinct()`. 
+
+:::
+
+## Transformation
+
+```{r recode-scopus-raw}
+scopus$raw <- scopus$api %>% 
+  distinct(doi, .keep_all = TRUE) %>% 
+  filter(ptype %in% c("Article", "Conference Paper"))
+```
+
+
+### Check transformation
+```{r openalex-check-transformation}
+scopus$raw %>% 
+  filter(!is.na(doi)) %>% # exclude cases without DOI
+  group_by(doi) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+```
+
+
+```{r export-data-to-local}
+#| echo: false
+#| eval: false
+
+qs::qsave(scopus, file = here("local_data/references_scopus.qs"))
+```
+

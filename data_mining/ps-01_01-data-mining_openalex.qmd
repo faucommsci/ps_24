@@ -1,0 +1,199 @@
+---
+title: "API mining: OpenAlex"
+subtitle: "Projektseminar"
+date: last-modified
+date-format: "DD.MM.YYYY"
+---
+
+## Preparation
+
+```{r load-packages}
+# Load necessary packages
+pacman::p_load(
+  here, qs, 
+  magrittr, janitor,
+  naniar, visdat,
+  easystats, sjmisc,
+  ggpubr, 
+  gt, gtExtras, gtsummary,
+  openalexR, bibliometrix, 
+  tidyverse
+)
+```
+
+```{r data-import-backend}
+#| echo: false
+references <- qs::qread(here("local_data/references_full.qs"))
+```
+
+## Mining OpenAlex API
+
+### Set credentials
+
+```{r openalex-define-options}
+# Set openalexR.mailto option so that your requests go to the polite pool for faster response times
+options(openalexR.mailto = "christoph.adrian@fau.de")
+```
+
+### Initial OpenAlex API query
+
+```{r openalex-api-query-test}
+#| eval: false
+#| echo: false
+
+oa_query(
+  entity = "works",
+  title_and_abstract.search = '("artificial intelligence" OR AI OR "chatbot" OR "AI-based chatbot" OR "artificial intelligence-based chatbot" OR "chat agent" OR "voice bot" OR "voice assistant" OR "voice-based assistant" OR "conversational agent" OR "conversational assistant" OR "conversational AI" OR "AI-based assistant" OR "artificial intelligence-based assistant" OR "virtual assistant" OR "intelligent assistant" OR "digital assistant" OR "smart speaker" OR chatgpt OR "google gemini" OR "google bard" OR "bing chat" OR "microsoft copilot" OR "claude ai" OR "perplexity ai") AND (anthropomorphism OR humanlike OR humanness OR humanized OR "user experience" OR UX OR usability OR trust* OR "conversational experience" OR CUX OR "conversation design" OR safety OR privacy)',
+  publication_year = "2016-2025",
+  primary_topic.field.id = c(
+    "fields/33", # Social Science
+    "fields/32" # Psychology
+    # "fields/17" # Computer Science
+  ),
+  type = c("article", "conference-paper", "preprint"),
+  language = "en",
+  verbose = TRUE
+)
+```
+
+```{r openalex-api-download}
+#| eval: false
+
+references <- list()
+
+# Download data via API
+references$openalex$api <- openalexR::oa_fetch(
+  entity = "works",
+  title_and_abstract.search = '("artificial intelligence" OR AI OR "chatbot" OR "AI-based chatbot" OR "artificial intelligence-based chatbot" OR "chat agent" OR "voice bot" OR "voice assistant" OR "voice-based assistant" OR "conversational agent" OR "conversational assistant" OR "conversational AI" OR "AI-based assistant" OR "artificial intelligence-based assistant" OR "virtual assistant" OR "intelligent assistant" OR "digital assistant" OR "smart speaker" OR chatgpt OR "google gemini" OR "google bard" OR "bing chat" OR "microsoft copilot" OR "claude ai" OR "perplexity ai") AND (anthropomorphism OR humanlike OR humanness OR humanized OR "user experience" OR UX OR usability OR trust* OR "conversational experience" OR CUX OR "conversation design" OR safety OR privacy)',
+  publication_year = "2016-2025",
+  primary_topic.field.id = c(
+    "fields/33", # Social Science
+    "fields/32" # Psychology
+  ),
+  language = "en",
+  type = c("article", "conference-paper", "preprint"),
+  verbose = TRUE
+)
+```
+
+## Quality control
+
+```{r openalex-api-overview}
+references$openalex$api %>% 
+  skimr::skim()
+```
+
+::: callout-note
+#### Quick overview
+-   Nearly all references have an abstract (± 96 percent) and DOI (± 93 percent), which are the critical information for the analysis.
+-   The difference in the number of cases and the number of unique IDs indicates that there are duplicates in the data. 
+:::
+
+### Check duplicates
+
+#### based on OpenAlex ID
+
+```{r openalex-duplicates-ids-check}
+# Check for duplicates based on OpenAlex ID
+references$openalex$api %>% 
+  group_by(id) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+```
+
+```{r openalex-duplicates-ids-data}
+duplicates <- list()
+
+# Extract duplicated IDs
+duplicates$openalex$api$id$string <- references$openalex$api %>% 
+  group_by(id) %>%
+  summarise(n = n()) %>%
+  filter(n > 1) %>% 
+  pull(id)
+
+# Extract cases with duplicated IDs
+duplicates$openalex$api$id$data <- references$openalex$api %>% 
+  filter(id %in% duplicates$openalex$api$id$string) %>% 
+  arrange(id)
+```
+
+```{r openalex-duplicates-ids-comparison}
+# Extract uneven (odd) rows
+df1 <- duplicates$openalex$api$id$data[seq(1, nrow(duplicates$openalex$api$id$data), by = 2), ]
+df2 <- duplicates$openalex$api$id$data[seq(2, nrow(duplicates$openalex$api$id$data), by = 2), ]
+
+# Compare the two data frames
+summary(arsenal::comparedf(df1, df2))
+```
+
+
+#### based on DOI
+
+```{r openalex-duplicates-doi-check}
+# Check for duplicates based on DOI
+references$openalex$api %>% 
+  distinct(id, .keep_all = TRUE) %>% # exclude ID duplicates
+  filter(!is.na(doi)) %>% # exclude cases without DOI
+  group_by(doi) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+```
+
+```{r openalex-duplicates-doi-data}
+# Extract duplicated IDs
+duplicates$openalex$api$doi$string <- references$openalex$api %>%  
+  distinct(id, .keep_all = TRUE) %>% 
+  filter(!is.na(doi)) %>%
+  group_by(doi) %>%
+  summarise(n = n()) %>%
+  filter(n > 1) %>% 
+  pull(doi)
+
+# Extract cases with duplicated IDs
+duplicates$openalex$api$doi$data <- references$openalex$api %>% 
+  filter(doi %in% duplicates$openalex$api$doi$string)
+
+# Extract cases to be deleted
+duplicates$openalex$api$doi$delete <- duplicates$openalex$api$doi$data %>%
+  mutate(id_number = as.numeric(sub(".*W", "", id))) %>% 
+  group_by(doi) %>% # Group by `doi`
+  slice_min(id_number, n = 1, with_ties = FALSE) %>% 
+  select(-id_number) 
+```
+
+::: callout-note
+#### Summary
+-   The duplicates based on the OpenAlex ID seem to only have differences in columns, that are less relevant for the analysis. The duplicates are therefore eliminated with the `distinct()` function.
+-   The duplicates based on the DOI are a result of pre-prints being published. Therefore, only the most recent entry for each duplicated DOI will be kept. 
+
+:::
+
+## Transformation
+
+```{r recode-openalex-raw}
+references$openalex$raw <- references$openalex$api %>% 
+  distinct(id, .keep_all = TRUE) %>% # delete duplicates based on ID
+  anti_join(duplicates$openalex$api$doi$delete, by = "id") # delete one case of each DOI duplicated()
+```
+
+### Check transformation
+```{r openalex-check-transformation}
+references$openalex$raw %>% 
+  group_by(id) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+
+references$openalex$raw %>% 
+  filter(!is.na(doi)) %>% # exclude cases without DOI
+  group_by(doi) %>% 
+  summarise(n = n()) %>% 
+  frq(n, sort.frq = "desc")
+```
+
+
+```{r}
+#| echo: false
+#| eval: false
+
+qs::qsave(references, file = here("local_data/references_openalex.qs"))
+```
