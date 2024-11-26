@@ -31,6 +31,7 @@ references <- qs::qread(here("local_data/references_full.qs"))
 <!-- TODO Add information about (source) of scopus API mining -->
 
 ```{r data-import-scopus}
+#| eval: false
 references <- qs::qread(here("local_data/references_openalex.qs"))
 references$scopus$raw <- qs::qread(here("local_data/references_scopus.qs"))$raw
 ```
@@ -135,6 +136,8 @@ missing_references$data$combined %>%
 ``` 
 
 ```{r missing-references-duplicates-doi-data}
+duplicates <- list()
+
 # Extract duplicated IDs
 duplicates$missing_references$combined$doi$string  <- missing_references$data$combined %>%  
   distinct(id, .keep_all = TRUE) %>% 
