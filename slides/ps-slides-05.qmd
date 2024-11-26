@@ -1,5 +1,5 @@
 ---
-title: "Datensatzvorstellung & RefresheR"
+title: "Datensatzvorstellung & RefreshR"
 subtitle: "Session 05"
 date: 27 11 2024
 date-format: "DD.MM.YYYY"
@@ -337,4 +337,4 @@ Fragen zu R, Topic Modeling & Co.
 
 # `bibliometrix` im Fokus {#r-example background-image="img/slide_bg-example.png"}
 
-Refreshe{{< iconify devicon rstudio >}} zu bibliometrische Analysen
+Refresh{{< iconify devicon rstudio >}} zu bibliometrische Analysen
