@@ -110,7 +110,7 @@ references <- qs::qread(here("local_data/references_full.qs"))
 
 <!-- -->
 
--   Alle Erhebungsschritte sind auf der Kurspage unter [Datenerhebung](data_mining/ps-01_02-data-mining_scopus.html) dokumentiert
+-   Alle Erhebungsschritte sind auf der Kurspage unter [Datenerhebung](../data_mining/ps-01_02-data-mining_scopus.html) dokumentiert
 -   Im Folgenden kurze Darstellung von ausgewählten Details
 
 ## Mining ➜ Überprüfen ➜ Kombinieren
@@ -199,6 +199,7 @@ references$openalex$api %>%
 
 -   **Custom functions** statt R-Paket ➜ Output weniger strukturiert
 -   **Strikteres Charakterlimit** für Scopus-API-Abfrage als bei OpenAlex ➜ Erhöhter Aufwand bei Qualitätskontrolle
+-   API-Abfrage **nur mit Account (bzw. API-Key)** möglich 
 
 #### Herausforderungen bei der Kombination der Daten:
 
@@ -290,7 +291,7 @@ misinfo <- refs %>%
 misinfo %>% naniar::vis_miss(warn_large_data = FALSE)
 ```
 
-## Viele Wege der Exploration
+## Explorieren, Validieren, Interpretieren
 
 #### Nützliche Funktionen zur Datenexploration
 
