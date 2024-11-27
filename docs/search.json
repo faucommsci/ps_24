@@ -292,7 +292,7 @@
     "href": "slides/ps-slides-05.html#besonderheiten-und-herausforderungen",
     "title": "Datensatzvorstellung & RefreshR",
     "section": "Besonderheiten und Herausforderungen",
-    "text": "Besonderheiten und Herausforderungen\nBesonderheiten der Scopus-API-Abfrage:\n\nCustom functions statt R-Paket ➜ Output weniger strukturiert\nStrikteres Charakterlimit für Scopus-API-Abfrage als bei OpenAlex ➜ Erhöhter Aufwand bei Qualitätskontrolle\n\nHerausforderungen bei der Kombination der Daten:\n\nUnterschiedliche Struktur der Datensätze (z.B. Variablennamen, Autorenangaben etc.)\nUnterschiedliche Kategorisierung der Referenzen (z.B. in Bezug auf Forschungsfeld oder Publikationstyp)\nFehlende Abstracts in OpenAlex-Datensatz ➜ Substitution durch Scopus-Daten"
+    "text": "Besonderheiten und Herausforderungen\nBesonderheiten der Scopus-API-Abfrage:\n\nCustom functions statt R-Paket ➜ Output weniger strukturiert\nStrikteres Charakterlimit für Scopus-API-Abfrage als bei OpenAlex ➜ Erhöhter Aufwand bei Qualitätskontrolle\nAPI-Abfrage nur mit Account (bzw. API-Key) möglich\n\nHerausforderungen bei der Kombination der Daten:\n\nUnterschiedliche Struktur der Datensätze (z.B. Variablennamen, Autorenangaben etc.)\nUnterschiedliche Kategorisierung der Referenzen (z.B. in Bezug auf Forschungsfeld oder Publikationstyp)\nFehlende Abstracts in OpenAlex-Datensatz ➜ Substitution durch Scopus-Daten"
   },
   {
     "objectID": "slides/ps-slides-05.html#finalisierung-der-daten",
@@ -330,11 +330,11 @@
     "text": "Missing Abstracts?\nÜberprüfung der zentralen Variablen\n\nmisinfo %&gt;% naniar::vis_miss(warn_large_data = FALSE)"
   },
   {
-    "objectID": "slides/ps-slides-05.html#viele-wege-der-exploration",
-    "href": "slides/ps-slides-05.html#viele-wege-der-exploration",
+    "objectID": "slides/ps-slides-05.html#explorieren-validieren-interpretieren",
+    "href": "slides/ps-slides-05.html#explorieren-validieren-interpretieren",
     "title": "Datensatzvorstellung & RefreshR",
-    "section": "Viele Wege der Exploration",
-    "text": "Viele Wege der Exploration\nNützliche Funktionen zur Datenexploration\n\nGrundsätzlich viel Funktionen & Pakete zur Überprüfung der Daten in R verfügbar\nEmpfehlungen:\n\nskimr::skim() für schnellen & umfassenden Überblick der Daten in R\neasystats-verse für vertiefende Analysen in R\nbibliometrix für bibliometrische Analysen in R ➜ biblioshiny() für Analyse mit GUI"
+    "section": "Explorieren, Validieren, Interpretieren",
+    "text": "Explorieren, Validieren, Interpretieren\nNützliche Funktionen zur Datenexploration\n\nGrundsätzlich viel Funktionen & Pakete zur Überprüfung der Daten in R verfügbar\nEmpfehlungen:\n\nskimr::skim() für schnellen & umfassenden Überblick der Daten in R\neasystats-verse für vertiefende Analysen in R\nbibliometrix für bibliometrische Analysen in R ➜ biblioshiny() für Analyse mit GUI"
   },
   {
     "objectID": "slides/ps-slides-05.html#fragen-zu--code",
