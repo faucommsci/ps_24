@@ -1,6 +1,6 @@
 ---
 title: "All things {{< iconify devicon rstudio >}}"
-subtitle: "Session 06"
+subtitle: "Session 08"
 date: 18 12 2024
 date-format: "DD.MM.YYYY"
 bibliography: references_slides.bib
