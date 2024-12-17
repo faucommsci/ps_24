@@ -1,0 +1,201 @@
+---
+title: "All things {{< iconify devicon rstudio >}}"
+subtitle: "Session 06"
+date: 18 12 2024
+date-format: "DD.MM.YYYY"
+bibliography: references_slides.bib
+editor_options: 
+  chunk_output_type: console
+execute: 
+  eval: true
+---
+
+```{r setup-slide-session}
+#| echo: false
+ 
+# if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+    here, qs, # file management
+    magrittr, janitor, # data wrangling
+    easystats, sjmisc, # data analysis
+    gt, gtExtras, # table visualization
+    ggpubr, ggwordcloud, # visualization
+    # text analysis    
+    tidytext, widyr, # based on tidytext
+    quanteda, # based on quanteda
+    quanteda.textmodels, quanteda.textplots, quanteda.textstats, 
+    stm, # structural topic modeling
+    openalexR, pushoverr, tictoc, 
+    rollama, bibliometrix,
+    formatR,
+    xml2, 
+    tidyverse # load last to avoid masking issues
+  )
+
+pacman::p_load_gh("chrdrn/halpeR")
+
+# Load schedule
+source(here("slides/schedule-ps_ws.R"))
+```
+
+## Seminarplan {.smaller}
+
+```{r table-schedule}
+#| echo: false 
+
+schedule %>% 
+    gt::gt() %>% 
+    gt::fmt_markdown() %>% 
+    gt::tab_options(
+        table.width = gt::pct(80), 
+        table.font.size = "14px") %>% 
+    gtExtras::gt_theme_538() %>% 
+    # customise column header labels
+    gt::cols_label(
+        session = "Sitzung", 
+        date = "Datum",
+        topic = "Thema (synchron)"
+    ) %>% 
+    gt::cols_width(
+        session ~ pct(15),
+        date ~ pct(15),
+        topic ~ pct(70)
+    ) %>% 
+    # highlight current session
+    gtExtras::gt_highlight_rows(
+        rows = 8,
+        fill = "#C50F3C", alpha = 0.15,
+        bold_target_only = TRUE,
+        target_col = session:topic
+    ) %>% 
+    # fade out past sessions
+    gt::tab_style(
+        style = gt::cell_text(
+            style = "italic", 
+            color = "grey"),
+        location = gt::cells_body(
+            columns = everything(), 
+            rows = c(1:7)
+        )
+    )
+```
+
+# Agenda {background-image="img/slide_bg-agenda.png"}
+
+1.  [Vorstellung GROBID](#data)
+2.  [Eure Fragen zu {{< iconify devicon rstudio >}}](#r-questions)
+
+# PDF to Text {#data background-image="img/slide_bg-example.png"}
+
+Kurze Vorstellung des [GROBID](https://grobid.readthedocs.io/en/latest)-Tools
+
+## GeneRation Of BIbliographic Data
+
+#### Kurze Vorstellung von  @grobid2008 
+
+-   kostenlose Opens Source Machine-Learning-Bibliothek zur **Extraktion, Analyse und Umstrukturierung von Rohdokumenten wie PDFs** in strukturierte XML/TEI-codierte Dokumente
+-   Besonderem Fokus auf technische und **wissenschaftliche Publikationen**
+-   **Zentrales Feature**: *"**Full text extraction and structuring from PDF** articles, including a model for the overall document segmentation and models for the structuring of the text body (paragraph, section titles, reference and footnote callouts, figures, tables, data availability statements, etc.)."*
+
+## GROBID in Aktion
+
+#### Vorstellung des [Demo-Servers](https://kermitt2-grobid.hf.space/)
+
+::::: columns
+::: {.column width="50%"}
+![](img/ps-session-08/graphics-grobid_gui_full.png){fig-align="center"}
+:::
+
+::: {.column width="50%"}
+<br>
+
+-   Tool ermöglicht **niedrigschwellige Möglichkeit der PDF-Konvertierung** (inklusive verschiedener Anpassungsoptionen)
+-   Export im **TEI-Format** (spezielles XML-Format bzw. internationaler Standart zur digitalen Darstellung von Texten)
+:::
+:::::
+
+## Import der XML
+
+#### Verarbeitung der TEI-Datei in R (I)
+
+```{r grobid-import}
+#| output-location: column
+
+# Read the XML file
+doc <- read_xml(
+  here(
+    "local_data/guzman_lewis_2020.tei.xml"
+    ))
+
+# Print the XML content
+doc
+```
+
+## Extraktion der Informationen
+
+#### Verarbeitung der TEI-Datei in R (II)
+
+```{r grobid-extract-1}
+# Define the namespace
+ns <- c(tei = "http://www.tei-c.org/ns/1.0")
+
+# Extract the title
+title <- xml_text(xml_find_first(doc, "//tei:titleStmt/tei:title[@type='main']",ns))
+
+# Print title
+print(title)
+
+
+# Extract the DOI
+doi <- xml_text(xml_find_first(doc,"//tei:idno[@type='DOI']",ns))
+
+# Print DOI
+print(doi)
+```
+
+## Export des Volltextes
+
+#### Weiterverarbeitung der Daten in R (III)
+
+```{r grobid-extract-2}
+# Extract the body text excluding abstract, author information, and references
+body_nodes <- xml_find_all(doc, "//tei:text/tei:body//tei:div/tei:p", ns)
+body_text <- paste(xml_text(body_nodes), collapse = " ")
+
+# Construct the tibble
+result <- tibble(
+  title = title,
+  doi = doi,
+  body = body_text
+)
+
+# Print the result
+print(result)
+```
+
+## Vergleich der Ergebnisse
+
+#### Weiterverarbeitung der Daten in R (IV)
+
+::::: columns
+::: {.column width="50%"}
+```{r grobid-comparison}
+result$body 
+```
+:::
+
+::: {.column width="50%"}
+![[@guzman2019]](img/ps-session-08/graphics-paper-example.png){fig-align="center"}
+:::
+:::::
+
+# Eure Fragen zu {{< iconify devicon rstudio >}} {#r-questions background-image="img/slide_bg-participation.png"}
+
+Fragen zu R, Topic Modeling & Co.
+
+# Thank you! {background-image="img/slide_bg-end_session.png"}
+
+## References
+
+::: {#refs}
+:::
