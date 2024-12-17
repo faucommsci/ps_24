@@ -339,3 +339,10 @@ Fragen zu R, Topic Modeling & Co.
 # `bibliometrix` im Fokus {#r-example background-image="img/slide_bg-example.png"}
 
 Refresh{{< iconify devicon rstudio >}} zu bibliometrische Analysen
+
+# Thank you! {background-image="img/slide_bg-end_session.png"}
+
+## References
+
+::: {#refs}
+:::
