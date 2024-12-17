@@ -19,7 +19,7 @@ Diese Seite erhält eine Übersicht über die Sitzung bzw. Themen des Methodense
 | 5 | 27.11.2024 | All things R: *RefreshR & Vorstellung Datensatz* | [{{< bi file-earmark-slides >}}](/slides/ps-slides-05.html "Slides: Session 07"){aria-label="Slides Session 05"} |
 | 6 | 04.12.2024 | Update zum Workflow I |  |
 | 7 | 11.12.2024 | Gruppenarbeit |  |
-| 8 | 18.12.2024 | All things R |  |
+| 8 | 18.12.2024 | All things R | [{{< bi file-earmark-slides >}}](/slides/ps-slides-08.html "Slides: Session 08"){aria-label="Slides Session 08"} |
 | 9 | 08.01.2025 | Update zum Workflow II |  |
 | 10 | 15.01.2025 | Gruppenarbeit |  |
 | 11 | 22.01.2025 | All things R |  |
