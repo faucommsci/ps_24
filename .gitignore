@@ -48,9 +48,12 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
+# Quarto
 /.quarto/
 
+# Lua
+/.luarc.json
+
 # Custom
-.DS_Store
 *local_*
-/_freeze/
+_freeze
