@@ -21,7 +21,7 @@ Diese Seite erhält eine Übersicht über die Sitzung bzw. Themen des Methodense
 | 7 | 11.12.2024 | Gruppenarbeit |  |
 | 8 | 18.12.2024 | All things R | [{{< bi file-earmark-slides >}}](/slides/ps-slides-08.html "Slides: Session 08"){aria-label="Slides Session 08"} |
 | 9 | 08.01.2025 | Update zum Workflow II |  |
-| 10 | 15.01.2025 | Gruppenarbeit |  |
+| 10 | 15.01.2025 | Gruppenarbeit | [{{< bi file-earmark-slides >}}](/slides/ps-slides-10.html "Slides: Session 10"){aria-label="Slides Session 10"} |
 | 11 | 22.01.2025 | All things R |  |
 |  | 27.01.2025 | Sondertermin: Vorstellung Projektseminar |  |
 | 12 | 29.01.2025 | Abschlusspräsentation (inklusive Feedback) |  |
