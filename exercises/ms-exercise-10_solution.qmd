@@ -146,9 +146,9 @@ quanteda_stm <- quanteda_dfm_trim %>%
 
 review_subsample <- qs::qread(here("data/session-10/review_subsample.qs"))
 quanteda_stm <- qs::qread(here("data/session-10/quanteda_stm.qs"))
-stm_mdl_k0 <- qs::qread(here("data/session-10/stm_mdl_k0.qs"))
+stm_mdl_k0 <- qs::qread(here("local_data/stm_mdl_k0.qs"))
 stm_mdl_k20 <- qs::qread(here("data/session-10/stm_mdl_k20.qs"))
-stm_search <- qs::qread(here("data/session-10/stm_search.qs"))
+stm_search <- qs::qread(here("local_data/stm_search.qs"))
 ```
 
 ## 🛠️ Praktische Anwendung
